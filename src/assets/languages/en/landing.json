@@ -1,0 +1,20 @@
+{
+    "title": "Home",
+    "description": "If the page has a brief description, write it down here.",
+    "sections": {
+        "electronics": {
+            "title": "Electronics",
+            "description": "Some electronic stuffs.",
+            "recommended": "You might like these electonics."
+        },
+        "books": {
+            "title": "Books",
+            "description": "Some nerd stuffs.",
+            "recommended": "You might like these books."
+        }
+    },
+    "confirmation": {
+        "title": "Are you sure want to delete {0}?", 
+        "description": "{0} might not yet available in the future releases." 
+    }
+}

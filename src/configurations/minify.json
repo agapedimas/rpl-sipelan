@@ -1,0 +1,13 @@
+{
+    "enabled": false,
+    "htmlOptions": {
+        "removeComments": true,
+        "collapseWhitespace": true,
+        "collapseBooleanAttributes": true,
+        "removeAttributeQuotes": true,
+        "minifyJS": true,
+        "minifyCSS": true
+    },
+    "cssOptions": {},
+    "jsOptions": {}
+}

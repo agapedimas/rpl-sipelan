@@ -1,0 +1,40 @@
+{
+    "id": {
+        "title": "ID"
+    },
+    "email": {
+        "title": "Email",
+        "errors": {
+            "TOO_LONG": "Email length is too long.",
+            "INVALID": "Email is invalid."
+        }
+    },
+    "password": {
+        "title": "Password",
+        "errors": {
+            "TOO_LONG": "Password max length is 64 characters.",
+            "TOO_SHORT": "Password minimum length is 8 characters.",
+            "INVALID": "Password is invalid."
+        }
+    },
+    "passwordconfirm": {
+        "title": "Confirm Password",
+        "errors": {
+            "NOT_MATCH": "Password confirmation doesn't match."
+        }
+    },
+    "fullname": {
+        "title": "Full Name",
+        "errors": {
+            "INVALID": "Name should only contains alphabetics.",
+            "TOO_LONG": "Name max length is 255 characters.",
+            "TOO_SHORT": "Name minimum length is 3 characters."
+        }
+    },
+    "created": {
+        "title": "Created at"
+    },
+    "role": {
+        "title": "Role"
+    }
+}

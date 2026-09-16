@@ -1,0 +1,32 @@
+<% 
+    variables.session.page_title = language('home.title');
+%>
+
+<style>
+    #profilePictureImage {
+        position: relative;
+        right: 0;
+        top: calc(var(--padding) * -1 - 40px);
+        float: right;
+        width: 40px;
+        aspect-ratio: 1;
+        border-radius: 100%;
+        transition: 0.1s filter;
+    }
+    #profilePictureImage:hover {
+        filter: var(--filter-accent-plain-hover);
+    }
+    #profilePictureImage:active {
+        filter: var(--filter-accent-plain-active);
+    }
+</style>
+
+<div class="header">
+    <div class="title"><%= language('home.title') %></div>
+</div>
+
+<div class="content">
+    <img id="profilePictureImage" ad-goto="/admin/settings" src="/pp/<%= variables.session.activeUser.id %>/<%= variables.session.activeUser.pictureId %>"/>
+</div>
+
+<script></script>

@@ -1,0 +1,40 @@
+<script src="/utils/forms.js"></script>
+<script src="/utils/input-validator.js"></script>
+
+<section class="root">
+	<%- body %>
+</section>
+
+<script>
+	if (window.location.pathname != "/") {
+		if (window.matchMedia("(display-mode: standalone)").matches)
+			document.title = "<%= variables.session.page_title %>";
+		else
+			document.title = "<%= variables.session.page_title %> - <%= variables.app.admin_name %>";
+	}
+	else {
+		document.title = "<%= variables.app.admin_name %>";
+	}
+</script>
+
+<script>
+	const INPUT_VALIDATOR_ERRORS = {
+		email: {
+			"INVALID": "<%= language('account.email.errors.INVALID') %>",
+			"TOO_LONG": "<%= language('account.email.errors.TOO_LONG') %>"
+		},
+		fullname: {
+			"INVALID": "<%= language('account.fullname.errors.INVALID') %>",
+			"TOO_LONG": "<%= language('account.fullname.errors.TOO_LONG') %>",
+			"TOO_SHORT": "<%= language('account.fullname.errors.TOO_SHORT') %>"
+		},
+		password: {
+			"INVALID": "<%= language('account.password.errors.INVALID') %>",
+			"TOO_LONG": "<%= language('account.password.errors.TOO_LONG') %>",
+			"TOO_SHORT": "<%= language('account.password.errors.TOO_SHORT') %>"
+		},
+		passwordconfirm: {
+			"NOT_MATCH": "<%= language('account.passwordconfirm.errors.NOT_MATCH') %>"
+		}
+	}
+</script>

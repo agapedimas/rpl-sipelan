@@ -1,0 +1,20 @@
+<section id="heroSection">
+    <video src="/assets/hero.mp4" autoplay muted loop></video>
+</section>
+
+<section>
+    <p><%= language("landing.description") %></p>
+</section>
+
+<script>
+    function updateHeaderBound() {
+        const mostBottom = heroSection.getBoundingClientRect().bottom;
+        mainHeader.dataset.bound = mostBottom;
+    }
+
+    mainHeader.dataset.dark = true;
+    mainHeader.setAttribute("theme", "dark");
+    updateHeaderBound();
+    
+    window.addEventListener("resize", updateHeaderBound);
+</script>

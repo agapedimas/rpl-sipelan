@@ -1,0 +1,25 @@
+
+<header id="mainHeader">
+    <%- include("./headerMain") %>
+</header>
+
+<main>
+    <%- body %>
+</main>
+
+<footer>
+    <%- include("./footerMain") %>
+</footer>
+
+<script src="/script.js"></script>
+<script>
+    if (window.location.pathname != "/") {
+        if (window.matchMedia("(display-mode: standalone)").matches)
+            document.title = "<%= variables.session.page_title %>";
+        else
+            document.title = "<%= variables.session.page_title %> - <%= variables.app.name %>";
+    }
+    else {
+        document.title = "<%= variables.app.name %>";
+    }
+</script>

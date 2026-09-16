@@ -1,0 +1,107 @@
+.root {
+    background-image: 
+        url("/assets/background.png"),
+        linear-gradient(-45deg, #de482a, #a72127);
+    background-size: cover;
+    grid-auto-columns: auto;
+    grid-auto-rows: auto;
+    grid-template-areas: "Content";
+    padding: 0;
+    justify-items: center;
+    align-items: center;
+    transition: none;
+}
+
+.panel {
+    display: grid;
+    grid-auto-flow: row;
+    background: var(--gray-6);
+    padding: 33px 30px;
+    border-radius: 20px;
+    border: 1px solid var(--overlay-6);
+    gap: 0.3em;
+    width: 350px;
+    box-shadow: 0 5px 35px 0px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+}
+    .panel img {
+        height: 1.55em;
+        cursor: pointer;
+        opacity: 1;
+        transition: 0.25s opacity;
+    }
+    .panel img:hover {
+        opacity: 0.7;
+    }
+    .panel img:active {
+        opacity: 0.5;
+    }
+    .panel .title {
+        font-size: 1.75em;
+        font-family: var(--font-bold);
+        margin: 0.25em 0 0;
+    }
+    .panel .subtitle {
+        font-size: 1.25em;
+        margin: 0 0 25px;
+    }
+    .panel .inputs {
+        display: grid;
+        gap: 7px;
+    }
+        .panel .inputs .error {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: max-content auto;
+            text-align: left;
+            color: var(--notice);
+            margin: 0 0 0.5em;
+            gap: 0.5em;
+            font-size: 0.8em;
+            letter-spacing: 0.025em;
+        }
+            .panel .inputs .error::before {
+                content: "\f1aa";
+                font-family: var(--font-icon);
+            }
+    .panel .actions {
+        display: grid;
+        gap: 7px;
+        margin: 1em 0 0 0;
+    }
+        .panel .actions .error {
+            color: var(--notice);
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .panel .actions button {
+            padding: 0.6em 0.8em;
+            margin: 1em 0;
+        }
+            .panel .actions button .progressring {
+                width: 1em;
+                height: 1em;
+            }
+            .panel:not(.loading) .actions button .progressring {
+                display: none;
+            }
+        .panel .actions .suggestion {
+            text-align: center;
+        }
+
+@media screen and (max-width: 500px) {
+    .root {
+        align-items: start;
+        background: white;
+    }
+    .panel {
+        position: relative;
+        width: 100vw;
+        box-shadow: none;
+        border-radius: 0;
+        align-content: start;
+        overflow: unset;
+        background: var(--background-page);
+        border: none;
+    }
+}

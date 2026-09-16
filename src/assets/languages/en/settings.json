@@ -1,0 +1,54 @@
+{
+    "title": "Settings",
+    "appearance": {
+        "title": "Appearance"
+    },
+    "profile_picture": {
+        "change": {
+            "title": "Change",
+            "errors": {
+                "title": "Unable to Change",
+                "TOO_BIG": "File size should not exceed 3 MB.",
+                "NOT_SUPPORTED": "File type is not supported.",
+                "UNKNOWN": "Something went wrong. Please try again later. ({0})"
+            },
+            "success": {
+                "title": "Profile Picture Changed",
+                "description": "Profile picture has been changed successfully."
+            }
+        }
+    },
+    "theme": {
+        "title": "Theme",
+        "states": {
+            "system": "System Default",
+            "light": "Light",
+            "dark": "Dark"
+        }
+    },
+    "accent": {
+        "title": "Accent Color",
+        "colors": {
+            "red": "Red",
+            "yellow": "Yellow",
+            "green": "Green",
+            "cyan": "Cyan",
+            "blue": "Blue",
+            "indigo": "Indigo",
+            "purple": "Purple"
+        }
+    },
+    "about": {
+        "title": "About",
+        "repository": {
+            "title": "Git Repository"
+        },
+        "version": {
+            "title": "Version"
+        },
+        "copyright": {
+            "title": "Copyright",
+            "detail": "All Rights Reserved."
+        }
+    }
+}

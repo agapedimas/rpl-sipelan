@@ -1,0 +1,23 @@
+{
+    "back": "Back",
+    "refresh": "Refresh",
+    "homepage": "Homepage",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "edit": "Edit",
+
+    "errors": {
+        "page_not_found": {
+            "title": "The page you’re looking for can’t be found.",
+			"message": "Could it be a typo? Or something else?"
+        },
+        "page_forbidden": {
+            "title": "Ahh... You don’t have permission to see that here.",
+			"message": "Please re-check the url or sign in with privileged account."
+        },
+        "page_trouble": {
+            "title": "Oops...\nWe’re having trouble at the moment.",
+			"message": "We’re working on it. Please wait and try again later."
+        }
+    }
+}

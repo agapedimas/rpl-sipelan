@@ -1,0 +1,335 @@
+<% 
+    variables.session.page_title = language('settings.title');
+%>
+
+<style>
+    html:not([theme=dark]) .root .main {
+        background: var(--gray-6);
+    }
+    .list {
+        max-width: 800px;
+    }
+        .list .stack > span:last-child {
+            color: var(--foreground-description);
+        }
+        .list .stack > button:last-child {
+            padding: 0;
+        }
+    
+    #profileGrid {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 8em auto;
+        margin: 0 0 2em;
+        align-items: center;
+        gap: 1em 1.5em;
+    }
+        #profileGrid #profilePictureGrid {
+            text-align: center;
+        }
+        #profileGrid button {
+            margin-top: 0.25em;
+        }
+        #profileGrid .profilePicture {
+            position: relative;
+            border-radius: 100%;
+            overflow: hidden;
+        }
+        #profileGrid .profilePicture.loading {
+            pointer-events: none;
+        }
+            #profileGrid .profilePicture::before {
+                content: "\edfc";
+                position: absolute;
+                bottom: 0;
+                display: grid;
+                font-family: var(--font-icon);
+                font-size: 1.3em;
+                width: 100%;
+                height: 35px;
+                background: #00000080;
+                color: white;
+                align-items: center;
+                justify-content: center;
+                transition: 0.5s var(--key-animation) transform;
+                transform: translateY(100%);
+                z-index: 1;
+            }
+            #profileGrid .profilePicture:not(.loading):hover::before {
+                transform: translateY(0);
+            }
+            #profileGrid .profilePicture img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                transition: 0.1s filter;
+            }
+            #profileGrid .profilePicture:hover img {
+                filter: var(--filter-accent-plain-hover);
+            }
+            #profileGrid .profilePicture:active img {
+                filter: var(--filter-accent-plain-active);
+            }
+            #profileGrid .profilePicture.loading img {
+                filter: brightness(0.3);
+            }
+            #profileGrid .profilePicture .progressring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 30px;
+                transform: translate(-50%, -50%);
+                display: none;
+                z-index: 1;
+            }
+            #profileGrid .profilePicture.loading .progressring {
+                display: block;
+            }
+        #profileGrid .details {
+            display: block;
+        }
+            #profileGrid .details .name {    
+                font-size: 1.5em;
+                font-family: var(--font-semibold);
+            }
+            #profileGrid .details .description {    
+                font-size: 1.5em;
+                font-family: var(--font-semibold);
+                color: var(--foreground-description);
+            }
+            #profileGrid .details button {
+                margin: 1em 0 0;
+            }
+
+    #accentColorsGrid {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 5px;
+    }
+        #accentColorsGrid .color {
+            width: 24px;
+            aspect-ratio: 1;
+            border-radius: 100%;
+            outline: 2px solid transparent;
+            transition: 
+                0.4s var(--key-animation) outline, 
+                0.4s var(--key-animation) transform;
+        }
+        #accentColorsGrid .color.active {
+            outline: 2px solid var(--text);
+        }
+        #accentColorsGrid .color:hover {
+            outline: 2px solid var(--text);
+        }
+        #accentColorsGrid .color:active {
+            transform: scale(0.8);
+        }
+        #accentColorsGrid .color[data-value=red] {
+            background: #ff3b30;
+        }
+        #accentColorsGrid .color[data-value=yellow] {
+            background: #ffcc00;
+        }
+        #accentColorsGrid .color[data-value=green] {
+            background: #34c759;
+        }
+        #accentColorsGrid .color[data-value=cyan] {
+            background: #32ade6;
+        }
+        #accentColorsGrid .color[data-value=blue] {
+            background: #007aff;
+        }
+        #accentColorsGrid .color[data-value=indigo] {
+            background: #5856d6;
+        }
+        #accentColorsGrid .color[data-value=purple] {
+            background: #af52de;
+        }
+
+    @media screen and (max-width: 500px) {
+        #profileGrid {
+            grid-auto-flow: row;
+            grid-auto-columns: auto;
+            justify-items: center;
+            text-align: center;
+            margin-top: var(--padding);
+        }
+            #profileGrid .profilePicture {
+                max-width: 150px;
+            }
+    }
+</style>
+
+<div class="header">
+    <div class="title"><%= language('settings.title') %></div>
+    <div class="buttons">
+        <button class="back" ad-goto="/admin/home"><%= language('home.title') %></button>
+    </div>
+</div>
+
+<div class="content">
+    <div id="profileGrid">
+        <div id="profilePictureGrid">
+            <div class="profilePicture" ad-tooltip="Ganti Foto Profil">
+                <div class="progressring"></div>
+                <img id="profilePictureImage" src="/pp/<%= variables.session.activeUser.id %>/<%= variables.session.activeUser.pictureId %>"/>
+            </div>
+            <button class="plain"><%= language('general.edit') %></button>
+        </div>
+        <div class="details">
+            <div class="name"><%= variables.session.activeUser.fullname %></div>
+            <div class="description"><%= variables.session.activeUser.email %></div>
+            <button id="signOutButton" class="critical plain"><%= language('auth.signout.title') %></button>
+        </div>
+    </div> 
+    <div class="list" ad-header="<%= language('settings.appearance.title') %>">
+        <div class="stack">
+            <span><%= language('settings.theme.title') %></span>
+            <select class="plain" name="theme" id="themeSelect">
+                <option value="system"><%= language('settings.theme.states.system') %></option>
+                <option value="light"><%= language('settings.theme.states.light') %></option>
+                <option value="dark"><%= language('settings.theme.states.dark') %></option>
+            </select>
+        </div>
+        <div class="stack">
+            <span><%= language('settings.accent.title') %></span>
+            <div id="accentColorsGrid">
+                <div class="color" data-value="red" ad-tooltip="<%= language('settings.accent.colors.red') %>"></div>
+                <div class="color" data-value="yellow" ad-tooltip="<%= language('settings.accent.colors.yellow') %>"></div>
+                <div class="color" data-value="green" ad-tooltip="<%= language('settings.accent.colors.green') %>"></div>
+                <div class="color" data-value="cyan" ad-tooltip="<%= language('settings.accent.colors.cyan') %>"></div>
+                <div class="color" data-value="blue" ad-tooltip="<%= language('settings.accent.colors.blue') %>"></div>
+                <div class="color" data-value="indigo" ad-tooltip="<%= language('settings.accent.colors.indigo') %>"></div>
+                <div class="color" data-value="purple" ad-tooltip="<%= language('settings.accent.colors.purple') %>"></div>
+            </div>
+        </div>
+    </div>
+    <div class="list" ad-header="<%= language('settings.about.title') %>">
+        <div class="stack">
+            <span><%= language('settings.about.repository.title') %></span>
+            <button class="plain" ad-goto="<%= variables.app.repository.url %>" ad-type="newtab">
+                <span><%= variables.app.repository.name %></span>
+                <span class="icon">&#xebad;</span>
+            </button>
+        </div>
+        <div class="stack">
+            <span><%= language('settings.about.version.title') %></span>
+            <span><%= variables.app.version %></span>
+        </div>
+        <div class="stack vertical">
+            <span><%= language('settings.about.copyright.title') %></span>
+            <span>© 2026 Agape Dimas. <%= language('settings.about.copyright.detail') %></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    initialize();
+    function initialize() {
+        const accentValue = document.documentElement.getAttribute("accent");
+        const themeValue = localStorage.getItem("theme");
+
+        themeSelect.value = themeValue;
+        themeSelect.onchange = function() {
+            setTheme(this.value);
+        }
+        
+        for (const accentColor of [...accentColorsGrid.children]) {
+            accentColor.onclick = function() {
+                setAccentColor(this.dataset.value);
+            }
+        }
+
+        setAccentColor(accentValue);
+    }
+    function setAccentColor(value) {
+        localStorage.setItem("accent", value);
+        CheckAccent();
+
+        for (const accentColor of [...accentColorsGrid.children]) {
+            if (accentColor.dataset.value == value)
+                accentColor.classList.add("active");
+            else 
+                accentColor.classList.remove("active");
+        }
+    }
+    function setTheme(value) {
+        localStorage.setItem("theme", value);
+        CheckTheme();
+    }
+
+    profilePictureGrid.onclick = function() {
+        const fileInput = document.createElement("input");
+        fileInput.classList.add("hidden");
+        fileInput.type = "file";
+        fileInput.accept = ".png, .jpg, .jpeg, .webp";
+        fileInput.onchange = function() {
+            const files = Array.from(this.files);
+
+            if (files.length == 0)
+                return;
+
+            if (files[0].size > 3000000)
+                return Components.Notification.Send({ 
+                    Id: "avatar_failed", 
+                    Title: "<%= language('settings.profile_picture.change.errors.title') %>", 
+                    Message: "<%= language('settings.profile_picture.change.errors.TOO_BIG') %>", 
+                    Icon: "\ufe64", 
+                    Buttons: [{Text: "<%= language('general.ok') %>"}] 
+                });
+                
+            const form = new FormData();
+            form.append("file", files[0]);
+
+            profilePictureImage.parentNode.classList.add("loading");
+
+            $.ajax({
+                type: "POST",
+                url: "/pp/<%= variables.session.activeUser.id %>",
+                data: form,
+                contentType: false,
+                processData: false,
+                success: async function(response) {
+                    const url = "/pp/<%= variables.session.activeUser.id %>/" + response.data.id;
+                    profilePictureImage.src = url;
+                    profilePictureImage.onload = function() {
+                        Components.Notification.Remove({ Id: "avatar_failed" });
+                        profilePictureImage.parentNode.classList.remove("loading");   
+                    };
+                },
+                error: function(result) {
+                    Components.Notification.Send({ 
+                        Id: "avatar_failed", 
+                        Title: "<%= language('settings.profile_picture.change.errors.title') %>", 
+                        Message: result.responseJSON?.error || "<%= language('settings.profile_picture.change.errors.title') %>".format(result.status), 
+                        Icon: "\ufe64", 
+                        Buttons: [{Text: "<%= language('general.ok') %>"}] 
+                    });
+                    profilePictureImage.parentNode.classList.remove("loading");    
+                }
+            });
+        }
+        this.parentNode.append(fileInput);
+        fileInput.click();
+    }
+
+    signOutButton.onclick = function() {
+        Components.ActionSheet.Open({
+            Title: "<%= language('auth.signout.confirmation.title') %>",
+            Description: "<%= language('auth.signout.confirmation.description') %>",
+            Actions: [
+                { 
+                    Title: "<%= language('auth.signout.title') %>", Type: "Options.Critical", 
+                    Action: function() {
+                        return new Promise(function() {
+                            window.location.href = "/signout";
+                        });
+                    }
+                },
+                { 
+                    Title: "<%= language('general.cancel') %>", Type: "Footer"
+                }
+            ]
+        });     
+    }
+</script>

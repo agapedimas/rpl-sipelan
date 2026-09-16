@@ -1,0 +1,32 @@
+{
+    "name": "App",
+    "short_name": "App",
+    "admin_name": "App for Admin",
+
+    "version": "1.0.0",
+    
+    "description": "Lorem ipsum",
+
+    "host": {
+        "app": "https://app.agapedimas.com",
+        "assets": "https://assets.agapedimas.com"
+    },
+    "path": {
+        "logo": "/assets/logo.webp",
+        "logo_wordmark": "/assets/logo_wordmark.webp",
+        "logo_monochrome": "/assets/logo_monochrome.webp",
+        "thumbnail": "/assets/thumbnail.webp"
+    },
+
+    "repository": {
+        "name": "agapedimas/App",
+        "url": "https://github.com/agapedimas/App"
+    },
+
+    "port": 3000,
+
+    "throttle": {
+        "enabled": false,
+        "delayTime": 750
+    }
+}

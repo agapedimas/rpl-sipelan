@@ -1,0 +1,28 @@
+<header class="titlebar">
+	<img class="icon" src="<%= variables.app.path.logo_monochrome %>"/>
+	<span class="name"><%= variables.app.admin_name %></span>
+</header>
+
+<div class="root">
+	<nav class="sidebar">
+        <%- include("./navigationAdmin") %>
+	</nav>
+	<script src="/admin.js"></script>
+	<section class="main">
+		<div class="activity">
+            <%- body %>
+		</div>
+	</section>
+</div>
+
+<script>
+	if (window.location.pathname != "/") {
+		if (window.matchMedia("(display-mode: standalone)").matches)
+			document.title = "<%= variables.session.page_title %>";
+		else
+			document.title = "<%= variables.session.page_title %> - <%= variables.app.admin_name %>";
+	}
+	else {
+		document.title = "<%= variables.app.admin_name %>";
+	}
+</script>
