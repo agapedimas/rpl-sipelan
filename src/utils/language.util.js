@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const languageFolderPath = "./src/assets/languages";
-const SUPPORTED_LANGUAGES = [ "en" ];
+const SUPPORTED_LANGUAGES = [ "id", "en" ];
 
 const indexedDictionary = {};
 

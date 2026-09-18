@@ -1,14 +1,14 @@
 {
-    "name": "App",
-    "short_name": "App",
-    "admin_name": "App for Admin",
+    "name": "Sipelan",
+    "short_name": "Sipelan",
+    "admin_name": "Sipelan for Admin",
 
     "version": "1.0.0",
     
     "description": "Lorem ipsum",
 
     "host": {
-        "app": "https://app.agapedimas.com",
+        "app": "https://sipelan.agapedimas.com",
         "assets": "https://assets.agapedimas.com"
     },
     "path": {
@@ -19,11 +19,11 @@
     },
 
     "repository": {
-        "name": "agapedimas/App",
-        "url": "https://github.com/agapedimas/App"
+        "name": "agapedimas/rpl-bencana-mbg",
+        "url": "https://github.com/agapedimas/rpl-bencana-mbg"
     },
 
-    "port": 3000,
+    "port": 6767,
 
     "throttle": {
         "enabled": false,

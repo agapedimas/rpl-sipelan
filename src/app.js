@@ -1,9 +1,4 @@
-console.log(
-	"Starting Server |",
-	new Date().toLocaleDateString(), 
-	"|",
-	new Date().toLocaleTimeString()
-);
+console.log("Starting Server |", new Date().toLocaleDateString(), "|", new Date().toLocaleTimeString());
 
 const Database = require("./database");
 const Routes = require("./routes");

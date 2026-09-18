@@ -1,7 +1,6 @@
 .root {
     background-image: 
-        url("/assets/background.png"),
-        linear-gradient(-45deg, #de482a, #a72127);
+        url("/assets/background.png");
     background-size: cover;
     grid-auto-columns: auto;
     grid-auto-rows: auto;

@@ -1,0 +1,40 @@
+{
+    "id": {
+        "title": "ID"
+    },
+    "email": {
+        "title": "Email",
+        "errors": {
+            "TOO_LONG": "Email terlalu panjang.",
+            "INVALID": "Email tidak valid."
+        }
+    },
+    "password": {
+        "title": "Kata Sandi",
+        "errors": {
+            "TOO_LONG": "Kata sandi maksimal 64 karakter.",
+            "TOO_SHORT": "Kata sandi minimal 8 karakter.",
+            "INVALID": "Kata sandi tidak valid."
+        }
+    },
+    "passwordconfirm": {
+        "title": "Konfirmasi Kata Sandi",
+        "errors": {
+            "NOT_MATCH": "Konfirmasi kata sandi tidak cocok."
+        }
+    },
+    "fullname": {
+        "title": "Nama Lengkap",
+        "errors": {
+            "INVALID": "Nama hanya boleh berisi huruf.",
+            "TOO_LONG": "Nama maksimal 255 karakter.",
+            "TOO_SHORT": "Nama minimal 3 karakter."
+        }
+    },
+    "created": {
+        "title": "Dibuat pada"
+    },
+    "role": {
+        "title": "Peran"
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "back": "Kembali",
+    "refresh": "Muat Ulang",
+    "homepage": "Beranda",
+    "cancel": "Batal",
+    "ok": "Oke",
+    "edit": "Edit",
+
+    "errors": {
+        "page_not_found": {
+            "title": "Halaman yang Anda cari tidak dapat ditemukan.",
+			"message": "Mungkin ada salah ketik atau masalah lainnya."
+        },
+        "page_forbidden": {
+            "title": "Anda tidak memiliki izin untuk melihat halaman ini.",
+			"message": "Periksa kembali URL atau masuk dengan akun yang memiliki izin."
+        },
+        "page_trouble": {
+            "title": "Ups...\nSaat ini terjadi kendala.",
+			"message": "Kami sedang menanganinya. Silakan tunggu dan coba lagi nanti."
+        }
+    }
+}

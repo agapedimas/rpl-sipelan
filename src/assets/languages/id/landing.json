@@ -1,0 +1,20 @@
+{
+    "title": "Beranda",
+    "description": "Tuliskan deskripsi singkat halaman di sini.",
+    "sections": {
+        "electronics": {
+            "title": "Elektronik",
+            "description": "Berbagai produk elektronik.",
+            "recommended": "Anda mungkin menyukai produk elektronik ini."
+        },
+        "books": {
+            "title": "Buku",
+            "description": "Berbagai buku menarik.",
+            "recommended": "Anda mungkin menyukai buku-buku ini."
+        }
+    },
+    "confirmation": {
+        "title": "Apakah Anda yakin ingin menghapus {0}?",
+        "description": "{0} mungkin tidak tersedia lagi pada rilis mendatang."
+    }
+}
