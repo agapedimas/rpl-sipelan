@@ -1,8 +1,8 @@
 const path = require("path");
 const fs = require("fs");
 
-const Accounts = require("../repositories/accounts.repositories");
-const Authentications = require("../repositories/authentications.repositories");
+const Accounts = require("../repositories/account.repository");
+const Authentications = require("../repositories/authentication.repository");
 
 const defaultProfilePictureFilePath = path.resolve(__dirname, "../assets/profilePicture.webp");
 const pictureFolderPath = path.resolve(__dirname, "../../data/pp");

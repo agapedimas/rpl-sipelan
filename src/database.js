@@ -6,7 +6,7 @@ const tableFiles =
     fs
         .readdirSync(tableFolderPath)
         .filter(o => o.endsWith(".sql"))
-        .sort((a,b) => a - b);
+        .sort((a,b) => a.localeCompare(b, undefined, { numeric: true }));
 
 /** @type { mySql.Pool } */
 let pool;

@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS City (
+    id INT UNSIGNED AUTO_INCREMENT,
+    provinceId INT UNSIGNED NOT NULL,
+    name VARCHAR(128) NOT NULL,
+
+    FOREIGN KEY (provinceId)
+        REFERENCES Province(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    PRIMARY KEY (id),
+    INDEX (provinceId)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_bin;

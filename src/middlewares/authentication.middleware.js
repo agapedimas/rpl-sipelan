@@ -1,4 +1,4 @@
-const Authentications = require("../repositories/authentications.repositories");
+const Authentications = require("../repositories/authentication.repository");
 const Validator = require("../utils/validator.util");
 const Language = require("../utils/language.util");
 

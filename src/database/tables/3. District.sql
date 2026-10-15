@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS District (
+    id INT UNSIGNED AUTO_INCREMENT,
+    cityId INT UNSIGNED NOT NULL,
+    name VARCHAR(128) NOT NULL,
+    postalCode VARCHAR(10) NOT NULL,
+
+    FOREIGN KEY (cityId)
+        REFERENCES City(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+        
+    PRIMARY KEY (id),
+    INDEX (cityId)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_bin;

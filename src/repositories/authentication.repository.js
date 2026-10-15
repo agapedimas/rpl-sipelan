@@ -1,6 +1,6 @@
 const Database = require("../database");
-const Account = require("../models/account.models");
-const Authentication = require("../models/authentication.models");
+const Account = require("../models/account.model");
+const Authentication = require("../models/authentication.model");
 const Hash = require("../utils/hash.util");
 
 /**

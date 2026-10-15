@@ -4,7 +4,7 @@ const path = require("path");
 const Hash = require("../utils/hash.util");
 const Image = require("../utils/image.util");
 const Database = require("../database");
-const Account = require("../models/account.models");
+const Account = require("../models/account.model");
 
 const pictureFolderPath = path.resolve(__dirname, "../../data/pp");
 

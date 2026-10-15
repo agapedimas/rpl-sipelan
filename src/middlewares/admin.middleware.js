@@ -1,6 +1,6 @@
 const path = require("path");
 
-const Authentications = require("../repositories/authentications.repositories");
+const Authentications = require("../repositories/authentication.repository");
 
 async function checkAccess(req, res, next) {
     if (await Authentications.checkAccess(req.session.authenticationId, ["owner", "admin"]))

@@ -1,5 +1,5 @@
-const Accounts = require("../repositories/accounts.repositories");
-const Authentications = require("../repositories/authentications.repositories");
+const Accounts = require("../repositories/account.repository");
+const Authentications = require("../repositories/authentication.repository");
 
 const Controller = require("../controllers/profilePicture.controller");
 
