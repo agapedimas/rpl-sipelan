@@ -19,12 +19,17 @@ function initialize() {
     return new Promise(async function(resolve) {
         pool = mySql.createPool({
             connectionLimit: 10,
+            connectTimeout: 20000,
+            waitForConnections: true,
+            queueLimit: 0,
             host: process.env.SQL_HOST,
             port: 3306,
             user: process.env.SQL_USERNAME,
             password: process.env.SQL_PASSWORD,
             database: process.env.SQL_DATABASE,
             charset: "utf8mb4",
+            enableKeepAlive: true,
+            keepAliveInitialDelay: 0,
             multipleStatements: true,
             typeCast: function(field, next)
             {
