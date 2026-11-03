@@ -1,123 +1,182 @@
-const fs = require("fs");
-const path = require("path");
-
-const Hash = require("../utils/hash.util");
-const Image = require("../utils/image.util");
 const Database = require("../database");
-const Account = require("../models/account.model");
+const SqlUtil = require("../utils/sql.util");
 
-const pictureFolderPath = path.resolve(__dirname, "../../data/pp");
+const Account = require("../models/account.model");
 
 /**
  * @returns { Promise<Array<Account>> }
  */
-async function getAll() {
-    const results = await Database.doQuery("SELECT * FROM AccountView");
-    return results.data?.map(o => Object.assign(new Account(), o)) || [];
+async function findAll() {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM AccountView"
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults || [];
+}
+
+/**
+ * @param { typeof Account.prototype.role } role
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRole(role) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM Account WHERE role = ?", 
+            role
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults || [];
 }
 
 /**
  * @param { typeof Account.prototype.id } accountId
  * @returns { Promise<Account?> }
  */
-async function getByAccountId(accountId) {
-    const results = await Database.doQuery("SELECT * FROM AccountView WHERE id = ?", accountId);
-    const data = results.data?.at(0);
-    if (data)
-        return Object.assign(new Account(), data);
-    else
-        return null;
+async function findByAccountId(accountId) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM Account WHERE id = ? LIMIT 1", 
+            accountId
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults?.at(0) || null;
 }
 
 /**
- * @param { string } authenticationId
+ * @param { typeof Account.prototype.nik } nik
  * @returns { Promise<Account?> }
  */
-async function getByAuthenticationId(authenticationId) {
-    if (authenticationId == null)
-        return null;
-    
-    const results = 
-        await Database.doQuery(`
-            SELECT AccountView.* FROM AccountView 
-            JOIN
-                Authentication ON 
-                    Authentication.accountId = AccountView.id AND
-                    Authentication.id = ?;
-        `, authenticationId);
-
-    const data = results.data?.at(0);
-    if (data)
-        return Object.assign(new Account(), data);
-    else
-        return null;
+async function findByNik(nik) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM Account WHERE nik = ? LIMIT 1", 
+            nik
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults?.at(0) || null;
 }
 
 /**
- * @param { typeof Account.prototype.email } email
+ * @param { typeof Account.prototype.phone } phone
  * @returns { Promise<Account?> }
  */
-async function getByEmail(email) {
-    const results = await Database.doQuery("SELECT * FROM AccountView WHERE email = ?", email);
-    const data = results.data?.at(0);
-    if (data)
-        return Object.assign(new Account(), data);
-    else
-        return null;
+async function findByPhone(phone) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM Account WHERE phone = ? LIMIT 1", 
+            phone
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults?.at(0) || null;
 }
 
 /**
- * @param { typeof Account.prototype.email } email 
- * @param { typeof Account.prototype.fullname } fullname 
- * @param { string } password 
+ * @param { typeof Account.prototype.id } accountId
+ * @returns { Promise<typeof Account.prototype.picture?> } pictureBuffer
+ */
+async function getPicture(accountId) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT picture FROM Account WHERE id = ? LIMIT 1",
+            accountId
+        );
+    return queryResult.rows?.at(0)?.picture;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId
+ * @returns { Promise<typeof Account.prototype.role> }
+ */
+async function getRole(accountId) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT role FROM Account WHERE id = ? LIMIT 1",
+            accountId
+        );
+    return queryResult.rows?.at(0)?.role;
+}
+
+/**
+ * @param { typeof Account.prototype.phone } phone
+ * @param { typeof Account.prototype.name } name 
+ * @param { typeof Account.prototype.districtId } districtId
  * @param { typeof Account.prototype.role } role
+ * @param { typeof Account.prototype.nik } nik 
  * @returns { Promise<typeof Account.prototype.id> } Account id
  */
-async function add(email, fullname, password, role) {
-    const id = Hash.generateUniqueId(email);
-    password = await Hash.toHashString(password);
-
-    const result = 
+async function add(phone, name, districtId, role, nik) {
+    const queryResult = 
         await Database.doQuery(`
-            INSERT INTO Account (id, email, fullname, password, roleId)
-            VALUES (?, ?, ?, ?, (SELECT id FROM Role WHERE name=?))
+            INSERT INTO Account 
+                (name, nik, phone, role, districtId)
+            VALUES 
+                (?, ?, ?, ?, ?)
         `, 
-        [id, email, fullname, password, role]);
-
-    return id;
+        [name, nik, phone, role, districtId]);
+    return queryResult.insertId;
 }
 
 /**
- * 
  * @param { typeof Account.prototype.id } accountId 
- * @param { typeof Account.prototype.email? } email 
- * @param { typeof Account.prototype.fullname? } fullname 
- * @param { string? } password 
- * @param { typeof Account.prototype.role? } role
- * @param { typeof Account.prototype.pictureId? } pictureId 
- * @returns { Promise<boolean> }
+ * @param { typeof Account.prototype.phone? } phone 
+ * @param { typeof Account.prototype.name? } name 
+ * @param { typeof Account.prototype.districtId? } districtId
+ * @param { typeof Account.prototype.nik? } nik 
+ * @returns { Promise<boolean> } Result of execution
  */
-async function update(accountId, email, fullname, password, role, pictureId) {
-    if (password)
-        password = Hash.toHashString(password);
-
-    const pictureIdParam = pictureId === "@NULL" ? null : pictureId;
-
-    const result =
+async function updateInfo(accountId, phone, name, districtId, nik) {
+    const queryResult =
         await Database.doQuery(`
             UPDATE Account
             SET
-                email = COALESCE(?, email),
-                fullname = COALESCE(?, fullname),
-                password = COALESCE(?, password),
-                roleId = COALESCE((SELECT id FROM Role WHERE name = ?), roleId),
-                pictureId = ${ pictureId === "@NULL" ? "?" : "COALESCE(?, pictureId)" }
+                phone = COALESCE(?, phone),
+                name = COALESCE(?, name),
+                districtId = COALESCE(?, districtId),
+                nik = COALESCE(?, nik) 
             WHERE
                 id = ?
         `, 
-        [email, fullname, password, role, pictureIdParam, accountId]);
+        [phone, name, districtId, nik, accountId]);
 
-    return result.isSuccess;
+    return queryResult.isSuccess;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId 
+ * @param { typeof Account.prototype.picture? } pictureBuffer
+ * @returns { Promise<boolean> } Result of execution
+ */
+async function updatePicture(accountId, pictureBuffer) {
+    const queryResult =
+        await Database.doQuery(`
+            UPDATE Account
+            SET
+                picture = ? 
+            WHERE
+                id = ?
+        `, 
+        [pictureBuffer, accountId]);
+
+    return queryResult.isSuccess;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId 
+ * @param { typeof Account.prototype.isActive } isActive 
+ */
+async function updateActiveState(accountId, isActive = false) {
+    const queryResult =
+        await Database.doQuery(`
+            UPDATE Account
+            SET
+                isActive = ? 
+            WHERE
+                id = ?
+        `, 
+        [isActive, accountId]);
+
+    return queryResult.isSuccess;
 }
 
 /**
@@ -125,61 +184,21 @@ async function update(accountId, email, fullname, password, role, pictureId) {
  * @returns { Promise<boolean> }
  */
 async function remove(accountId) {
-    await removePicture(accountId);
-    const result = await Database.doQuery("DELETE FROM Account WHERE id = ?", accountId);
-    return result.success;
-}
+    const queryResult =
+        await Database.doQuery(`
+            DELETE FROM Account
+            WHERE
+                id = ?
+        `, 
+        accountId);
 
-/**
- * @param { typeof Account.prototype.id } accountId 
- * @returns { Promise<typeof Account.prototype.pictureId> }
- */
-async function getPictureId(accountId) {
-    const account = await getByAccountId(accountId);
-    return account?.pictureId;
-}
-
-/**
- * @param { typeof Account.prototype.id } accountId 
- * @param { Array<Buffer> } buffer 
- * @returns { Promise<string> }
- */
-async function setPicture(accountId, buffer) {
-    const newPictureId = Hash.generateUniqueId(accountId);
-
-    // Save to disk
-    await Image.saveBufferToImageFile(
-        buffer, newPictureId, pictureFolderPath, { 
-            width: 720, 
-            height: 720, 
-            horizontalAlignment: "center", 
-            verticalAlignment: "center"
-        });
-
-    // Remove old picture
-    await removePicture(accountId);
-    await update(accountId, null, null, null, null, newPictureId);
-
-    return newPictureId;
-}
-
-/**
- * @param { typeof Account.prototype.id } accountId 
- * @returns { Promise<void> }
- */
-async function removePicture(accountId) {
-    // Remove old picture if exists
-    const oldPictureId = await getPictureId(accountId);
-    if (oldPictureId)
-        if (fs.existsSync(pictureFolderPath + "/" + oldPictureId))
-            fs.unlinkSync(pictureFolderPath + "/" + oldPictureId);
-    
-    // Update database
-    await update(accountId, null, null, null, null, "@NULL");
+    return queryResult.isSuccess;
 }
 
 module.exports = {
-    getAll, getByAccountId, getByAuthenticationId, getByEmail,
-    add, update, remove,
-    getPictureId, setPicture, removePicture
+    findAll, findAllByRole, findByAccountId, findByNik, findByPhone,
+    getPicture, getRole,
+    add, 
+    updateInfo, updatePicture, updateActiveState,
+    remove
 };

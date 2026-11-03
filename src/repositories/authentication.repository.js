@@ -1,7 +1,8 @@
 const Database = require("../database");
+const SqlUtil = require("../utils/sql.util");
+
 const Account = require("../models/account.model");
 const Authentication = require("../models/authentication.model");
-const Hash = require("../utils/hash.util");
 
 /**
  * @param { typeof Account.prototype.id } accountId 
@@ -9,12 +10,13 @@ const Hash = require("../utils/hash.util");
  * @returns { Promise<typeof Authentication.prototype.id> } Authentication id
  */
 async function add(accountId, ipAddress) {
-    const result = 
+    const queryResult = 
+        // Allow single-session only
         await Database.doQuery(`
             REPLACE INTO Authentication (accountId, ipAddress)
             VALUES (?,?)
         `, [accountId, ipAddress]);
-    return result.data?.insertId;
+    return queryResult.insertId;
 }
 
 /**
@@ -23,52 +25,6 @@ async function add(accountId, ipAddress) {
  */
 async function remove(authenticationId) {
     await Database.doQuery("DELETE FROM Authentication WHERE id = ?", authenticationId);
-}
-
-/**
- * Check if account has access
- * @param { typeof Authentication.prototype.id } authenticationId 
- * @param { Array<typeof Account.prototype.role> } allowedRoles 
- * @returns { Promise<boolean> }
- */
-async function checkAccess(authenticationId, allowedRoles) {
-    let query;
-    let params = [];
-
-    if (allowedRoles) {
-        if (typeof allowedRoles === "string")
-            allowedRoles = [allowedRoles];
-
-        query = `
-            SELECT 
-                Authentication.id
-            FROM
-                Authentication
-            JOIN
-                Account ON Account.id = Authentication.accountId
-            JOIN
-                Role ON Role.id = Account.roleId
-            WHERE
-                Authentication.id = ?
-        `;
-        params.push(authenticationId);
-        
-        const roleQueries = [];
-        for (const role of allowedRoles) {
-            roleQueries.push("?");
-            params.push(role);
-        }
-
-        query += " AND Role.name IN (" + roleQueries.join(",") + ")";
-    }
-    else {
-        query = "SELECT id FROM authentication WHERE id=?";
-        params.push(authenticationId);
-    }
-
-    query += " LIMIT 1";
-    const results = await Database.doQuery(query, params);
-    return results.data?.length > 0;
 }
 
 /**

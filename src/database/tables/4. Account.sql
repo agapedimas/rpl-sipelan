@@ -1,9 +1,6 @@
 CREATE TABLE IF NOT EXISTS Account (
     id INT UNSIGNED AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) 
-        CHARACTER SET ascii COLLATE ascii_bin 
-        NOT NULL,
     nik VARCHAR(32)
         CHARACTER SET ascii COLLATE ascii_bin,
     picture LONGBLOB NULL,
@@ -22,9 +19,21 @@ CREATE TABLE IF NOT EXISTS Account (
     UNIQUE KEY (nik),
     UNIQUE KEY (phone),
 
-    INDEX (districtId),
-    INDEX (role)
+    INDEX (nik),
+    INDEX (phone)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_bin;
+
+CREATE OR REPLACE VIEW AccountView AS
+SELECT
+    id, 
+    name, 
+    nik,
+    phone, 
+    role,
+    districtId,
+    isActive
+FROM
+    Account

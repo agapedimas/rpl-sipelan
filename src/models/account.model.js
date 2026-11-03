@@ -3,7 +3,7 @@ class Account {
     #id;
     /** @type {string} */
     #name;
-    /** @type {string} */
+    /** @type {string | null} */
     #nik;
     /** @type {ArrayBuffer | null} */
     #picture;
@@ -19,7 +19,7 @@ class Account {
     /**
      * @param {number} id
      * @param {string} name
-     * @param {string} nik
+     * @param {string | null} nik
      * @param {ArrayBuffer | null} picture
      * @param {string} phone
      * @param {"citizen" | "volunteer" | "officer" | "admin"} role

@@ -70,13 +70,11 @@ function getPool() {
  * @param { string | Array<string> } values 
  * @returns { Promise<{
  *      isSuccess: boolean,
- *      data: Array<object> | { 
- *          affectedRows: number,
- *          changedRows: number,
- *          fieldCount: number,
- *          insertId: any,
- *          message: string
- *      }
+ *      rows: Array<import("mysql2").RowDataPacket>,
+ *      affectedRows: number,
+ *      fieldCount: number,
+ *      insertId: any,
+ *      message: string
  * }> }
  */
 function doQuery(query, values = []) {
@@ -87,16 +85,22 @@ function doQuery(query, values = []) {
                 console.error(error.message, errorObject);
 
                 return resolve({
-                    isSuccess: false,
-                    data: null
+                    isSuccess: false
                 });
+            }
+
+            let rows = null;
+            if (results.constructor.name === "RowPacket") {
+                rows = results || [];
             }
 
             return resolve({
                 isSuccess: true,
-                data: 
-                    results.constructor.name == "RowPacket" 
-                    ? (results.length > 0 ? results : null) : results 
+                rows: rows,        
+                affectedRows: results.affectedRows,
+                fieldCount: results.fieldCount,
+                insertId: results.insertId,
+                message: results.message
             });
         });
     });

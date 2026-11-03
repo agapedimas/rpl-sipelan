@@ -25,7 +25,7 @@ async function initialize() {
     require("./routes/language.route");
     require("./routes/authentication.route");
     require("./routes/admin.route");
-    require("./routes/profilePicture.route");
+    require("./routes/account.route");
     require("./routes/main.route");
 
 	const appPort = Configurations.get("app").port;

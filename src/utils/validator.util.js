@@ -1,9 +1,28 @@
 /**
+ * Check if field is empty.
+ * 
+ * Checks for string (empty), array (empty elements), and other (null value).
+ * @param { Array<any> } fields
+ * @returns { boolean } 
+ */
+function areFieldsEmpty(fields) {
+    for (const field of fields) {
+        if (typeof field === "string" && !field.trim())
+            return true;
+        else if (Array.isArray(fields) && field.length == 0)
+            return true;
+        else if (field == null)
+            return true;
+    }
+    return false;
+}
+
+/**
  * Check if email is valid
  * @param { string } email 
  * @returns { "OK" |  "TOO_LONG" | "INVALID" }
  */
-function checkEmail(email) {
+function checkEmailValidity(email) {
     if (typeof email !== "string")
         return "INVALID";
 
@@ -22,7 +41,7 @@ function checkEmail(email) {
  * @param { string } name  // User's name, School's name, etc.
  * @returns { "OK" | "TOO_SHORT" | "TOO_LONG" | "INVALID" }
  */
-function checkEntityName(name) {
+function checkEntityNameValidity(name) {
     if (typeof name !== "string")
         return "INVALID";
 
@@ -44,7 +63,7 @@ function checkEntityName(name) {
  * @param { string | number } mobile
  * @returns { "OK" | "TOO_SHORT" | "TOO_LONG" | "INVALID" } 
  */
-function checkMobileNumber(mobile) {
+function checkMobileNumberValidity(mobile) {
     // Convert to string
     if (typeof mobile === "number")
         mobile += "";
@@ -69,11 +88,32 @@ function checkMobileNumber(mobile) {
 }
 
 /**
+ * Check if nik is valid
+ * @param { string | number } nik
+ * @returns { "OK" | "INVALID" }
+ */
+function checkNikValidity(nik) {
+    if (typeof nik !== "string") {
+        if (typeof nik === "number")
+            nik += "";
+        else
+            return "INVALID";
+    }
+
+    nik = nik.replace(/\D/g, "");
+
+    if (nik.length !== 16)
+        return "INVALID";
+
+    return "OK";
+}
+
+/**
  * Check if password is valid
  * @param { string } password
  * @returns { "OK" | "TOO_SHORT" | "TOO_LONG" | "INVALID" }
  */
-function checkPassword(password) {
+function checkPasswordValidity(password) {
     if (typeof password !== "string")
         return "INVALID";
 
@@ -87,8 +127,10 @@ function checkPassword(password) {
 }
 
 module.exports = {
-    checkEmail,
-    checkEntityName,
-    checkMobileNumber,
-    checkPassword
+    areFieldsEmpty,
+    checkEmailValidity,
+    checkEntityNameValidity,
+    checkMobileNumberValidity,
+    checkNikValidity,
+    checkPasswordValidity
 }

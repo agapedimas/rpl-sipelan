@@ -1,112 +1,119 @@
-const fs = require("fs");
+const fs = require("fs/promises");
+const path = require("path");
 const { Jimp } = require("jimp");
 const WebpConverter = require("webp-converter");
+
 WebpConverter.grant_permission();
 
+const tempRootPath = path.resolve(__dirname, "../../tmp");
+
 /**
- * Save buffer to WEBP file
- * @param { Array<buffer> } buffer 
- * @param { string } fileName
- * @param { string } folderPath
- * @param { {
- *      width: number,
- *      height: number,
- *      horizontalAlignment: "left" | "center" | "right",
- *      verticalAlignment: "top" | "center" | "bottom"
- * }? } resizeOptions
- * @returns { Promise<void> }
+ * Resize and crop an image so the requested dimensions are fully covered.
+ * @param {import("jimp").Jimp} image
+ * @param {{width: number, height: number, horizontalAlignment?: "left" | "center" | "right", verticalAlignment?: "top" | "center" | "bottom"}} options
  */
-function saveBufferToImageFile(buffer, fileName, folderPath, resizeOptions) {
-    return new Promise(async function(resolve, reject) {
-        try {
-            if (folderPath.endsWith("/") === false) {
-                folderPath += "/";
-            }
+function resizeImage(image, options) {
+    const { width, height } = options;
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0)
+        throw new RangeError("Image width and height must be positive numbers.");
 
-            const filePath = folderPath + fileName;
-            const tempPngPath = filePath + ".png";
+    const scale = Math.max(width / image.width, height / image.height);
+    const resizedWidth = Math.round(image.width * scale);
+    const resizedHeight = Math.round(image.height * scale);
 
-            // Create folder if path does not exist
-            if (fs.existsSync(folderPath) === false) {
-                fs.mkdirSync(folderPath, { recursive: true });
-            }
-
-            if (resizeOptions) {
-                const { fileTypeFromBuffer } = await import("file-type");
-                const fileType = await fileTypeFromBuffer(buffer);
-                
-                if (fileType.mime === "image/webp") {
-                    fs.writeFileSync(filePath, buffer);
-                    await WebpConverter.dwebp(filePath, tempPngPath, "-o");
-                } 
-                else {
-                    fs.writeFileSync(tempPngPath, buffer);
-                }
-
-                const image = await Jimp.read(tempPngPath);
-                const targetW = resizeOptions.width;
-                const targetH = resizeOptions.height;
-
-                // 1. Find the highest scale factor to ensure the image covers the entire frame
-                const scaleW = targetW / image.width;
-                const scaleH = targetH / image.height;
-                const scale = Math.max(scaleW, scaleH);
-
-                const newW = Math.round(image.width * scale);
-                const newH = Math.round(image.height * scale);
-
-                // Resize image to cover dimensions
-                image.resize({ w: newW, h: newH });
-
-                // 2. Calculate crop offset based on alignment
-                let cropX = 0;
-                const alignH = resizeOptions.horizontalAlignment || "center";
-                if (alignH === "center") {
-                    cropX = Math.round((newW - targetW) / 2);
-                } 
-                else if (alignH === "right") {
-                    cropX = newW - targetW;
-                }
-                else {
-                    // 'left' defaults to 0
-                } 
-
-                let cropY = 0;
-                const alignV = resizeOptions.verticalAlignment || "center";
-                if (alignV === "center") {
-                    cropY = Math.round((newH - targetH) / 2);
-                } 
-                else if (alignV === "bottom") {
-                    cropY = newH - targetH;
-                } 
-                else {
-                    // 'top' defaults to 0
-                }
-
-                // Crop the overflowing parts
-                image.crop({ x: cropX, y: cropY, w: targetW, h: targetH });
-                await image.write(tempPngPath);
-
-            } 
-            else {
-                fs.writeFileSync(tempPngPath, buffer);
-            }
-
-            // Convert the manipulated PNG to final WEBP
-            await WebpConverter.cwebp(tempPngPath, filePath);
-            
-            // Delete temporary PNG file, keep the final WEBP
-            if (fs.existsSync(tempPngPath))
-                fs.unlinkSync(tempPngPath);
-
-            resolve();
-        } 
-        catch (error) {
-            reject(error);
-        }
+    image.resize({ w: resizedWidth, h: resizedHeight });
+    image.crop({
+        x: getCropOffset(resizedWidth - width, options.horizontalAlignment),
+        y: getCropOffset(resizedHeight - height, options.verticalAlignment),
+        w: width,
+        h: height
     });
+
+    return image;
 }
 
-module.exports = { 
-    saveBufferToImageFile 
-};
+/**
+ * Read, optionally resize/crop, and encode an image buffer as PNG.
+ * The returned buffer is independent of the temporary files used to decode WebP.
+ * @param {Buffer} buffer
+ * @param {{width: number, height: number, horizontalAlignment?: "left" | "center" | "right", verticalAlignment?: "top" | "center" | "bottom"}=} resizeOptions
+ * @returns {Promise<Buffer>}
+ */
+async function resizeBuffer(buffer, resizeOptions) {
+    await fs.mkdir(tempRootPath, { recursive: true });
+    const tempFolderPath = await fs.mkdtemp(path.join(tempRootPath, "image-"));
+
+    try {
+        let image = await readImage(buffer, tempFolderPath);
+        if (resizeOptions)
+            image = resizeImage(image, resizeOptions);
+
+        return await image.getBuffer("image/png");
+    }
+    finally {
+        await fs.rm(tempFolderPath, { recursive: true, force: true });
+    }
+}
+
+/**
+ * @param {number} overflow
+ * @param {"left" | "center" | "right" | "top" | "bottom" | undefined} alignment
+ */
+function getCropOffset(overflow, alignment = "center") {
+    if (alignment === "right" || alignment === "bottom")
+        return overflow;
+    if (alignment === "center")
+        return Math.round(overflow / 2);
+    return 0;
+}
+
+/**
+ * Read an image buffer. WebP is decoded to PNG first because this project
+ * uses webp-converter for WebP input support.
+ * @param {Buffer} buffer
+ * @param {string} tempFolderPath
+ * @returns {Promise<import("jimp").Jimp>}
+ */
+async function readImage(buffer, tempFolderPath) {
+    const { fileTypeFromBuffer } = await import("file-type");
+    const fileType = await fileTypeFromBuffer(buffer);
+
+    if (fileType?.mime !== "image/webp")
+        return Jimp.read(buffer);
+
+    const webpPath = path.join(tempFolderPath, "source.webp");
+    const pngPath = path.join(tempFolderPath, "source.png");
+    await fs.writeFile(webpPath, buffer);
+    await WebpConverter.dwebp(webpPath, pngPath, "-o");
+    return Jimp.read(pngPath);
+}
+
+/**
+ * Save a buffer as a WEBP image, optionally resizing and cropping it.
+ * @param {Buffer} buffer
+ * @param {string} fileName
+ * @param {string} folderPath
+ * @param {{width: number, height: number, horizontalAlignment?: "left" | "center" | "right", verticalAlignment?: "top" | "center" | "bottom"}=} resizeOptions
+ * @returns {Promise<void>}
+ */
+async function saveBufferToImageFile(buffer, fileName, folderPath, resizeOptions) {
+    if (path.basename(fileName) !== fileName)
+        throw new Error("fileName must not contain a directory path.");
+
+    const outputFolderPath = path.resolve(folderPath);
+    const outputFilePath = path.join(outputFolderPath, fileName);
+    await fs.mkdir(outputFolderPath, { recursive: true });
+    const resizedBuffer = await resizeBuffer(buffer, resizeOptions);
+    const tempFolderPath = await fs.mkdtemp(path.join(tempRootPath, "image-"));
+    const tempPngPath = path.join(tempFolderPath, "output.png");
+
+    try {
+        await fs.writeFile(tempPngPath, resizedBuffer);
+        await WebpConverter.cwebp(tempPngPath, outputFilePath);
+    }
+    finally {
+        await fs.rm(tempFolderPath, { recursive: true, force: true });
+    }
+}
+
+module.exports = { resizeBuffer, saveBufferToImageFile };
