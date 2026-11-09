@@ -10,43 +10,43 @@ const Authentication = require("../models/authentication.model");
  * @returns { Promise<typeof Authentication.prototype.id> } Authentication id
  */
 async function add(accountId, ipAddress) {
+    const currentTime = Date.now();
     const queryResult = 
         // Allow single-session only
         await Database.doQuery(`
-            REPLACE INTO Authentication (accountId, ipAddress)
-            VALUES (?,?)
-        `, [accountId, ipAddress]);
+            REPLACE INTO Authentication (accountId, ipAddress, time)
+            VALUES (?,?,?)
+        `, [accountId, ipAddress, currentTime]);
     return queryResult.insertId;
 }
 
 /**
  * @param { typeof Authentication.prototype.id } authenticationId 
- * @returns { Promise<void> }
+ * @returns { Promise<boolean> }
  */
 async function remove(authenticationId) {
-    await Database.doQuery("DELETE FROM Authentication WHERE id = ?", authenticationId);
+    const queryResult = await Database.doQuery(
+        "DELETE FROM Authentication WHERE id = ?", 
+        authenticationId
+    );
+    return queryResult.isSuccess;
 }
 
 /**
- * @param { string } email 
- * @param { string } password 
+ * Check if account is signed in
+ * @param { typeof Account.prototype.id } accountId 
  * @returns { Promise<boolean> }
  */
-async function checkCredentials(email, password) {
-    if (!email || !password)
-        return false;
-    
-    // Get password from database
-    const result = await Database.doQuery("SELECT password FROM Account WHERE email=?", email);
-    
-    if (result.isSuccess == false || !result.data?.at(0))
-        return false;
-
-    const hashedPasswordWithSalt = result.data[0].password;
-    return await Hash.isMatch(password, hashedPasswordWithSalt);
+async function isAuthenticated(accountId) {
+    const queryResult = await Database.doQuery(
+        "SELECT id FROM Authentication WHERE accountId = ? LIMIT 1",
+        accountId
+    );
+    return queryResult.rows?.length > 0;
 }
+
 
 module.exports = {
     add, remove,
-    checkAccess, checkCredentials
+    isAuthenticated
 };

@@ -1,12 +1,27 @@
-const Authentications = require("../repositories/authentication.repository");
-const Validator = require("../utils/validator.util");
-const Language = require("../utils/language.util");
+const AccountService = require("../services/account.service");
+const AuthenticationService = require("../services/authentication.service");
 
-async function needAuthAndRedirect(req, res, next) {
+async function doesNeedAuthAndRedirect(req, res, next) {
+    const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
+
     // Check if user already signed in
-    if (await Authentications.checkAccess(authenticationId) == true) {
-        return res.redirect("/admin");
+    if (await AuthenticationService.isSignedIn(accountId) === true) {
+        // Redirect to their dashboard page
+        const accountRole = AccountService.getRole(accountId);
+        switch(accountRole) {
+            case "admin":
+                return res.redirect("/admin");
+            case "officer":
+                return res.redirect("/officer");
+            case "volunteer":
+                return res.redirect("/volunteer");
+            case "citizen":
+                return res.redirect("/citizen");
+            // If role is unknown, redirect to main page
+            default:
+                return res.redirect("/");
+        }
     }
     // Continue to Sign In / Sign Up page
     else {
@@ -14,41 +29,6 @@ async function needAuthAndRedirect(req, res, next) {
     }
 } 
 
-async function validateSignInInput(req, res, next) {
-    /** @typedef { string } */
-    req.body.email = req.body.email?.trim();
-    req.body.password = req.body.password?.trim();
-
-    if (!req.body.email || !req.body.password)
-        return res.api.sendError(422);
-
-    return next();
-}
-
-async function validateSignUpInput(req, res, next) {
-    req.body.email = req.body.email?.trim();
-    req.body.password = req.body.password?.trim();
-    req.body.fullname = req.body.fullname?.trim();
-
-    const validateEmail = Validator.checkEmail(req.body.email);
-    const validatePassword = Validator.checkPassword(req.body.password);
-    const validateFullname = Validator.checkEntityName(req.body.fullname);
-
-    if (validateEmail !== "OK")
-        return res.api.sendError(422, validateEmail);
-
-    if (validatePassword !== "OK")
-        return res.api.sendError(422, validatePassword);
-
-    if (validateFullname !== "OK")
-        return res.api.sendError(422, validateFullname);
-
-    return next();
-}
-
-
 module.exports = {
-    needAuthAndRedirect,
-    validateSignInInput,
-    validateSignUpInput
+    doesNeedAuthAndRedirect
 }

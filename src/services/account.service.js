@@ -97,10 +97,21 @@ async function doesRoleExist(role) {
     return ["citizen", "volunteer", "officer", "admin"].includes(role);
 }
 
+
+/**
+ * @param { typeof Account.prototype.id } accountId 
+ * @returns { typeof Account.prototype.role }
+ */
+async function getRole(accountId) {
+    const role = await AccountRepository.getRole(accountId);
+    return role;
+}
+
 module.exports = {
     add, 
     updateInfo, 
     setPicture, removePicture,
     activate, deactivate,
-    doesRoleExist
+    doesRoleExist,
+    getRole
 }

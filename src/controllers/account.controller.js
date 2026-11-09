@@ -7,7 +7,7 @@ async function add(req, res) {
 
     // Make sure required fields are providen
     if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role]) === false) {
-        return res.status(400).send({message: "Phone, Name, DistrictId, and Role are required."});
+        return res.status(422).send({message: "Phone, Name, DistrictId, and Role are required."});
     }
 
     switch (ValidatorUtil.checkMobileNumberValidity(phone)) {
