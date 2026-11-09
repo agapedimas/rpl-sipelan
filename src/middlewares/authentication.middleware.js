@@ -1,7 +1,20 @@
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
-async function doesNeedAuthAndRedirect(req, res, next) {
+async function doesNeedAuthentication(req, res, next) {
+    const accountId = req.session.accountId;
+    const authenticationId = req.session.authenticationId;
+
+    // Check if user already signed in
+    if (await AuthenticationService.isSignedIn(accountId) === true) {
+        return res.status(400).send({ message: "User is already signed in." });
+    }
+    else {
+        return next();
+    }
+}
+
+async function doesNeedAuthenticationAndRedirect(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
 
@@ -30,5 +43,6 @@ async function doesNeedAuthAndRedirect(req, res, next) {
 } 
 
 module.exports = {
-    doesNeedAuthAndRedirect
+    doesNeedAuthentication,
+    doesNeedAuthenticationAndRedirect
 }

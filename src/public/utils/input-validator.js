@@ -41,29 +41,29 @@ class InputValidator {
     }
 
     /**
-     * Check if mobile number is valid
-     * @param { string | number } mobile
+     * Check if phone number is valid
+     * @param { string | number } phone
      * @returns { "OK" | "TOO_SHORT" | "TOO_LONG" | "INVALID" } 
      */
-    static checkMobileNumber(mobile) {
+    static checkPhoneNumber(phone) {
         // Convert to string
-        if (typeof mobile === "number")
-            mobile += "";
-        else if (typeof mobile !== "string")
+        if (typeof phone === "number")
+            phone += "";
+        else if (typeof phone !== "string")
             return "INVALID";
 
         // Clear white spaces and stripes
-        mobile = mobile.replace(/[\s\-]/g, "");
+        phone = phone.replace(/[\s\-]/g, "");
         
         // Check remaining characters
         const regex = /^\+?[0-9]+$/;
-        if (regex.test(mobile) == false)
+        if (regex.test(phone) == false)
             return "INVALID";
 
-        if (mobile.length < 6)
+        if (phone.length < 6)
             return "TOO_SHORT";
 
-        if (mobile.length > 15)
+        if (phone.length > 15)
             return "TOO_LONG";
 
         return "OK";

@@ -10,7 +10,7 @@ async function add(req, res) {
         return res.status(422).send({message: "Phone, Name, DistrictId, and Role are required."});
     }
 
-    switch (ValidatorUtil.checkMobileNumberValidity(phone)) {
+    switch (ValidatorUtil.checkPhoneNumberValidity(phone)) {
         case "TOO_LONG": 
             return res.status(400).send({message: "Phone number is too long."});
         case "TOO_SHORT": 

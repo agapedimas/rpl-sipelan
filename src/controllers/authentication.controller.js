@@ -1,21 +1,34 @@
-const Accounts = require("../repositories/account.repository");
-const Authentications = require("../repositories/authentication.repository");
+const AccountService = require("../services/account.service");
+const AuthenticationService = require("../services/authentication.service");
+
+async function requestOtp(req, res, next) {
+    const phone = req.body.phone;
+    const account = await AccountService.findByPhone(phone);
+    const isSuccess = await AuthenticationService.requestOtp(account.phone);
+
+    if (isSuccess)
+        return res.send({ accountId: account.id });
+    else
+        return res.status(500).send({ message: "Something went wrong." });
+}
 
 async function signIn(req, res, next) {
-    const email = req.body.email;
-    const password = req.body.password;
-    
-    const isValid = await Authentications.checkCredentials(email, password);
+    const accountId = req.body.accountId;
+    const otpCode = req.body.otpCode;
 
-    if (isValid == true) {
-        const account = await Accounts.getByEmail(email);
-        const authenticationId = await Authentications.add(account.id, req.ip);
-        req.session.authenticationId = authenticationId;
-        // If success, redirect to home page
-        return res.api.sendSuccess({ url: "/admin/" });
+    const isValid = await AuthenticationService.verifyOtp(accountId, otpCode);
+    if (isValid) {
+        // If valid, sign the user in
+        const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
+        if (authenticationId) {
+            return res.status(201).send({ authenticationId: authenticationId });
+        }
+        else {
+            return res.status(400).send({ message: "Something went wrong. "});
+        }
     }
     else {
-        return res.api.sendError(401, "Email or password is incorrect.");
+        return res.status(401).send({ message: "Invalid OTP code. "});
     }
 }
 

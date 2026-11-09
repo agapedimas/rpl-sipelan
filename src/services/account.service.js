@@ -1,4 +1,5 @@
 const ImageUtil = require("../utils/image.util");
+const FormatterUtil = require("../utils/formatter.util");
 
 const Account = require("../models/account.model");
 const AccountRepository = require("../repositories/account.repository");
@@ -12,6 +13,9 @@ const AccountRepository = require("../repositories/account.repository");
  * @returns { Promise<typeof Account.prototype.id> } Account id
  */
 async function add(phone, name, districtId, role, nik) {
+    if (phone)
+        phone = FormatterUtil.formatPhoneNumber(phone);
+
     const accountId = await AccountRepository.add(phone, name, districtId, role, nik);
     return accountId;
 }
@@ -27,6 +31,9 @@ async function add(phone, name, districtId, role, nik) {
  * @returns { Promise<boolean> } Result of execution
  */
 async function updateInfo(accountId, updatedInfo) {
+    if (updatedInfo.phone)
+        updatedInfo.phone = FormatterUtil.formatPhoneNumber(phone);
+
     const isSuccess = 
         await AccountRepository.updateInfo(
             accountId,
@@ -107,11 +114,23 @@ async function getRole(accountId) {
     return role;
 }
 
+
+/**
+ * @param { typeof Account.prototype.phone } phone
+ * @returns { Promise<Account> }
+ */
+async function findByPhone(phone) {
+    phone = FormatterUtil.formatPhoneNumber(phone);
+    const account = await AccountRepository.findByPhone(phone);
+    return account;
+}
+
 module.exports = {
     add, 
     updateInfo, 
     setPicture, removePicture,
     activate, deactivate,
     doesRoleExist,
-    getRole
+    getRole,
+    findByPhone
 }

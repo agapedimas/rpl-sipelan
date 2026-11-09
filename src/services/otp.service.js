@@ -44,7 +44,7 @@ function generateOtp(accountId) {
  * @param { number } code 
  * @returns { boolean } Validation result
  */
-function validateOtp(accountId, code) {
+function verifyOtp(accountId, code) {
     const otp = otpList.get(code);
     if (otp == null)
         return false;
@@ -59,5 +59,5 @@ function validateOtp(accountId, code) {
 
 module.exports = {
     generateOtp,
-    validateOtp
+    verifyOtp
 }

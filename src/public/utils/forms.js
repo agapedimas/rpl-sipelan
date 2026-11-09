@@ -29,7 +29,7 @@ class Form {
             if (currentFieldElement) {
                 if (currentFieldElement.tagName == "INPUT") {
                     if (currentFieldElement.type == "tel")
-                        registerMobileInput(currentFieldElement);
+                        registerPhoneInput(currentFieldElement);
                     
                     currentFieldElement.addEventListener("keydown", function(event) {
                         if (event.key == "Enter") {
@@ -175,7 +175,7 @@ class Form {
     }
 }
 
-function registerMobileInput(input) {
+function registerPhoneInput(input) {
     const enforcePrefix = function() {
         let val = this.value;
         let minPos = val.startsWith("+62 ") ? 4 : (val.startsWith("+62") ? 3 : 0);

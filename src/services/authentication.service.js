@@ -7,13 +7,32 @@ const AuthenticationRepository = require("../repositories/authentication.reposit
 const OtpService = require("../services/otp.service");
 
 /**
+ * @param { typeof Account.prototype.id } id
+ * @returns { Promise<boolean> }
+ */
+async function requestOtp(accountId) {
+    const isSuccess = OtpService.generateOtp(accountId);
+    return isSuccess;
+}
+
+/**
  * @param { typeof Account.prototype.id } accountId 
  * @param { typeof OTP.prototype.code } otpCode 
  * @param { boolean }
  */
-function signIn(accountId, otpCode) {
-    const isValid = OtpService.validateOtp(accountId, otpCode);
+function verifyOtp(accountId, otpCode) {
+    const isValid = OtpService.verifyOtp(accountId, otpCode);
     return isValid;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId 
+ * @param { typeof Authentication.prototype.ipAddress } ipAddress 
+ * @returns { Promise<typeof Authentication.prototype.id }
+ */
+async function signIn(accountId, ipAddress) {
+    const authenticationId = await AuthenticationRepository.add(accountId, ipAddress);
+    return authenticationId;
 }
 
 /**
@@ -35,6 +54,8 @@ async function isSignedIn(accountId) {
 }
 
 module.exports = {
+    requestOtp,
+    verifyOtp,
     signIn,
     signOut,
     isSignedIn
