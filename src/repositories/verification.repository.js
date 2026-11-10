@@ -3,7 +3,7 @@ const SqlUtil = require("../utils/sql.util");
 
 const Verification = require("../models/verification.model");
 
-// ===================== READ QUERY ============================
+// ===================== READ QUERIES ============================
 
 /**
  * Show all of the verification records in the database
@@ -22,7 +22,7 @@ async function findAll(){
 /**
  * Show all of the verification records that matched with the given status
  * @param { typeof Verification.prototype.status } status 
- * @returns { Promise<Array<Verification>> }
+ * @returns { Promise<typeof Array<Verification>> }
  */
 async function findAllByStatus(status){
     const queryResult = 
@@ -36,9 +36,41 @@ async function findAllByStatus(status){
 }
 
 /**
+ * Show all of the verification records that matched with the given submission id
+ * @param { typeof Verification.prototype.submissionId } submissionId 
+ * @returns { Promise<typeof Verification?> }
+ */
+async function findAllBySubmissionId(submissionId) {
+    const queryResult = 
+        await Database.doQuery(
+            `SELECT * FROM Verification WHERE submissionId = ?`,
+            submissionId
+        );
+
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Verification);
+    return dataResults || [];
+}
+
+/**
+ * Show all of verification records that matched with the given verifier id
+ * @param { typeof Verification.prototype.verifierId } verifierId 
+ * @returns { Promise<typeof Verification?> }
+ */
+async function findAllByVerifierId(verifierId) {
+    const queryResult = 
+        await Database.doQuery(
+            `SELECT * FROM Verification WHERE verifierId = ?`,
+            verifierId
+        );
+
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Verification);
+    return dataResults || [];
+}
+
+/**
  * Show a single verification record in the database that matched with the given verification id
  * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<Array<Verification>> }
+ * @returns { Promise<typeof Verification?> }
  */
 async function findByVerificationId(id){
     const queryResult = 
@@ -52,39 +84,7 @@ async function findByVerificationId(id){
 }
 
 /**
- * Show all of the verification records that matched with the given submission id
- * @param { typeof Verification.prototype.submissionId } submissionId 
- * @returns { Promise<Verification?> }
- */
-async function findBySubmissionId(submissionId) {
-    const queryResult = 
-        await Database.doQuery(
-            `SELECT * FROM Verification WHERE submissionId = ?`,
-            submissionId
-        );
-
-    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Verification);
-    return dataResults?.at(0) || null;
-}
-
-/**
- * Show all of verification records that matched with the given verifier id
- * @param { typeof Verification.prototype.verifierId } verifierId 
- * @returns { Promise<Verification?> }
- */
-async function findByVerifierId(verifierId) {
-    const queryResult = 
-        await Database.doQuery(
-            `SELECT * FROM Verification WHERE verifierId = ?`,
-            verifierId
-        );
-
-    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Verification);
-    return dataResults?.at(0) || null;
-}
-
-/**
- * Get the status attribute from the targeted verification
+ * Get the status attribute from the targeted verification id
  * @param { typeof Verification.prototype.id } id 
  * @returns { Promise<typeof Verification.prototype.status> } 
  */
@@ -99,7 +99,7 @@ async function getStatus(id) {
 }
 
 /**
- * Get the time attribute from the targeted verification
+ * Get the time attribute from the targeted verification id
  * @param { typeof Verification.prototype.id } id 
  * @returns { Promise<typeof Verification.prototype.time> } 
  */
@@ -114,7 +114,7 @@ async function getTime(id) {
 }
 
 /**
- * Get the reason attribute from the targeted verification 
+ * Get the reason attribute from the targeted verification id
  * @param { typeof Verification.prototype.id } id 
  * @returns { Promise<typeof Verification.prototype.reason> } 
  */
@@ -128,7 +128,7 @@ async function getReason(id) {
     return queryResult.rows?.at(0)?.reason;
 }
 
-// ===================== CREATE QUERY ============================
+// ===================== CREATE QUERIES ============================
 
 /**
  * Insert a brand new verification record
@@ -150,13 +150,13 @@ async function add(status, time, reason, submissionId, verifierId) {
     return queryResult.insertId;
 }
 
-// ===================== UPDATE QUERY ============================
+// ===================== UPDATE QUERIES ============================
 
 /**
  * Update status of verification record using the given verification id
  * @param { typeof Verification.prototype.id } id 
  * @param { typeof Verification.prototype.status } status 
- * @returns { Promise<Boolean> }
+ * @returns { Promise<typeof Boolean> }
  */
 async function updateVerificationStatus(id, status) {
     const queryResult = 
@@ -172,11 +172,11 @@ async function updateVerificationStatus(id, status) {
     return queryResult.isSuccess;
 }
 
-// ===================== DELETE QUERY ============================
+// ===================== DELETE QUERIES ============================
 /**
  * Delete verification record using the given verification id
  * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<Boolean> }
+ * @returns { Promise<typeof Boolean> }
  */
 async function removeVerification(id) {
     const queryResult = 
@@ -189,7 +189,7 @@ async function removeVerification(id) {
 }
 
 module.exports = {
-    findAll, findAllByStatus, findByVerificationId, findBySubmissionId, findByVerifierId,
+    findAll, findAllByStatus, findByVerificationId, findAllBySubmissionId, findAllByVerifierId,
     getStatus, getTime, getReason, 
     add, 
     updateVerificationStatus, 
