@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 const express = require("express");
 const expressBodyParser = require("body-parser");
@@ -24,7 +25,7 @@ async function initialize() {
     require("./routes/language.route");
     require("./routes/authentication.route");
     require("./routes/account.route");
-    require("./routes/main.route");
+    require("./routes/static.route");
 
 	const appPort = Configurations.get("app").port;
 
@@ -73,8 +74,6 @@ function initializeParser() {
     Server.use(function(req, res, next) {
         if (!req.session.languageId)
             req.session.languageId = Language.SUPPORTED_LANGUAGES[0];
-
-        req.variables = {};
 
         next();
     });
@@ -128,7 +127,6 @@ function initializeLayouts() {
     Server.set("view engine", "ejs");
     Server.set("views", path.join(__dirname, "./views"));
     Server.use(expressLayouts);
-    Server.set("layout", "layouts/main");
 }
 
 // Methods for accepting HTTP requests
@@ -157,8 +155,115 @@ function sendApiResponse(res, code = 200, message, data) {
     return res.status(code).send({ message, data });
 }
 
+/**
+ * Create middleware to render a page located inside `./views`.
+ * @param { object } data
+ * @param { string } pageName EJS filename located inside `./views/pages`.
+ * @param { string } [pageType="main"] Subfolder inside `./views/pages`.
+ * @param { string } [layoutName="main"] Layout filename located inside `./views/layouts`.
+ * @returns { import("express").RequestHandler }
+ */
+function sendRenderedPage(data, pageName, pageType = "main", layoutName = "main") {
+    const alphanumericRegex = /[^A-Za-z0-9]/;
+
+    if (alphanumericRegex.test(pageName))
+        throw new Error("Page name should only contain alphanumeric characters.");
+
+    if (alphanumericRegex.test(pageType))
+        throw new Error("Page type should only contain alphanumeric characters.");
+
+    if (alphanumericRegex.test(layoutName))
+        throw new Error("Layout name should only contain alphanumeric characters.");
+
+    const pageViewsFolderPath = path.resolve(__dirname, "./views/pages");
+    const pageViewPath = path.resolve(
+        pageViewsFolderPath,
+        pageType,
+        pageName + ".ejs"
+    );
+
+    return function (req, res, next) {
+        if (fs.existsSync(pageViewPath) === false)
+            return sendErrorPage(404)(req, res, next);
+
+        const languageId = req.session.languageId;
+        const language = (key) => Language.getString(languageId, key) || key;
+        const app = Configurations.get("app");
+
+        return res.render(
+            "pages/" + pageType + "/" + pageName,
+            {
+                layout: "layouts/" + layoutName,
+                data,
+                app,
+                language,
+                pageType
+            }
+        );
+    };
+}
+
+/**
+ * Method to send static files located in `/src/public/`
+ * @param { import("express").Request } req 
+ * @param { import("express").Response } res 
+ * @param { import("express").NextFunction } next 
+ */
+async function sendStaticFile(req, res, next) {
+    const refinedPath = req.path || "/";
+    const publicFolderPath = path.resolve(__dirname, "./public/");
+
+    // Check if path explicitly uses extension name
+    const extensionName = path.extname(refinedPath);
+
+    if (extensionName) {
+        const filePath = path.resolve(publicFolderPath + refinedPath);
+        const minifyConfig = Configurations.get("minify");
+        
+        // Check if static files need to be minified
+        if (minifyConfig.enabled === true) {
+            const minifiedFilePath = refinedPath.replace(extensionName, ".min" + extensionName);
+            if (extensionName === ".js") {
+                const output = await MinifierUtil.minifyJs(filePath, minifiedFilePath);
+                res.set("Content-Type", "application/javascript");
+                return res.send(output);
+            }
+            else if (extensionName === ".css") {
+                const output = await MinifierUtil.minifyCss(filePath, minifiedFilePath);
+                res.set("Content-Type", "text/css");
+                return res.send(output);
+            }
+        }
+        else {
+            return res.sendFile(filePath);
+        }
+    }
+    else {
+        const htmlFilePath = path.resolve(publicFolderPath, refinedPath + ".html");
+        const htmlFilePathWithIndex = path.resolve(publicFolderPath, refinedPath, "index.html");
+        
+        if (fs.existsSync(htmlFilePath)) {
+            return res.sendFile(htmlFilePath);
+        }
+        else if (fs.existsSync(htmlFilePathWithIndex)) {
+            return res.sendFile(htmlFilePathWithIndex);
+        }
+    }
+    
+    return next();
+}
+
+function sendErrorPage(code = 500) {
+    if ([403, 404, 500].includes(code) == false)
+        code = 500;
+
+    return async function (req, res, next) {
+        return sendRenderedPage({}, code, "error", "error")(req, res, next);
+    };
+}
+
 module.exports = {
     initialize,
     getMapping, postMapping, putMapping, patchMapping, deleteMapping,
-    sendApiResponse
+    sendApiResponse, sendRenderedPage, sendStaticFile, sendErrorPage
 }

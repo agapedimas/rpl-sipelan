@@ -1,13 +1,13 @@
 <% 
-    variables.session.page_title = language('auth.signup.title');
-    variables.session.page_name = language('auth.signup.title');
-    variables.session.page_description = null;
-    variables.session.page_keywords = null;
-    variables.session.page_thumbnail = null;
+    data.page_title = language('auth.signup.title');
+    data.page_name = language('auth.signup.title');
+    data.page_description = null;
+    data.page_keywords = null;
+    data.page_thumbnail = null;
 %>
 
 <div class="panel">
-    <img src="<%= variables.app.path.logo_wordmark %>" ad-goto="/"/>
+    <img src="<%= app.path.logo_wordmark %>" ad-goto="/"/>
     <div class="title"><%= language('auth.signup.title') %></div>
     <div class="subtitle"><%= language('auth.signup.description') %></div>
     <div class="inputs">

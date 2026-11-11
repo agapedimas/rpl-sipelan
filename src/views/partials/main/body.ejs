@@ -15,11 +15,11 @@
 <script>
     if (window.location.pathname != "/") {
         if (window.matchMedia("(display-mode: standalone)").matches)
-            document.title = "<%= variables.session.page_title %>";
+            document.title = "<%= data.page_title %>";
         else
-            document.title = "<%= variables.session.page_title %> - <%= variables.app.name %>";
+            document.title = "<%= data.page_title %> - <%= app.name %>";
     }
     else {
-        document.title = "<%= variables.app.name %>";
+        document.title = "<%= app.name %>";
     }
 </script>

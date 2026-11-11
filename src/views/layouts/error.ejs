@@ -5,13 +5,13 @@
         <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
         <meta content="#000000" name="theme-color"> 
         <meta content="#000000" name="apple-mobile-web-app-status-bar-style"> 
-        <link rel="stylesheet" type="text/css" href="<%= variables.app.host.assets %>/ui/v3/style.css" />
-        <link rel="icon" href="<%= variables.app.host.assets %>/icon_logo.ico" />
-        <title><%= variables.app.name %></title>
+        <link rel="stylesheet" type="text/css" href="<%= app.host.assets %>/ui/v3/style.css" />
+        <link rel="icon" href="<%= app.host.assets %>/icon_logo.ico" />
+        <title><%= app.name %></title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="<%= variables.app.host.assets %>/ui/v3/head.js"></script>
-        <script src="<%= variables.app.host.assets %>/ui/v3/components.js"></script>
-        <script src="<%= variables.app.host.assets %>/ui/v3/events.js"></script> 
+        <script src="<%= app.host.assets %>/ui/v3/head.js"></script>
+        <script src="<%= app.host.assets %>/ui/v3/components.js"></script>
+        <script src="<%= app.host.assets %>/ui/v3/events.js"></script> 
 		<style>
 			html[theme=light]
 			{
@@ -153,43 +153,6 @@
 		</style>
     </head>
     <body>
-		<div class="panel">
-			<div class="error">
-				<img class="logo" src="<%= variables.app.host.assets %>/icon_text.png"/>
-				<div id="title"><%= error.title %></div>
-				<div id="message"><%= error.message %></div>
-				<div id="actions"></div>
-			</div>
-			<img id="image" class="mascot" src="<%= variables.app.host.assets %>/<%= error.image %>.webp"/>
-		</div>
-        <script>
-            for (let action of "<%= error.actions %>".split(","))
-            {
-                let button = document.createElement("button");
-				let onclick;
-
-                if (actions.children.length == 0)
-                    button.classList.add("accent");
-
-				if (action == "refresh") {
-					button.innerText = "<%= language('general.refresh') %>";
-					onclick = o => window.location.reload();
-				}
-				else if (action == "back") {
-					button.innerText = "<%= language('general.back') %>";
-					onclick = o => window.history.back();
-				}
-				else if (action == "homepage") {
-					button.innerText = "<%= language('general.homepage') %>";
-					onclick = o => window.location.href = "/";
-				}
-				else {
-					button.innerText = action;
-				}
-				
-                button.onclick = onclick;
-                actions.append(button);
-            }
-        </script>
+		<%- include("../partials/" + pageType + "/body") %>
     </body>
 </html>

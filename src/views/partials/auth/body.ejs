@@ -8,12 +8,12 @@
 <script>
 	if (window.location.pathname != "/") {
 		if (window.matchMedia("(display-mode: standalone)").matches)
-			document.title = "<%= variables.session.page_title %>";
+			document.title = "<%= data.page_title %>";
 		else
-			document.title = "<%= variables.session.page_title %> - <%= variables.app.admin_name %>";
+			document.title = "<%= data.page_title %> - <%= app.admin_name %>";
 	}
 	else {
-		document.title = "<%= variables.app.admin_name %>";
+		document.title = "<%= app.admin_name %>";
 	}
 </script>
 

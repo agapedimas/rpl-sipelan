@@ -1,6 +1,6 @@
 <header class="titlebar">
-	<img class="icon" src="<%= variables.app.path.logo_monochrome %>"/>
-	<span class="name"><%= variables.app.admin_name %></span>
+	<img class="icon" src="<%= app.path.logo_monochrome %>"/>
+	<span class="name"><%= app.admin_name %></span>
 </header>
 
 <div class="root">
@@ -18,11 +18,11 @@
 <script>
 	if (window.location.pathname != "/") {
 		if (window.matchMedia("(display-mode: standalone)").matches)
-			document.title = "<%= variables.session.page_title %>";
+			document.title = "<%= data.page_title %>";
 		else
-			document.title = "<%= variables.session.page_title %> - <%= variables.app.admin_name %>";
+			document.title = "<%= data.page_title %> - <%= app.admin_name %>";
 	}
 	else {
-		document.title = "<%= variables.app.admin_name %>";
+		document.title = "<%= app.admin_name %>";
 	}
 </script>

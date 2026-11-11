@@ -13,6 +13,7 @@ Routes.postMapping("/api/signin",
     AuthenticationController.signIn);
 
 Routes.getMapping("/signin", 
-    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect);
+    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
+    Routes.sendRenderedPage({}, "signin", "auth"));
 Routes.getMapping("/signout", 
     AuthenticationController.signOut);
