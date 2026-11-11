@@ -93,7 +93,7 @@ async function findAllByTime(time, districtId){
 /**
  * Show a single report record in the database that matched with the given report id
  * @param { typeof Report.prototype.id } id 
- * @returns { Promise<Arra> }
+ * @returns { Promise<Report?> }
  */
 async function findByReportId(id, districtId) {
     const queryResult = 
@@ -117,7 +117,7 @@ async function findByReportId(id, districtId) {
  * @param { typeof Report.prototype.description } description 
  * @param { typeof Report.prototype.time } time 
  * @param { typeof Report.prototype.disasterTypeId } disasterTypeId 
- * @returns { Promise<Boolean> }
+ * @returns { Promise<typeof Report.prototype.id> }
  */
 async function add(isArchived, status, description, time, disasterTypeId) {
     const queryResult = 
@@ -126,17 +126,17 @@ async function add(isArchived, status, description, time, disasterTypeId) {
             VALUES(?, ?, ?, ?, ?)
         `, [isArchived, status, description, time, disasterTypeId]);
 
-    return queryResult.isSuccess;
+    return queryResult.insertId;
 }
 
 // ===================== UPDATE QUERIES ============================
 /**
  * Update isArchive status by report id
  * @param { typeof Report.prototype.id } id 
- * @param { typeof Report.prototype.isArchived } isArchive 
+ * @param { typeof Report.prototype.isArchived } isArchived 
  * @returns { Promise<Boolean> }
  */
-async function updateIsArhived(id, isArchive) {
+async function updateIsArhived(id, isArchived) {
     const queryResult = 
         await Database.doQuery(`
             UPDATE FROM Report
@@ -144,7 +144,7 @@ async function updateIsArhived(id, isArchive) {
                 isArchive = ?
             WHERE
                 id = ?    
-        `, [isArchive, id]);
+        `, [isArchived, id]);
 
     return queryResult.isSuccess;
 }
