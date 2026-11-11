@@ -51,6 +51,56 @@ async function add(req, res) {
         return res.status(500).send({message: "Something went wrong."});
 }
 
+async function updateInfo(req, res) {}
+
+async function getPicture(req, res) {
+    const accountId = req.params.accountId;
+    const pictureBuffer = await AccountService.getPicture(accountId);
+
+    if (pictureBuffer != null) {
+        // Set cache of profile picture to 1 day
+        res.header("Cache-Control", "private, max-age=86400");
+        res.header("Content-Type", "image/webp");
+    
+        return res.send(pictureBuffer);
+    }
+    // Send placeholder profile picture if not available
+    else {
+        const defaultProfilePictureFilePath = path.resolve(__dirname, "../assets/profilePicture.webp");
+        return res.sendFile(defaultProfilePictureFilePath);
+    }
+}
+
+async function setPicture(req, res) {
+    const accountId = req.params.accountId;
+    const pictureBuffer = req.files.file.data;
+
+    if (pictureBuffer != null) {
+        // Make sure the file size is not beyond limit,
+        // which is 3 MB at maximum
+        if (pictureBuffer.length > 3_000_000)
+            return res.status(400).send({ message: "File size should not exceed 3 MB." });
+        
+        const isSuccess = await AccountService.setPicture(accountId, pictureBuffer);
+        if (isSuccess)
+            return res.status(201).send();
+        else
+            return res.status(500).send({ message: "Something went wrong." });
+    }
+    else {
+        return res.status(400).send({ message: "No files are providen." });
+    }
+}
+
+async function removePicture(req, res) {
+    const accountId = req.session.accountId;
+    await AccountService.removePicture(accountId);
+    return res.status(200).send();
+}
+
+
 module.exports = {
-    add
+    add,
+    updateInfo,
+    getPicture, setPicture, removePicture
 }

@@ -36,4 +36,4 @@ SELECT
     districtId,
     isActive
 FROM
-    Account
+    Account;

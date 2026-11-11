@@ -46,6 +46,15 @@ async function updateInfo(accountId, updatedInfo) {
 
 /**
  * @param { typeof Account.prototype.id } accountId 
+ * @returns { Promise<typeof Account.prototype.picture> }
+ */
+async function getPicture(accountId) {
+    const pictureBuffer = await AccountRepository.getPicture(accountId);
+    return pictureBuffer;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId 
  * @param { typeof Account.prototype.picture } pictureBuffer 
  * @returns { Promise<boolean> }
  */
@@ -107,7 +116,7 @@ async function doesRoleExist(role) {
 
 /**
  * @param { typeof Account.prototype.id } accountId 
- * @returns { typeof Account.prototype.role }
+ * @returns { Promise<typeof Account.prototype.role> }
  */
 async function getRole(accountId) {
     const role = await AccountRepository.getRole(accountId);
@@ -128,7 +137,7 @@ async function findByPhone(phone) {
 module.exports = {
     add, 
     updateInfo, 
-    setPicture, removePicture,
+    getPicture, setPicture, removePicture,
     activate, deactivate,
     doesRoleExist,
     getRole,
