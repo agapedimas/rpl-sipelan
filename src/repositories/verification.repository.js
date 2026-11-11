@@ -38,7 +38,7 @@ async function findAllByStatus(status){
 /**
  * Show all of the verification records that matched with the given submission id
  * @param { typeof Verification.prototype.submissionId } submissionId 
- * @returns { Promise<typeof Verification?> }
+ * @returns { Promise<typeof Array<Verification>> }
  */
 async function findAllBySubmissionId(submissionId) {
     const queryResult = 
@@ -54,7 +54,7 @@ async function findAllBySubmissionId(submissionId) {
 /**
  * Show all of verification records that matched with the given verifier id
  * @param { typeof Verification.prototype.verifierId } verifierId 
- * @returns { Promise<typeof Verification?> }
+ * @returns { Promise<typeof Array<Verification>> }
  */
 async function findAllByVerifierId(verifierId) {
     const queryResult = 
@@ -92,7 +92,7 @@ async function findByVerificationId(id){
  * @param { typeof Verification.prototype.reason } reason 
  * @param { typeof Verification.prototype.submissionId } submissionId 
  * @param { typeof Verification.prototype.verifierId } verifierId 
- * @returns { typeof Promise<typeof Verification.prototype.id> } newVerificationId
+ * @returns { Promise<typeof Verification.prototype.id> }
  */
 async function add(status, time, reason, submissionId, verifierId) {
     const queryResult = 
@@ -106,6 +106,7 @@ async function add(status, time, reason, submissionId, verifierId) {
 }
 
 module.exports = {
-    findAll, findAllByStatus, findByVerificationId, findAllBySubmissionId, findAllByVerifierId,
+    findAll, findAllByStatus, findAllBySubmissionId, findAllByVerifierId,
+    findByVerificationId,
     add
 };
