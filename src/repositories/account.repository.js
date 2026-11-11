@@ -9,7 +9,7 @@ const Account = require("../models/account.model");
 async function findAll() {
     const queryResult = 
         await Database.doQuery(
-            "SELECT * FROM Account"
+            "SELECT * FROM AccountView"
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
     return dataResults || [];
