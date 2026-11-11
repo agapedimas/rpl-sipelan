@@ -21,6 +21,7 @@ class Report {
      * @param {string} description
      * @param {number} time Unix timestamp in milliseconds
      * @param {number} disasterTypeId
+     * @param {number} districtId
      */
     constructor(id, isArchived, status, description, time, disasterTypeId, districtId) {
         this.#id = id;
