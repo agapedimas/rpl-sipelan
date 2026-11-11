@@ -46,7 +46,7 @@ async function add(req, res) {
     const isSuccess = await AccountService.add(phone, name, districtId, role, nik);
 
     if (isSuccess)
-        return res.status(201);
+        return res.status(201).send();
     else
         return res.status(500).send({message: "Something went wrong."});
 }

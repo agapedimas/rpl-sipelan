@@ -6,7 +6,7 @@ async function doesNeedAuthentication(req, res, next) {
     const authenticationId = req.session.authenticationId;
 
     // Check if user already signed in
-    if (await AuthenticationService.isSignedIn(accountId) === true) {
+    if (await AuthenticationService.isSignedIn(authenticationId) === true) {
         return res.status(400).send({ message: "User is already signed in." });
     }
     else {
@@ -19,7 +19,7 @@ async function doesNeedAuthenticationAndRedirect(req, res, next) {
     const authenticationId = req.session.authenticationId;
 
     // Check if user already signed in
-    if (await AuthenticationService.isSignedIn(accountId) === true) {
+    if (await AuthenticationService.isSignedIn(authenticationId) === true) {
         // Redirect to their dashboard page
         const accountRole = AccountService.getRole(accountId);
         switch(accountRole) {

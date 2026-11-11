@@ -34,13 +34,16 @@ async function remove(authenticationId) {
 
 /**
  * Check if account is signed in
- * @param { typeof Account.prototype.id } accountId 
+ * @param { typeof Authentication.prototype.id } authenticationId 
  * @returns { Promise<boolean> }
  */
-async function isAuthenticated(accountId) {
+async function isAuthenticated(authenticationId) {
+    if (authenticationId == null)
+        return false;
+    
     const queryResult = await Database.doQuery(
-        "SELECT id FROM Authentication WHERE accountId = ? LIMIT 1",
-        accountId
+        "SELECT id FROM Authentication WHERE id = ? LIMIT 1",
+        authenticationId
     );
     return queryResult.rows?.length > 0;
 }
