@@ -19,7 +19,7 @@ async function findAll() {
  * @param { typeof LogCategory.prototype.id } logCategoryId 
  * @returns { Promise<LogCategory?> }
  */
-async function findByLogCategoryId(logCategoryId) {
+async function findById(logCategoryId) {
     const queryResult =
         await Database.doQuery(
             "SELECT * FROM LogCategory WHERE id = ?",
@@ -48,56 +48,21 @@ async function add(name, type, unit) {
 }
 
 /**
- * @param { typeof LogCategory.prototype.id } logCategoryId 
- * @param { typeof LogCategory.prototype.name } name 
+ * @param { number } categoryId
+ * @param { string? } name
+ * @param { string? } type
+ * @param { string? } unit
  * @returns { Promise<boolean> } Result of execution
  */
-async function updateName(logCategoryId, name) {
-    const queryResult =
-        await Database.doQuery(`
-            UPDATE LogCategory
-            SET
-                name = COALESCE(?, name)
-            WHERE
-                id = ?
-        `,
-        [name, logCategoryId]);
-    return queryResult.isSuccess;
-}
-
-/**
- * @param { typeof LogCategory.prototype.id } logCategoryId 
- * @param { typeof LogCategory.prototype.type } type
- * @returns { Promise<boolean> } Result of execution
- */
-async function updateType(logCategoryId, type) {
-    const queryResult =
-        await Database.doQuery(`
-            UPDATE LogCategory
-            SET
-                type = COALESCE(?, type)
-            WHERE
-                id = ?
-        `,
-        [type, logCategoryId]);
-    return queryResult.isSuccess;
-}
-
-/**
- * @param { typeof LogCategory.prototype.id } logCategoryId 
- * @param { typeof LogCategory.prototype.unit } unit
- * @returns { Promise<boolean> } Result of execution
- */
-async function updateUnit(logCategoryId, unit) {
-    const queryResult =
-        await Database.doQuery(`
-            UPDATE LogCategory
-            SET
-                unit = COALESCE(?, unit)
-            WHERE
-                id = ?
-        `,
-        [unit, logCategoryId]);
+async function updateInfo(categoryId, name, type, unit) {
+    const queryResult = await Database.doQuery(`
+        UPDATE LogCategory
+        SET
+            name = COALESCE(?, name),
+            type = COALESCE(?, type),
+            unit = COALESCE(?, unit)
+        WHERE id = ?
+    `, [name, type, unit, categoryId]);
     return queryResult.isSuccess;
 }
 
@@ -117,8 +82,8 @@ async function remove(logCategoryId) {
 }
 
 module.exports = {
-    findAll, findByLogCategoryId, 
+    findAll, findById, 
     add, 
-    updateName, updateType, updateUnit, 
+    updateInfo,
     remove
 }
