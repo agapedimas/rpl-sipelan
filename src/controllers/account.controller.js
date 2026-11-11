@@ -2,6 +2,7 @@ const ValidatorUtil = require("../utils/validator.util");
 
 const AccountService = require("../services/account.service");
 
+/** @type {import("express").RequestHandler} */
 async function add(req, res) {
     let { phone, name, districtId, role, nik } = req.body;
 
@@ -51,8 +52,10 @@ async function add(req, res) {
         return res.status(500).send({message: "Something went wrong."});
 }
 
+/** @type {import("express").RequestHandler} */
 async function updateInfo(req, res) {}
 
+/** @type {import("express").RequestHandler} */
 async function getPicture(req, res) {
     const accountId = req.params.accountId;
     const pictureBuffer = await AccountService.getPicture(accountId);
@@ -71,6 +74,7 @@ async function getPicture(req, res) {
     }
 }
 
+/** @type {import("express").RequestHandler} */
 async function setPicture(req, res) {
     const accountId = req.params.accountId;
     const pictureBuffer = req.files.file.data;
@@ -92,6 +96,7 @@ async function setPicture(req, res) {
     }
 }
 
+/** @type {import("express").RequestHandler} */
 async function removePicture(req, res) {
     const accountId = req.session.accountId;
     await AccountService.removePicture(accountId);

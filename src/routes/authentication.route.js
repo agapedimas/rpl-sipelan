@@ -1,19 +1,18 @@
 const Routes = require("../routes");
-const Server = Routes.getServer();
 
 const AuthenticationController = require("../controllers/authentication.controller");
 const AuthenticationMiddleware = require("../middlewares/authentication.middleware");
 
-Server.post("/api/requestOtp", 
+Routes.postMapping("/api/requestOtp", 
     AuthenticationMiddleware.doesNeedAuthentication, 
     AuthenticationController.requestOtp);
-Server.post("/api/verifyOtp", 
+Routes.postMapping("/api/verifyOtp", 
     AuthenticationMiddleware.doesNeedAuthentication, 
     AuthenticationController.verifyOtp);
-Server.post("/api/signin",
+Routes.postMapping("/api/signin",
     AuthenticationController.signIn);
 
-Server.get("/signin", 
+Routes.getMapping("/signin", 
     AuthenticationMiddleware.doesNeedAuthenticationAndRedirect);
-Server.get("/signout", 
+Routes.getMapping("/signout", 
     AuthenticationController.signOut);

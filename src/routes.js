@@ -131,11 +131,34 @@ function initializeLayouts() {
     Server.set("layout", "layouts/main");
 }
 
-function getServer() {
-    return Server;
+// Methods for accepting HTTP requests
+/** @type {typeof Server.get} */
+const getMapping = (...args) => Server.get(...args);
+/** @type {typeof Server.post} */
+const postMapping = (...args) => Server.post(...args);
+/** @type {typeof Server.put} */
+const putMapping = (...args) => Server.put(...args);
+/** @type {typeof Server.patch} */
+const patchMapping = (...args) => Server.patch(...args);
+/** @type {typeof Server.delete} */
+const deleteMapping = (...args) => Server.delete(...args);
+
+/**
+ * Method to standardize API responses
+ * @param { import("express").Response } res 
+ * @param { number } code 
+ * @param { string } message 
+ * @param { object } data 
+ */
+function sendApiResponse(res, code = 200, message, data) {
+    if (res == null)
+        throw new Error("Please specify Express Response");
+
+    return res.status(code).send({ message, data });
 }
 
 module.exports = {
     initialize,
-    getServer
+    getMapping, postMapping, putMapping, patchMapping, deleteMapping,
+    sendApiResponse
 }

@@ -11,6 +11,7 @@ const ErrorController = require("./error.controller");
 const publicFolderPath = "./src/public/";
 const pageViewsFolderPath = "./src/views/pages/";
 
+/** @type {import("express").RequestHandler} */
 async function map(req, res, next) {
     const refinePathResult = URL.refinePath(req.path);
     const refinedPath = refinePathResult.refinedPath;

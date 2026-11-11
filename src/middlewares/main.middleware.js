@@ -37,33 +37,42 @@ async function accessAs(allowedRoles, req, res, next) {
 
 
 
+/** @type {import("express").RequestHandler} */
 async function viewAsCitizen(req, res, next) {
     return viewAs("citizen", req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function viewAsVolunteer(req, res, next) {
     return viewAs("volunteer", req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function viewAsOfficer(req, res, next) {
     return viewAs("officer", req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function viewAsAdmin(req, res, next) {
     return viewAs("admin", req, res, next);
 }
 
 
 
+/** @type {import("express").RequestHandler} */
 async function accessAsCitizen(req, res, next) {
     return accessAs(["citizen"], req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function accessAsVolunteer(req, res, next) {
     return accessAs(["volunteer"], req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function accessAsOfficer(req, res, next) {
     return accessAs(["officer"], req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function accessAsAdmin(req, res, next) {
     return accessAs(["admin"], req, res, next);
 }
+/** @type {import("express").RequestHandler} */
 async function accessAsVolunteerOrAdmin(req, res, next) {
     return accessAs(["volunteer", "admin"], req, res, next);
 }

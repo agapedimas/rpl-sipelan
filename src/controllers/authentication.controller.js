@@ -1,6 +1,7 @@
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+/** @type {import("express").RequestHandler} */
 async function requestOtp(req, res, next) {
     const phone = req.body.phone;
     const account = await AccountService.findByPhone(phone);
@@ -12,6 +13,7 @@ async function requestOtp(req, res, next) {
         return res.status(500).send({ message: "Something went wrong." });
 }
 
+/** @type {import("express").RequestHandler} */
 async function verifyOtp(req, res, next) {
     const accountId = req.body.accountId;
     const otpCode = req.body.otpCode;
@@ -25,6 +27,7 @@ async function verifyOtp(req, res, next) {
     }
 }
 
+/** @type {import("express").RequestHandler} */
 async function signIn(req, res, next) {
     const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
     if (authenticationId) {
@@ -38,6 +41,7 @@ async function signIn(req, res, next) {
     }
 }
 
+/** @type {import("express").RequestHandler} */
 async function signOut(req, res, next) {
     if (req.session.authenticationId != null) {
         await Authentications.remove(req.session.authenticationId);

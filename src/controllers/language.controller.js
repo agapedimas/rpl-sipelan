@@ -1,5 +1,6 @@
 const Language = require("../utils/language.util");
 
+/** @type {import("express").RequestHandler} */
 function setLanguage(req, res, next) {
     if (Language.SUPPORTED_LANGUAGES.includes(req.params.languageId)) {
         req.session.languageId = req.params.languageId;
@@ -10,6 +11,7 @@ function setLanguage(req, res, next) {
     }
 }
 
+/** @type {import("express").RequestHandler} */
 function getLanguagedFile(req, res, next) {
     if (Language.SUPPORTED_LANGUAGES.includes(req.params.languageId)) {
         // If user visit page with language path

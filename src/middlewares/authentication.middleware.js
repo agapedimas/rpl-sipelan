@@ -1,6 +1,7 @@
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+/** @type {import("express").RequestHandler} */
 async function doesNeedAuthentication(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
@@ -13,7 +14,7 @@ async function doesNeedAuthentication(req, res, next) {
         return next();
     }
 }
-
+/** @type {import("express").RequestHandler} */
 async function doesNeedAuthenticationAndRedirect(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;

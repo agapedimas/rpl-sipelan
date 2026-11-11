@@ -1,6 +1,5 @@
 const Routes = require("../routes");
-const Server = Routes.getServer();
 
-const Controller = require("../controllers/main.controller");
+const MainController = require("../controllers/main.controller");
 
-Server.get("*", Controller.map);
+Routes.getMapping("*", MainController.map);
