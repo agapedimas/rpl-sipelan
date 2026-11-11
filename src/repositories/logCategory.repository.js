@@ -19,7 +19,7 @@ async function findAll() {
  * @param { typeof LogCategory.prototype.id } logCategoryId 
  * @returns { Promise<LogCategory?> }
  */
-async function findById(logCategoryId) {
+async function findByLogCategoryId(logCategoryId) {
     const queryResult =
         await Database.doQuery(
             "SELECT * FROM LogCategory WHERE id = ?",
@@ -117,7 +117,7 @@ async function remove(logCategoryId) {
 }
 
 module.exports = {
-    findAll, findById, 
+    findAll, findByLogCategoryId, 
     add, 
     updateName, updateType, updateUnit, 
     remove
