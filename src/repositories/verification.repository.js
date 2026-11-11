@@ -83,52 +83,7 @@ async function findByVerificationId(id){
     return dataResults?.at(0) || null;
 }
 
-/**
- * Get the status attribute from the targeted verification id
- * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<typeof Verification.prototype.status> } 
- */
-async function getStatus(id) {
-    const queryResult = 
-        await Database.doQuery(
-            `SELECT status FROM Verification WHERE id = ? LIMIT 1`,
-            id
-        );
-
-    return queryResult.rows?.at(0)?.status;
-}
-
-/**
- * Get the time attribute from the targeted verification id
- * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<typeof Verification.prototype.time> } 
- */
-async function getTime(id) {
-    const queryResult = 
-        await Database.doQuery(
-            `SELECT time FROM Verification WHERE id = ? LIMIT 1`,
-            id
-        );
-
-    return queryResult.rows?.at(0)?.time;
-}
-
-/**
- * Get the reason attribute from the targeted verification id
- * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<typeof Verification.prototype.reason> } 
- */
-async function getReason(id) {
-    const queryResult = 
-        await Database.doQuery(
-            `SELECT reason FROM Verification WHERE id = ? LIMIT 1`,
-            id
-        );
-
-    return queryResult.rows?.at(0)?.reason;
-}
-
-// ===================== CREATE QUERIES ============================
+// ===================== CREATE QUERY ============================
 
 /**
  * Insert a brand new verification record
@@ -150,48 +105,7 @@ async function add(status, time, reason, submissionId, verifierId) {
     return queryResult.insertId;
 }
 
-// ===================== UPDATE QUERIES ============================
-
-/**
- * Update status of verification record using the given verification id
- * @param { typeof Verification.prototype.id } id 
- * @param { typeof Verification.prototype.status } status 
- * @returns { Promise<typeof Boolean> }
- */
-async function updateVerificationStatus(id, status) {
-    const queryResult = 
-        await Database.doQuery(`
-            UPDATE Verification
-            SET
-                status = ?
-            WHERE
-                id = ?    
-        `, [status, id]
-        );
-
-    return queryResult.isSuccess;
-}
-
-// ===================== DELETE QUERIES ============================
-/**
- * Delete verification record using the given verification id
- * @param { typeof Verification.prototype.id } id 
- * @returns { Promise<typeof Boolean> }
- */
-async function removeVerification(id) {
-    const queryResult = 
-        await Database.doQuery(`
-            DELETE FROM Verification
-            WHERE id = ?
-        `, id);
-    
-    return queryResult.isSuccess;
-}
-
 module.exports = {
     findAll, findAllByStatus, findByVerificationId, findAllBySubmissionId, findAllByVerifierId,
-    getStatus, getTime, getReason, 
-    add, 
-    updateVerificationStatus, 
-    removeVerification
+    add
 };
