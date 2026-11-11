@@ -21,10 +21,8 @@ async function initialize() {
     initializeLayouts();
 
     // Read every routes components
-    require("./routes/ping.route");
     require("./routes/language.route");
     require("./routes/authentication.route");
-    require("./routes/admin.route");
     require("./routes/account.route");
     require("./routes/main.route");
 
