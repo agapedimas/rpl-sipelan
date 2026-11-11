@@ -67,19 +67,6 @@ function initializeSessions() {
 }
 
 function initializeParser() {
-    Server.use(function(req, res, next) {
-        // Add custom helper
-        res.api = {
-            sendSuccess: function(data) {
-                return res.send({ isSuccess: true, data: data });
-            },
-            sendError: function(httpCode, error) {
-                return res.status(httpCode).send({ isSuccess: true, error: error });
-            }
-        }
-        next();
-    });
-    
     Server.use(expressBodyParser.urlencoded({ limit: "50mb", extended: true }));
     Server.use(expressBodyParser.json({ limit: "50mb" }));
     Server.use(expressFileUpload());
@@ -90,9 +77,6 @@ function initializeParser() {
             req.session.languageId = Language.SUPPORTED_LANGUAGES[0];
 
         req.variables = {};
-
-        if (req.query.contentOnly == "true")
-            req.contentOnly = true;
 
         next();
     });
@@ -128,8 +112,8 @@ function initializeCaching() {
     	
     	for (const [key, value] of Object.entries(file)) {
     		if (value.test(req.url)) {
-                // Cache for 7 days
-    			res.header("Cache-Control", "public, max-age=604800");
+                // Cache for 1 day
+    			res.header("Cache-Control", "public, max-age=86400");
 			}
 			else if (req.query.cache == "false") {
 				res.header("Cache-Control", "no-cache, no-store, must-revalidate");
