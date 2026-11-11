@@ -204,3 +204,13 @@ async function removeReport(id) {
     
     return queryResult.isSuccess;
 }
+
+module.exports = {
+    findAll, findAllByIsArchivedStatus, findAllByStatus, findAllByTime, findAllByDisasterTypeId, 
+    findByReportId,
+    add,
+    updateIsArhived,
+    updateStatus,
+    updateDescription,
+    removeReport
+};
