@@ -11,6 +11,8 @@ class Report {
     #time;
     /** @type {number} */
     #disasterTypeId;
+    /** @type {number} */
+    #districtId;
 
     /**
      * @param {number} id
@@ -20,13 +22,14 @@ class Report {
      * @param {number} time Unix timestamp in milliseconds
      * @param {number} disasterTypeId
      */
-    constructor(id, isArchived, status, description, time, disasterTypeId) {
+    constructor(id, isArchived, status, description, time, disasterTypeId, districtId) {
         this.#id = id;
         this.#isArchived = isArchived;
         this.#status = status;
         this.#description = description;
         this.#time = time;
         this.#disasterTypeId = disasterTypeId;
+        this.#districtId = districtId;
     }
 
     get id() { return this.#id; }
@@ -35,6 +38,7 @@ class Report {
     get description() { return this.#description; }
     get time() { return this.#time; }
     get disasterTypeId() { return this.#disasterTypeId; }
+    get districtId() { return this.#districtId; }
 }
 
 module.exports = Report;
