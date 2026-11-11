@@ -1,0 +1,102 @@
+const Configurations = require("../src/configurations");
+
+const { test } = require("node:test");
+const assert = require("node:assert/strict");
+
+const baseUrl = "http://localhost:" + Configurations.get("app").port;
+
+function createCookieJar() {
+    const cookies = new Map();
+
+    return {
+        getHeader() {
+            return Array.from(cookies, ([name, value]) => `${name}=${value}`).join("; ");
+        },
+        store(response) {
+            for (const cookie of response.headers.getSetCookie()) {
+                const [pair] = cookie.split(";");
+                const separator = pair.indexOf("=");
+                if (separator < 0)
+                    continue;
+
+                cookies.set(pair.slice(0, separator), pair.slice(separator + 1));
+            }
+        }
+    };
+}
+
+function buildUrl(path, query) {
+    const url = new URL(path, baseUrl);
+    if (query != null) {
+        for (const [key, value] of Object.entries(query)) {
+            if (value == null)
+                continue;
+
+            if (Array.isArray(value)) {
+                for (const item of value)
+                    url.searchParams.append(key, item);
+            }
+            else {
+                url.searchParams.set(key, value);
+            }
+        }
+    }
+
+    return url;
+}
+
+async function request(method, path, options = {}) {
+    const headers = new Headers(options.headers);
+    const cookieHeader = options.cookieJar?.getHeader();
+    if (cookieHeader)
+        headers.set("cookie", cookieHeader);
+
+    let body = options.body;
+    if (body != null && typeof body === "object" && !(body instanceof FormData) && !(body instanceof URLSearchParams)) {
+        body = JSON.stringify(body);
+        if (!headers.has("content-type"))
+            headers.set("content-type", "application/json");
+    }
+
+    const response = await fetch(buildUrl(path, options.query), {
+        method,
+        headers,
+        body,
+        redirect: options.redirect
+    });
+    options.cookieJar?.store(response);
+
+    return response;
+}
+
+function getRequest(path, options = {}) {
+    return request("GET", path, options);
+}
+
+function postRequest(path, options = {}) {
+    return request("POST", path, options);
+}
+
+function putRequest(path, options = {}) {
+    return request("PUT", path, options);
+}
+
+function patchRequest(path, options = {}) {
+    return request("PATCH", path, options);
+}
+
+function deleteRequest(path, options = {}) {
+    return request("DELETE", path, options);
+}
+
+module.exports = {
+    test,
+    assert,
+    request,
+    getRequest,
+    postRequest,
+    putRequest,
+    patchRequest,
+    deleteRequest,
+    createCookieJar
+};
