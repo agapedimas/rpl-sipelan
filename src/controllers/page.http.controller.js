@@ -14,15 +14,16 @@ const LanguageUtil = require("../utils/language.util");
  * @returns { import("express").RequestHandler }
  */
 function sendRenderedPage(data, pageName, pageType = "main", layoutName = "main") {
-    const alphanumericRegex = /[^A-Za-z0-9]/;
+    const alphanumericRegex = /[A-Za-z0-9]/;
+    const alphanumericPathRegex = /^[A-Za-z0-9]+(?:\/[A-Za-z0-9]+)*$/;
 
-    if (alphanumericRegex.test(pageName))
-        throw new Error("Page name should only contain alphanumeric characters.");
+    if (alphanumericPathRegex.test(pageName) === false)
+        throw new Error("Page name should only contain alphanumeric characters or a valid directory path.");
 
-    if (alphanumericRegex.test(pageType))
+    if (alphanumericRegex.test(pageType) === false)
         throw new Error("Page type should only contain alphanumeric characters.");
 
-    if (alphanumericRegex.test(layoutName))
+    if (alphanumericRegex.test(layoutName) === false)
         throw new Error("Layout name should only contain alphanumeric characters.");
 
     const pageViewsFolderPath = path.resolve(__dirname, "../views/pages");
@@ -31,10 +32,25 @@ function sendRenderedPage(data, pageName, pageType = "main", layoutName = "main"
         pageType,
         pageName + ".ejs"
     );
+    const pageViewPathWithIndex = path.resolve(
+        pageViewsFolderPath,
+        pageType,
+        pageName + "/index" + ".ejs"
+    );
+    const pageNameWithIndex = pageName + "/index";
 
     return function (req, res, next) {
-        if (fs.existsSync(pageViewPath) === false)
-            return sendErrorPage(404)(req, res, next);
+        // Check if path/to/file.ejs does not exist
+        if (fs.existsSync(pageViewPath) === false) {
+            // Check if path/to/file/index.ejs does exist
+            if (fs.existsSync(pageViewPathWithIndex) === true) {
+                // Change pageName with index to locate the .ejs file
+                pageName = pageNameWithIndex;
+            }
+            else {
+                return sendErrorPage(404)(req, res, next);
+            }
+        }
 
         const languageId = req.session.languageId;
         const language = (key) => LanguageUtil.getString(languageId, key) || key;

@@ -11,40 +11,33 @@
     <div class="title"><%= language('auth.signin.title') %></div>
     <div class="subtitle"><%= language('auth.signin.description') %></div>
     <div class="inputs">
-        <input type="email" id="emailInput" ad-text="<%= language('account.email.title') %>"/>
-        <input type="password" id="passwordInput" ad-text="<%= language('account.password.title') %>"/>
+        <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
     </div>
     <div class="actions">
         <span class="error hidden" id="generalError"></span>
         <button class="accent" id="signInButton" disabled>
             <div class="progressring"></div>
-            <span><%= language('auth.signin.title') %></span>
+            <span><%= language('general.next') %></span>
         </button>
-        <div class="suggestion">
-            <%= language('auth.signup.offer') %>
-            <a class="link" ad-goto="/signup"><%= language('auth.signup.title') %></a>
-        </div>
     </div>
 </div>
 
 <script>
     const signInForm = new Form([
-            new Field(emailInput),
-            new Field(passwordInput)
+            new Field(phoneInput)
         ], signInButton);
 
     signInButton.onaction = function() {
         return new Promise(function(resolve) {
             generalError.classList.add("hidden");
             $.ajax({
-                url: "/api/signin",
+                url: "/api/requestOtp",
                 type: "POST",
                 data: { 
-                    email: emailInput.value, 
-                    password: passwordInput.value
+                    phone: phoneInput.value
                 },
                 success: function(response) {
-                    window.location.replace(response.data.url);
+                    location.href = "/signin/verifyOtp";
                     resolve(true);
                 },
                 error: function(result) {
