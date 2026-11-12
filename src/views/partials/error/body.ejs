@@ -1,44 +1,35 @@
 <div class="panel">
     <div class="error">
-        <img class="logo" src="<%= app.host.assets %>/icon_text.png"/>
+        <img class="logo" src="<%= app.path.logo_wordmark %>"/>
         <div id="title"><%= data.error.title %></div>
         <div id="message"><%= data.error.message %></div>
         <div id="actions">
-            <%- 
-                if (data.error.actions.includes("refresh")) 
-                    return <button>Refresh</button>
-            %>
 
+            <%  if (data.error.actions.includes("back")) {  %>
+                <button onclick="action.back()">
+                    <%= language('general.back') %>
+                </button>
+            <%  }  %>
+
+            <%  if (data.error.actions.includes("home")) {  %>
+                <button onclick="action.homepage()">
+                    <%= language('general.homepage') %>
+                </button>
+            <%  }  %>
+
+            <%  if (data.error.actions.includes("refresh")) {  %>
+                <button class="accent" onclick="action.refresh()">
+                    <%= language('general.refresh') %>
+                </button>
+            <%  }  %>
         </div>
     </div>
     <img id="image" class="mascot" src="<%= app.host.assets %>/<%= data.error.image %>.webp"/>
 </div>
 <script>
-    for (let action of "<%= data.error.actions %>".split(","))
-    {
-        let button = document.createElement("button");
-        let onclick;
-
-        if (actions.children.length == 0)
-            button.classList.add("accent");
-
-        if (action == "refresh") {
-            button.innerText = "<%= language('general.refresh') %>";
-            onclick = o => window.location.reload();
-        }
-        else if (action == "back") {
-            button.innerText = "<%= language('general.back') %>";
-            onclick = o => window.history.back();
-        }
-        else if (action == "homepage") {
-            button.innerText = "<%= language('general.homepage') %>";
-            onclick = o => window.location.href = "/";
-        }
-        else {
-            button.innerText = action;
-        }
-        
-        button.onclick = onclick;
-        actions.append(button);
+    const action = {
+        refresh: o => location.reload(),
+        back: o => history.back(),
+        homepage: o => location.href = "/"
     }
 </script>
