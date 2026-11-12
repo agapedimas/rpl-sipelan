@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const Configurations = require("../configurations");
+
+const ResponseUtil = require("../utils/response.util");
 const UrlUtil = require("../utils/url.util");
 const MinifierUtil = require("../utils/minifier.util");
 
@@ -38,16 +40,16 @@ async function sendStaticFile(req, res, next) {
             if (extensionName === ".js") {
                 const output = await MinifierUtil.minifyJs(filePath, minifiedFilePath);
                 res.set("Content-Type", "application/javascript");
-                return res.send(output);
+                return ResponseUtil.sendBuffer(res, output);
             }
             else if (extensionName === ".css") {
                 const output = await MinifierUtil.minifyCss(filePath, minifiedFilePath);
                 res.set("Content-Type", "text/css");
-                return res.send(output);
+                return ResponseUtil.sendBuffer(res, output);
             }
         }
         else {
-            return res.sendFile(filePath);
+            return ResponseUtil.sendFileResponse(res, filePath);
         }
     }
     else {
@@ -55,10 +57,10 @@ async function sendStaticFile(req, res, next) {
         const htmlFilePathWithIndex = path.resolve(publicFolderPath, refinedPath, "index.html");
         
         if (fs.existsSync(htmlFilePath)) {
-            return res.sendFile(htmlFilePath);
+            return ResponseUtil.sendFileResponse(res, htmlFilePath);
         }
         else if (fs.existsSync(htmlFilePathWithIndex)) {
-            return res.sendFile(htmlFilePathWithIndex);
+            return ResponseUtil.sendFileResponse(res, htmlFilePathWithIndex);
         }
         else {
             // Continue to send 404 error page

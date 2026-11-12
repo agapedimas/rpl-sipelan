@@ -1,6 +1,8 @@
 const Account = require("../models/account.model");
 const AccountService = require("../services/account.service");
 
+const ResponseUtil = require("../utils/response.util");
+
 /**
  * Check for requester role to view pages
  * @param { typeof Account.prototype.role } allowedRole 
@@ -32,7 +34,7 @@ async function accessAs(allowedRoles, req, res, next) {
     if (allowedRoles.includes(accountRole))
         return next();
     else
-        return res.status(403).send({message: "You do not have required access to perform this action."});
+        return ResponseUtil.sendApiResponse(res, 403, "You do not have required access to perform this action.");
 }
 
 

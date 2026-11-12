@@ -1,21 +1,23 @@
+const ResponseUtil = require("../utils/response.util");
+
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+
 /** @type {import("express").RequestHandler} */
 async function requestOtp(req, res, next) {
-    const phone = req.body.phone;
-    const account = await AccountService.findByPhone(phone);
-    const isSuccess = await AuthenticationService.requestOtp(account.phone);
+    const accountId = req.session.accountId;
+    const isSuccess = await AuthenticationService.requestOtp(accountId);
 
     if (isSuccess)
-        return res.send({ accountId: account.id });
+        return ResponseUtil.sendApiResponse(res, 200, null, { accountId: accountId});
     else
-        return res.status(500).send({ message: "Something went wrong." });
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
 /** @type {import("express").RequestHandler} */
 async function verifyOtp(req, res, next) {
-    const accountId = req.body.accountId;
+    const accountId = req.session.accountId;
     const otpCode = req.body.otpCode;
 
     const isValid = await AuthenticationService.verifyOtp(accountId, otpCode);
@@ -23,21 +25,21 @@ async function verifyOtp(req, res, next) {
         return next();
     }
     else {
-        return res.status(401).send({ message: "Invalid OTP code. "});
+        return ResponseUtil.sendApiResponse(res, 401, "Invalid OTP code.");
     }
 }
 
 /** @type {import("express").RequestHandler} */
 async function signIn(req, res, next) {
+    const accountId = req.session.accountId;
     const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
     if (authenticationId) {
         // Store authentication id and account id to encrypted cookies
         req.session.authenticationId = authenticationId;
-        req.session.accountId = accountId;
-        return res.status(201).send({ authenticationId: authenticationId });
+        return ResponseUtil.sendApiResponse(res, 201, null, { authenticationId: authenticationId });
     }
     else {
-        return res.status(400).send({ message: "Something went wrong. "});
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
     }
 }
 

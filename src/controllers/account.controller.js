@@ -1,3 +1,4 @@
+const ResponseUtil = require("../utils/response.util");
 const ValidatorUtil = require("../utils/validator.util");
 
 const AccountService = require("../services/account.service");
@@ -8,25 +9,25 @@ async function add(req, res) {
 
     // Make sure required fields are providen
     if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role]) === false) {
-        return res.status(422).send({message: "Phone, Name, DistrictId, and Role are required."});
+        return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");
     }
 
     switch (ValidatorUtil.checkPhoneNumberValidity(phone)) {
         case "TOO_LONG": 
-            return res.status(400).send({message: "Phone number is too long."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too long.");
         case "TOO_SHORT": 
-            return res.status(400).send({message: "Phone number is too short."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too short.");
         case "INVALID": 
-            return res.status(400).send({message: "Phone number is invalid."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is invalid.");
     }
 
     switch (ValidatorUtil.checkEntityNameValidity(name)) {
         case "TOO_LONG": 
-            return res.status(400).send({message: "Name is too long."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is too long.");
         case "TOO_SHORT": 
-            return res.status(400).send({message: "Name is too short."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is too short.");
         case "INVALID": 
-            return res.status(400).send({message: "Name is invalid."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is invalid.");
     }
 
     // TO DO: 
@@ -34,22 +35,22 @@ async function add(req, res) {
     // DistrictService.doesDistrictExist(districtId);
 
     if (AccountService.doesRoleExist(role) === false)
-        return res.status(400).send({message: "Role " + role + "does not exist."});
+        return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");
 
     // NIK is optional. If providen, then check for its validity.
     if (nik !== null) {
         switch (ValidatorUtil.checkNikValidity(nik)) {
             case "INVALID": 
-                return res.status(400).send({message: "NIK is should be a number and 16 digits."});
+                return ResponseUtil.sendApiResponse(res, 400, "NIK is should be a number and 16 digits.");
         }
     }
 
     const isSuccess = await AccountService.add(phone, name, districtId, role, nik);
 
     if (isSuccess)
-        return res.status(201).send();
+        return ResponseUtil.sendApiResponse(res, 201);
     else
-        return res.status(500).send({message: "Something went wrong."});
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
 /** @type {import("express").RequestHandler} */
@@ -65,12 +66,12 @@ async function getPicture(req, res) {
         res.header("Cache-Control", "private, max-age=86400");
         res.header("Content-Type", "image/webp");
     
-        return res.send(pictureBuffer);
+        return ResponseUtil.sendBufferResponse(res, pictureBuffer);
     }
     // Send placeholder profile picture if not available
     else {
         const defaultProfilePictureFilePath = path.resolve(__dirname, "../assets/profilePicture.webp");
-        return res.sendFile(defaultProfilePictureFilePath);
+        return ResponseUtil.sendFileResponse(res, defaultProfilePictureFilePath);
     }
 }
 
@@ -83,16 +84,16 @@ async function setPicture(req, res) {
         // Make sure the file size is not beyond limit,
         // which is 3 MB at maximum
         if (pictureBuffer.length > 3_000_000)
-            return res.status(400).send({ message: "File size should not exceed 3 MB." });
+            return ResponseUtil.sendApiResponse(res, 400, "File size should not exceed 3 MB.");
         
         const isSuccess = await AccountService.setPicture(accountId, pictureBuffer);
         if (isSuccess)
-            return res.status(201).send();
+            return ResponseUtil.sendApiResponse(res, 201);
         else
-            return res.status(500).send({ message: "Something went wrong." });
+            return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
     }
     else {
-        return res.status(400).send({ message: "No files are providen." });
+        return ResponseUtil.sendApiResponse(res, 400, "No files are providen.");
     }
 }
 
@@ -100,7 +101,7 @@ async function setPicture(req, res) {
 async function removePicture(req, res) {
     const accountId = req.session.accountId;
     await AccountService.removePicture(accountId);
-    return res.status(200).send();
+    return ResponseUtil.sendApiResponse(res, 200);
 }
 
 

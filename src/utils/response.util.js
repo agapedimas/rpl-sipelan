@@ -17,7 +17,26 @@ function sendApiResponse(res, httpCode = 200, message, data) {
 
     return res.status(httpCode).send({ message: message, data: data });
 }
+/**
+ * Method to standardize file responses
+ * @param { import("express").Response } res 
+ * @param { string } filePath Absolute file path. Use `path.resolve(__dirname, "...")` to get relative file path.
+ */
+function sendFileResponse(res, filePath) {
+    return res.sendFile(filePath);
+}
 
-export {
-    sendApiResponse
+/**
+ * Method to standardize buffer responses
+ * @param { import("express").Response } res 
+ * @param { Buffer } buffer 
+ */
+function sendBufferResponse(res, buffer) {
+    return res.send(buffer);
+}
+
+module.exports = {
+    sendApiResponse,
+    sendFileResponse,
+    sendBufferResponse
 }
