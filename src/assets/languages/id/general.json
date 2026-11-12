@@ -5,6 +5,8 @@
     "cancel": "Batal",
     "ok": "Oke",
     "edit": "Edit",
+    "next": "Berikutnya",
+    "previous": "Sebelumnya",
 
     "errors": {
         "page_not_found": {

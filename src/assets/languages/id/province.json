@@ -1,0 +1,11 @@
+{
+    "title": "Provinsi",
+    "name": {
+        "title": "Nama",
+        "errors": {
+            "INVALID": "Nama hanya boleh berisi huruf.",
+            "TOO_SHORT": "Nama minimal 3 karakter.",
+            "TOO_LONG": "Nama maksimal 255 karakter."
+        }
+    }
+}
