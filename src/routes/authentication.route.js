@@ -1,6 +1,6 @@
 const Routes = require("../routes");
 
-const PageController = require("../controllers/page.controller");
+const PageController = require("../controllers/page.http.controller");
 
 const AuthenticationController = require("../controllers/authentication.controller");
 const AuthenticationMiddleware = require("../middlewares/authentication.middleware");

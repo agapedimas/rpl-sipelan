@@ -22,10 +22,10 @@ async function initialize() {
     initializeLayouts();
 
     // Read every routes components
-    require("./routes/language.route");
+    require("./routes/language.http.route");
     require("./routes/authentication.route");
     require("./routes/account.route");
-    require("./routes/static.route");
+    require("./routes/static.http.route");
 
 	const appPort = Configurations.get("app").port;
 

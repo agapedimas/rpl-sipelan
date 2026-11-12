@@ -1,7 +1,7 @@
 const Routes = require("../routes");
 
-const PageController = require("../controllers/page.controller");
-const StaticController = require("../controllers/static.controller");
+const PageController = require("../controllers/page.http.controller");
+const StaticController = require("../controllers/static.http.controller");
 
 Routes.getMapping("*", 
     StaticController.map, 
