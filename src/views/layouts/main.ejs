@@ -5,7 +5,7 @@
         <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport" />
         <link rel="stylesheet" type="text/css" href="<%= app.host.assets %>/ui/v3/style.css" />
 
-        <%- include("../partials/" + pageType + "/head") %>
+        <%- include("./partials/" + pageType + "/head") %>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="<%= app.host.assets %>/ui/v3/head.js"></script>
@@ -14,6 +14,6 @@
         <script src="<%= app.host.assets %>/ui/v3/events.js"></script> 
     </head>
     <body>
-        <%- include("../partials/" + pageType + "/body") %>
+        <%- include("./partials/" + pageType + "/body") %>
     </body>
 </html>
