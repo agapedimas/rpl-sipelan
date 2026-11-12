@@ -10,7 +10,7 @@ async function requestOtp(req, res, next) {
     const isSuccess = await AuthenticationService.requestOtp(accountId);
 
     if (isSuccess)
-        return ResponseUtil.sendApiResponse(res, 200, null, { accountId: accountId});
+        return ResponseUtil.sendApiResponse(res, 200, null, { redirectUrl: "/signin/verify" });
     else
         return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }

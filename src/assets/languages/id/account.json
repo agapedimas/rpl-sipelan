@@ -30,6 +30,5 @@
         }
     },
     "role": "Peran",
-    "districtId": "Kecamatan",
-    "isActive": "Status Aktif"
+    "domicile": "Domisili"
 }

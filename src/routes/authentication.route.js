@@ -30,5 +30,9 @@ Routes.getMapping("/signin/verify",
     AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
     PageController.sendRenderedPage({}, "signin/verify", "auth"));
 
+Routes.getMapping("/signup", 
+    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
+    PageController.sendRenderedPage({}, "signup", "auth"));
+
 Routes.getMapping("/signout", 
     AuthenticationController.signOut);

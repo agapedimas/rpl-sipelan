@@ -9,8 +9,8 @@ async function checkAccountExistenceForOtp(req, res, next) {
     const account = await AccountService.findByPhone(phone);
 
     if (account == null) {
-        // signup
-        return ResponseUtil.sendApiResponse(res, 200, "");
+        // If account is not registered yet, then ask the user to sign up
+        return ResponseUtil.sendApiResponse(res, 200, null, { redirectUrl: "/signup" });
     }
     else {
         // Save account id to user's session and continue to request OTP

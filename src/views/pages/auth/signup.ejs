@@ -6,39 +6,30 @@
     data.page_thumbnail = null;
 %>
 
-<div class="panel">
-    <img src="<%= app.path.logo_wordmark %>" ad-goto="/"/>
-    <div class="title"><%= language('auth.signup.title') %></div>
-    <div class="subtitle"><%= language('auth.signup.description') %></div>
-    <div class="inputs">
-        <input type="email" id="emailInput" ad-text="<%= language('account.email.title') %>"/>
-        <span class="error hidden" id="emailError"></span>
-        <input type="text" ad-type="name" id="fullnameInput" ad-text="<%= language('account.fullname.title') %>"/>
-        <span class="error hidden" id="fullnameError"></span>
-        <input type="password" id="passwordInput" ad-text="<%= language('account.password.title') %>"/>
-        <span class="error hidden" id="passwordError"></span>
-        <input type="password" ad-type="confirmpassword" id="passwordConfirmInput" ad-text="<%= language('account.passwordconfirm.title') %>"/>
-        <span class="error hidden" id="passwordConfirmError"></span>
-    </div>
-    <div class="actions">
-        <span class="error hidden" id="generalError"></span>
-        <button class="accent" id="signUpButton" disabled>
-            <div class="progressring"></div>
-            <span><%= language('auth.signup.title') %></span>
-        </button>
-        <div class="suggestion">
-            <%= language('auth.signin.offer') %>
-            <a class="link" ad-goto="/signin"><%= language('auth.signin.title') %></a>
-        </div>
-    </div>
+<div class="title"><%= language('auth.signup.title') %></div>
+<div class="subtitle"><%= language('auth.signup.description') %></div>
+<div class="inputs">
+    <input type="text" ad-type="name" id="nameInput" ad-text="<%= language('account.name.title') %>"/>
+    <span class="error hidden" id="nameError"></span>
+    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
+    <div class="separator"><%= language('domicile.title') %></div>
+    <select id="provinceSelect" ad-text="<%= language('domicile.province.title') %>"></select>
+    <select id="citySelect" ad-text="<%= language('domicile.city.title') %>"></select>
+    <select id="districtSelect" ad-text="<%= language('domicile.district.title') %>"></select>
+</div>
+<div class="actions">
+    <span class="error hidden" id="generalError"></span>
+    <button class="accent" id="signUpButton" disabled>
+        <div class="progressring"></div>
+        <span><%= language('auth.signup.title') %></span>
+    </button>
 </div>
 
 <script>
+    provinceSelect.options.add(new Option("Provinsi 1", "1"));
     const signUpForm = new Form([
-            new Field(emailInput, emailError),
-            new Field(fullnameInput, fullnameError),
-            new Field(passwordInput, passwordError),
-            new Field(passwordConfirmInput, passwordConfirmError)
+            new Field(nameInput, nameError),
+            new Field(phoneInput)
         ], signUpButton);
 
     signUpButton.onaction = function() {

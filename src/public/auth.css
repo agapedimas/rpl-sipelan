@@ -48,6 +48,25 @@
         display: grid;
         gap: 7px;
     }
+        .panel .inputs .separator {
+            display: grid;
+            margin: 1em 0 0;
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 0.025rem;
+            color: var(--foreground-description);
+        }
+        .panel .inputs label:has(select) {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: max-content auto;
+        }
+            .panel .inputs label select {
+                    text-align: end;
+                    text-align-last: end;
+                    padding-top: 0.8em;
+                    padding-bottom: 0.8em;
+                }
         .panel .inputs .error {
             display: grid;
             grid-auto-flow: column;

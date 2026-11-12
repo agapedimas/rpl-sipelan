@@ -1,5 +1,6 @@
 {
-    "title": "Kecamatan",
+    "title": "Domisili",
+
     "name": {
         "title": "Nama",
         "errors": {
@@ -8,5 +9,20 @@
             "TOO_LONG": "Nama maksimal 255 karakter."
         }
     },
-    "postalCode": "Kode Pos"
+    
+    "district": {
+        "title": "Kecamatan"
+    },
+
+    "city": {
+        "title": "Kota"
+    },
+
+    "province": {
+        "title": "Provinsi"
+    },
+
+    "postalCode": {
+        "title": "Kode Pos"
+    }
 }
