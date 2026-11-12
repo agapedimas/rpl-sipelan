@@ -1,5 +1,7 @@
 const Routes = require("../routes");
 
+const PageController = require("../controllers/page.controller");
+
 const AuthenticationController = require("../controllers/authentication.controller");
 const AuthenticationMiddleware = require("../middlewares/authentication.middleware");
 
@@ -14,6 +16,6 @@ Routes.postMapping("/api/signin",
 
 Routes.getMapping("/signin", 
     AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
-    Routes.sendRenderedPage({}, "signin", "auth"));
+    PageController.sendRenderedPage({}, "signin", "auth"));
 Routes.getMapping("/signout", 
     AuthenticationController.signOut);
