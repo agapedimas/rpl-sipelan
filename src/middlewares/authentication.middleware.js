@@ -1,6 +1,7 @@
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+const FormatterUtil = require("../utils/formatter.util");
 const ResponseUtil = require("../utils/response.util");
 
 /** @type {import("express").RequestHandler} */
@@ -13,14 +14,18 @@ async function checkAccountExistenceForOtp(req, res, next) {
         return ResponseUtil.sendApiResponse(res, 200, null, { redirectUrl: "/signup?phone=" + encodeURIComponent(phone) });
     }
     else {
-        // Save account id to user's session and continue to request OTP
-        req.session.accountId = account.id;
+        // Assign OTP info to session and continue to request OTP
+        req.session.otpInfo = { 
+            accountId: account.id,
+            accountPhone: FormatterUtil.censorPhoneNumber(account.phone),
+            accountName: account.name
+        };
         return next();
     }
 }
 
 /** @type {import("express").RequestHandler} */
-async function doesNeedAuthentication(req, res, next) {
+async function checkIfAuthenticationNeeded(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
 
@@ -33,14 +38,15 @@ async function doesNeedAuthentication(req, res, next) {
     }
 }
 /** @type {import("express").RequestHandler} */
-async function doesNeedAuthenticationAndRedirect(req, res, next) {
-    const accountId = req.session.accountId;
+async function checkIfAuthenticationNeededAndRedirect(req, res, next) {
     const authenticationId = req.session.authenticationId;
 
     // Check if user already signed in
     if (await AuthenticationService.isSignedIn(authenticationId) === true) {
         // Redirect to their dashboard page
-        const accountRole = AccountService.getRole(accountId);
+        const accountId = req.session.accountId;
+        const accountRole = await AccountService.getRole(accountId);
+
         switch(accountRole) {
             case "admin":
                 return res.redirect("/admin");
@@ -61,8 +67,23 @@ async function doesNeedAuthenticationAndRedirect(req, res, next) {
     }
 } 
 
+/** @type {import("express").RequestHandler} */
+async function checkIfOtpPending(req, res, next) {
+    const otpInfo = req.session.otpInfo;
+    if (otpInfo == null) {
+        // If there are no otp pending, redirect to sign in page.
+        return res.redirect("/signin");
+    }
+    else {
+        // Assign data to page renderer
+        res.locals = otpInfo;
+        return next();
+    }
+}
+
 module.exports = {
     checkAccountExistenceForOtp,
-    doesNeedAuthentication,
-    doesNeedAuthenticationAndRedirect
+    checkIfOtpPending,
+    checkIfAuthenticationNeeded,
+    checkIfAuthenticationNeededAndRedirect
 }

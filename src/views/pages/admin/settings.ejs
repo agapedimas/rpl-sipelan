@@ -301,7 +301,7 @@
                     Components.Notification.Send({ 
                         Id: "avatar_failed", 
                         Title: "<%= language('settings.profile_picture.change.errors.title') %>", 
-                        Message: result.responseJSON?.error || "<%= language('settings.profile_picture.change.errors.title') %>".format(result.status), 
+                        Message: result.responseJSON?.message || "<%= language('settings.profile_picture.change.errors.title') %>".format(result.status), 
                         Icon: "\ufe64", 
                         Buttons: [{Text: "<%= language('general.ok') %>"}] 
                     });

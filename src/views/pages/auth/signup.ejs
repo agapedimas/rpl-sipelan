@@ -9,7 +9,8 @@
 <div class="title"><%= language('auth.signup.title') %></div>
 <div class="subtitle"><%= language('auth.signup.description') %></div>
 <div class="inputs">
-    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>" disabled/>
+    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
+    <span class="error hidden" id="phoneError"></span>
     <input type="text" ad-type="name" id="nameInput" ad-text="<%= language('account.name.title') %>"/>
     <span class="error hidden" id="nameError"></span>
     <div class="separator"><%= language('domicile.title') %></div>
@@ -41,6 +42,7 @@
     }
     
     const signUpForm = new Form([
+            new Field(phoneInput, phoneError),
             new Field(nameInput, nameError),
             new Field(provinceSelect),
             new Field(citySelect),
@@ -63,7 +65,7 @@
                     resolve(true);
                 },
                 error: function(result) {
-                    generalError.innerText = result.responseJSON?.error || "<%= language('auth.errors.something_went_wrong') %>";
+                    generalError.innerText = result.responseJSON?.message || "<%= language('auth.errors.something_went_wrong') %>";
                     generalError.classList.remove("hidden");
                     resolve(false);
                 }

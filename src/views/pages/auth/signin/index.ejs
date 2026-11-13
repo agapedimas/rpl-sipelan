@@ -44,7 +44,7 @@
                     }
                 },
                 error: function(result) {
-                    generalError.innerText = result.responseJSON?.error || "<%= language('auth.errors.something_went_wrong') %>";
+                    generalError.innerText = result.responseJSON?.message || "<%= language('auth.errors.something_went_wrong') %>";
                     generalError.classList.remove("hidden");
                     resolve(false);
                 }
