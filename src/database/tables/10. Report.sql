@@ -28,9 +28,9 @@ COLLATE=utf8mb4_bin;
 CREATE OR REPLACE VIEW ReportView AS
 SELECT 
     r.*,
-    `districtId`
+    districtId
 FROM 
-    Report r LEFT JOIN Partofreport p
-        ON r.id = p.id
-    LEFT JOIN submission s
-        ON p.`submissionId` = s.`submissionId`
+    Report r LEFT JOIN PartOfReport p
+        ON r.id = p.reportId
+    LEFT JOIN Submission s
+        ON p.submissionId = s.id;
