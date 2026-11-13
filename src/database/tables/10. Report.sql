@@ -24,3 +24,13 @@ CREATE TABLE IF NOT EXISTS Report (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_bin;
+
+CREATE OR REPLACE VIEW ReportView AS
+SELECT 
+    r.*,
+    `districtId`
+FROM 
+    Report r LEFT JOIN Partofreport p
+        ON r.id = p.id
+    LEFT JOIN submission s
+        ON p.`submissionId` = s.`submissionId`
