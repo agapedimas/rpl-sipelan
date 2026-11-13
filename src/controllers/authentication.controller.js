@@ -36,11 +36,12 @@ async function cancelOtp(req, res, next) {
 
 /** @type {import("express").RequestHandler} */
 async function signIn(req, res, next) {
-    const accountId = req.session.accountId;
+    const accountId = req.session.otpInfo.accountId;
     const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
     if (authenticationId) {
         // Store authentication id and account id to encrypted cookies
         req.session.authenticationId = authenticationId;
+        req.session.accountId = accountId;
         // Delete otp info
         delete req.session.otpInfo;
         return ResponseUtil.sendApiResponse(res, 200, null);
@@ -58,8 +59,9 @@ async function signUpAsCitizen(req, res, next) {
 
 /** @type {import("express").RequestHandler} */
 async function signOut(req, res, next) {
-    if (req.session.authenticationId != null) {
-        await Authentications.remove(req.session.authenticationId);
+    const authenticationId = req.session.authenticationId;
+    if (authenticationId != null) {
+        await AuthenticationService.signOut(authenticationId);
         delete req.session.authenticationId;
         delete req.session.accountId;
     }
