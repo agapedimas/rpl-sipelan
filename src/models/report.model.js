@@ -1,4 +1,6 @@
-class Report {
+const Model = require("./model");
+
+class Report extends Model {
     /** @type {number} */
     #id;
     /** @type {boolean} */
@@ -24,6 +26,7 @@ class Report {
      * @param {number} districtId
      */
     constructor(id, isArchived, status, description, time, disasterTypeId, districtId) {
+        super();
         this.#id = id;
         this.#isArchived = isArchived;
         this.#status = status;

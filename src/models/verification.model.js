@@ -1,4 +1,6 @@
-class Verification {
+const Model = require("./model");
+
+class Verification extends Model {
     /** @type {number} */
     #id;
     /** @type {"verified" | "rejected"} */
@@ -21,6 +23,7 @@ class Verification {
      * @param {number} verifierId
      */
     constructor(id, status, time, reason, submissionId, verifierId) {
+        super();
         this.#id = id;
         this.#status = status;
         this.#time = time;

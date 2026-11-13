@@ -1,4 +1,6 @@
-class Authentication {
+const Model = require("./model");
+
+class Authentication extends Model {
     /** @type {number} */
     #id;
     /** @type {number} */
@@ -15,6 +17,7 @@ class Authentication {
      * @param {number} time Unix timestamp in milliseconds
      */
     constructor(id, accountId, ipAddress, time) {
+        super();
         this.#id = id;
         this.#accountId = accountId;
         this.#ipAddress = ipAddress;

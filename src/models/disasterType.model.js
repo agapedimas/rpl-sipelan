@@ -1,4 +1,6 @@
-class DisasterType {
+const Model = require("./model");
+
+class DisasterType extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -12,6 +14,7 @@ class DisasterType {
      * @param {boolean} isActive
      */
     constructor(id, name, isActive) {
+        super();
         this.#id = id;
         this.#name = name;
         this.#isActive = isActive;

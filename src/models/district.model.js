@@ -1,4 +1,6 @@
-class District {
+const Model = require("./model");
+
+class District extends Model {
     /** @type {number} */
     #id;
     /** @type {number} */
@@ -15,6 +17,7 @@ class District {
      * @param {string} postalCode
      */
     constructor(id, cityId, name, postalCode) {
+        super();
         this.#id = id;
         this.#cityId = cityId;
         this.#name = name;

@@ -90,7 +90,7 @@ function doQuery(query, values = []) {
             }
 
             let rows = null;
-            if (results.constructor.name === "RowPacket") {
+            if (results.constructor.name === "Array") {
                 rows = results || [];
             }
 

@@ -1,4 +1,6 @@
-class Account {
+const Model = require("./model");
+
+class Account extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -27,6 +29,7 @@ class Account {
      * @param {boolean} isActive
      */
     constructor(id, name, nik, picture, phone, role, districtId, isActive) {
+        super();
         this.#id = id;
         this.#name = name;
         this.#nik = nik;

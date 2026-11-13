@@ -1,4 +1,6 @@
-class Province {
+const Model = require("./model");
+
+class Province extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -9,6 +11,7 @@ class Province {
      * @param {string} name
      */
     constructor(id, name) {
+        super();
         this.#id = id;
         this.#name = name;
     }

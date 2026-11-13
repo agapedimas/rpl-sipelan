@@ -1,4 +1,6 @@
-class Submission {
+const Model = require("./model");
+
+class Submission extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -36,6 +38,7 @@ class Submission {
         citizenId,
         disasterTypeId
     ) {
+        super();
         this.#id = id;
         this.#description = description;
         this.#time = time;

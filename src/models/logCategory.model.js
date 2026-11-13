@@ -1,4 +1,6 @@
-class LogCategory {
+const Model = require("./model");
+
+class LogCategory extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -15,6 +17,7 @@ class LogCategory {
      * @param {string | null} unit
      */
     constructor(id, name, type, unit) {
+        super();
         this.#id = id;
         this.#name = name;
         this.#type = type;

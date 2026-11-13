@@ -1,4 +1,6 @@
-class Log {
+const Model = require("./model");
+
+class Log extends Model {
     /** @type {number} */
     #id;
     /** @type {string} */
@@ -32,6 +34,7 @@ class Log {
         logCategoryId,
         reportId
     ) {
+        super();
         this.#id = id;
         this.#value = value;
         this.#time = time;

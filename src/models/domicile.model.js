@@ -1,8 +1,9 @@
 const District = require("./district.model");
 const City = require("./city.model");
 const Province = require("./province.model");
+const Model = require("./model");
 
-class Domicile {
+class Domicile extends Model {
     /** @type {District} */
     #district;
     /** @type {City} */
@@ -16,6 +17,7 @@ class Domicile {
      * @param {Province} province
      */
     constructor(district, city, province) {
+        super();
         this.#district = district;
         this.#city = city;
         this.#province = province;

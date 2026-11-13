@@ -1,6 +1,7 @@
 const Account = require("./account.model");
+const Model = require("./model");
 
-class OTP {
+class OTP extends Model {
     /** @type { number } */
     #code;
     /** @type { typeof Account.prototype.id } */
@@ -15,6 +16,7 @@ class OTP {
      * @param { string } expireAt UNIX timestamp
      */
     constructor(code, accountId, expireAt) {
+        super();
         this.#code = code;
         this.#accountId = accountId;
         // Default expiration time is 5 minutes 

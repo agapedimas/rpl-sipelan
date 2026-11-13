@@ -1,4 +1,6 @@
-class City {
+const Model = require("./model");
+
+class City extends Model {
     /** @type {number} */
     #id;
     /** @type {number} */
@@ -12,6 +14,7 @@ class City {
      * @param {string} name
      */
     constructor(id, provinceId, name) {
+        super();
         this.#id = id;
         this.#provinceId = provinceId;
         this.#name = name;
