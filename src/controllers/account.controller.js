@@ -2,11 +2,12 @@ const ResponseUtil = require("../utils/response.util");
 const ValidatorUtil = require("../utils/validator.util");
 
 const AccountService = require("../services/account.service");
+const DistrictService = require("../services/district.service");
 
 /** @type {import("express").RequestHandler} */
 async function add(req, res) {
     let { phone, name, districtId, role, nik } = req.body;
-
+    
     // Make sure required fields are providen
     if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role]) === false) {
         return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");
@@ -30,9 +31,8 @@ async function add(req, res) {
             return ResponseUtil.sendApiResponse(res, 400, "Name is invalid.");
     }
 
-    // TO DO: 
-    // Check if districtId does exist
-    // DistrictService.doesDistrictExist(districtId);
+    if (DistrictService.doesDistrictExist(districtId) == false)
+        return ResponseUtil.sendApiResponse(res, 400, "District with id '" + districtId + "' does not exist.");
 
     if (AccountService.doesRoleExist(role) === false)
         return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");

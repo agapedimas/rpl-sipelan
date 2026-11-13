@@ -7,7 +7,7 @@ const AuthenticationRepository = require("../repositories/authentication.reposit
 const OtpService = require("../services/otp.service");
 
 /**
- * @param { typeof Account.prototype.id } id
+ * @param { typeof Account.prototype.id } accountId
  * @returns { Promise<boolean> }
  */
 async function requestOtp(accountId) {
