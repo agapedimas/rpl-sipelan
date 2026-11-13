@@ -43,7 +43,7 @@ class OTP extends Model {
 
     get isValid() {
         const isExpired = Date.now() - this.#expireAt > 0;
-        return this.#isUsed === true || isExpired === true;
+        return this.#isUsed === false && isExpired === false;
     }
 }
 

@@ -1,0 +1,52 @@
+<% 
+    data.page_title = language('auth.signin.verify');
+    data.page_name = language('auth.signin.verify');
+    data.page_description = null;
+    data.page_keywords = null;
+    data.page_thumbnail = null;
+%>
+
+<div class="title"><%= language('auth.verify.title').format(data.accountName) %></div>
+<div class="subtitle"><%= language('auth.verify.description').format(data.accountPhone) %></div>
+<div class="inputs">
+    <input type="text" id="otpInput" ad-type="otp" ad-text="<%= language('auth.otpCode.title') %>"/>
+</div>
+<div class="actions">
+    <span class="error hidden" id="generalError"></span>
+    <button class="accent" id="verifyButton" disabled>
+        <div class="progressring"></div>
+        <span><%= language('general.verify') %></span>
+    </button>
+    <div class="suggestion">
+        <%= language('auth.change_phone_suggestion') %>
+        <a class="link" ad-goto="/signin/verify/change"><%= language('general.change') %></a>
+    </div>
+</div>
+
+<script>
+    const signUpForm = new Form([
+            new Field(otpInput),
+        ], verifyButton);
+
+    verifyButton.onaction = function() {
+        return new Promise(function(resolve) {
+            generalError.classList.add("hidden");
+            $.ajax({
+                url: "/api/verifyOtp",
+                type: "POST",
+                data: { 
+                    otpCode: otpInput.value
+                },
+                success: function(response) {
+                    location.reload();
+                    resolve(true);
+                },
+                error: function(result) {
+                    generalError.innerText = result.responseJSON?.message || "<%= language('auth.errors.something_went_wrong') %>";
+                    generalError.classList.remove("hidden");
+                    resolve(false);
+                }
+            });
+        });
+    }
+</script>

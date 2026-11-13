@@ -21,6 +21,9 @@ async function requestOtp(accountId) {
  * @param { boolean }
  */
 function verifyOtp(accountId, otpCode) {
+    // Convert data type
+    accountId = Number(accountId);
+    otpCode = Number(otpCode);
     const isValid = OtpService.verifyOtp(accountId, otpCode);
     return isValid;
 }

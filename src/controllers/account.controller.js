@@ -8,7 +8,6 @@ const DistrictService = require("../services/district.service");
 async function add(req, res) {
     let { phone, name, districtId, role, nik } = req.body;
     
-    console.log(req.body)
     // Make sure required fields are providen
     if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role])) {
         return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");

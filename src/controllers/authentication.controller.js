@@ -6,7 +6,7 @@ const AuthenticationService = require("../services/authentication.service");
 
 /** @type {import("express").RequestHandler} */
 async function requestOtp(req, res, next) {
-    const accountId = req.session.accountId;
+    const accountId = req.session.otpInfo?.accountId;
     const isSuccess = await AuthenticationService.requestOtp(accountId);
 
     if (isSuccess)
@@ -17,7 +17,7 @@ async function requestOtp(req, res, next) {
 
 /** @type {import("express").RequestHandler} */
 async function verifyOtp(req, res, next) {
-    const accountId = req.session.accountId;
+    const accountId = req.session.otpInfo?.accountId;
     const otpCode = req.body.otpCode;
 
     const isValid = await AuthenticationService.verifyOtp(accountId, otpCode);
@@ -29,6 +29,11 @@ async function verifyOtp(req, res, next) {
     }
 }
 
+async function cancelOtp(req, res, next) {
+    delete req.session.otpInfo;
+    return res.redirect("/signin");
+}
+
 /** @type {import("express").RequestHandler} */
 async function signIn(req, res, next) {
     const accountId = req.session.accountId;
@@ -36,7 +41,9 @@ async function signIn(req, res, next) {
     if (authenticationId) {
         // Store authentication id and account id to encrypted cookies
         req.session.authenticationId = authenticationId;
-        return ResponseUtil.sendApiResponse(res, 201, null, { authenticationId: authenticationId });
+        // Delete otp info
+        delete req.session.otpInfo;
+        return ResponseUtil.sendApiResponse(res, 200, null);
     }
     else {
         return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
@@ -61,6 +68,6 @@ async function signOut(req, res, next) {
 }
 
 module.exports = {
-    requestOtp, verifyOtp,
+    requestOtp, verifyOtp, cancelOtp,
     signIn, signUpAsCitizen, signOut
 }

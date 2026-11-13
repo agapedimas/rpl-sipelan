@@ -11,15 +11,13 @@ const AuthenticationMiddleware = require("../middlewares/authentication.middlewa
 
 // API
 Routes.postMapping("/api/requestOtp", 
-    AuthenticationMiddleware.doesNeedAuthentication, 
+    AuthenticationMiddleware.checkIfAuthenticationNeeded, 
     AuthenticationMiddleware.checkAccountExistenceForOtp,
     AuthenticationController.requestOtp);
 
 Routes.postMapping("/api/verifyOtp", 
-    AuthenticationMiddleware.doesNeedAuthentication, 
-    AuthenticationController.verifyOtp);
-
-Routes.postMapping("/api/signin",
+    AuthenticationMiddleware.checkIfAuthenticationNeeded, 
+    AuthenticationController.verifyOtp,
     AuthenticationController.signIn);
 
 Routes.postMapping("/api/signup",
@@ -29,16 +27,21 @@ Routes.postMapping("/api/signup",
 
 // Frontend
 Routes.getMapping("/signin", 
-    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
-    PageController.sendRenderedPage({}, "signin", "auth"));
+    AuthenticationMiddleware.checkIfAuthenticationNeededAndRedirect,
+    PageController.sendRenderedPage("signin", "auth"));
 
 Routes.getMapping("/signin/verify", 
-    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
-    PageController.sendRenderedPage({}, "signin/verify", "auth"));
+    AuthenticationMiddleware.checkIfAuthenticationNeededAndRedirect,
+    AuthenticationMiddleware.checkIfOtpPending,
+    PageController.sendRenderedPage("signin/verify", "auth"));
+
+Routes.getMapping("/signin/verify/change", 
+    AuthenticationMiddleware.checkIfAuthenticationNeededAndRedirect,
+    AuthenticationController.cancelOtp);
 
 Routes.getMapping("/signup", 
-    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
-    PageController.sendRenderedPage({}, "signup", "auth"));
+    AuthenticationMiddleware.checkIfAuthenticationNeededAndRedirect,
+    PageController.sendRenderedPage("signup", "auth"));
 
 Routes.getMapping("/signout", 
     AuthenticationController.signOut);
