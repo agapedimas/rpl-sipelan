@@ -123,6 +123,14 @@ async function getRole(accountId) {
     return role;
 }
 
+/**
+ * @param { typeof Account.prototype.id } accountId
+ * @returns { Promise<Account> }
+ */
+async function findByAccountId(accountId) {
+    const account = await AccountRepository.findByAccountId(accountId);
+    return account;
+}
 
 /**
  * @param { typeof Account.prototype.phone } phone
@@ -141,5 +149,5 @@ module.exports = {
     activate, deactivate,
     doesRoleExist,
     getRole,
-    findByPhone
+    findByAccountId, findByPhone
 }

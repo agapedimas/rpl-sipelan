@@ -22,7 +22,7 @@ async function findAll() {
 async function findAllByRole(role) {
     const queryResult = 
         await Database.doQuery(
-            "SELECT * FROM Account WHERE role = ?", 
+            "SELECT * FROM AccountView WHERE role = ?", 
             role
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
@@ -36,7 +36,7 @@ async function findAllByRole(role) {
 async function findByAccountId(accountId) {
     const queryResult = 
         await Database.doQuery(
-            "SELECT * FROM Account WHERE id = ? LIMIT 1", 
+            "SELECT * FROM AccountView WHERE id = ? LIMIT 1", 
             accountId
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
@@ -50,7 +50,7 @@ async function findByAccountId(accountId) {
 async function findByNik(nik) {
     const queryResult = 
         await Database.doQuery(
-            "SELECT * FROM Account WHERE nik = ? LIMIT 1", 
+            "SELECT * FROM AccountView WHERE nik = ? LIMIT 1", 
             nik
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
@@ -64,7 +64,7 @@ async function findByNik(nik) {
 async function findByPhone(phone) {
     const queryResult = 
         await Database.doQuery(
-            "SELECT * FROM Account WHERE phone = ? LIMIT 1", 
+            "SELECT * FROM AccountView WHERE phone = ? LIMIT 1", 
             phone
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
@@ -91,7 +91,7 @@ async function getPicture(accountId) {
 async function getRole(accountId) {
     const queryResult = 
         await Database.doQuery(
-            "SELECT role FROM Account WHERE id = ? LIMIT 1",
+            "SELECT role FROM AccountView WHERE id = ? LIMIT 1",
             accountId
         );
     return queryResult.rows?.at(0)?.role;

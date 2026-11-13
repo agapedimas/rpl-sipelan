@@ -54,9 +54,6 @@ async function checkIfAuthenticationNeededAndRedirect(req, res, next) {
                 return res.redirect("/officer");
             case "volunteer":
                 return res.redirect("/volunteer");
-            case "citizen":
-                return res.redirect("/citizen");
-            // If role is unknown, redirect to main page
             default:
                 return res.redirect("/");
         }

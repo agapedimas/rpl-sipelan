@@ -1,6 +1,7 @@
 const Account = require("../models/account.model");
 const AccountService = require("../services/account.service");
 
+const PageController = require("../controllers/page.http.controller");
 const ResponseUtil = require("../utils/response.util");
 
 /**
@@ -12,12 +13,16 @@ const ResponseUtil = require("../utils/response.util");
  */
 async function viewAs(allowedRole, req, res, next) {
     const accountId = req.session.accountId;
+
+    if (accountId == null)
+        return res.redirect("/signin?continue=" + decodeURIComponent(req.url));
+
     const accountRole = await AccountService.getRole(accountId);
 
     if (accountRole === allowedRole)
         return next();
     else
-        return res.redirect("/signin?continue=" + decodeURIComponent(req.url));
+        return PageController.sendErrorPage(403);
 }
 
 /**
@@ -29,6 +34,10 @@ async function viewAs(allowedRole, req, res, next) {
  */
 async function accessAs(allowedRoles, req, res, next) {
     const accountId = req.session.accountId;
+
+    if (accountId == null) 
+        return ResponseUtil.sendApiResponse(res, 403, "You do not have required access to perform this action.");
+
     const accountRole = await AccountService.getRole(accountId);
 
     if (allowedRoles.includes(accountRole))

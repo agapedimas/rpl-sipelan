@@ -28,6 +28,8 @@ async function initialize() {
     require("./routes/province.route");
     require("./routes/city.route");
     require("./routes/district.route");
+    require("./routes/report.dummy.route");
+    require("./routes/submission.dummy.route");
     require("./routes/static.http.route");
 
 	const appPort = Configurations.get("app").port;

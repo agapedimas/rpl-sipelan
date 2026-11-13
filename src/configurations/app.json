@@ -1,7 +1,8 @@
 {
     "name": "Sipelan",
-    "short_name": "Sipelan",
-    "admin_name": "Sipelan for Admin",
+    "name_for_volunteer": "Sipelan for Volunteer",
+    "name_for_officer": "Sipelan for Officer",
+    "name_for_admin": "Sipelan for Admin",
 
     "version": "1.0.0",
     

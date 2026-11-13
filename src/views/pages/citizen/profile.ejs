@@ -1,0 +1,254 @@
+<% 
+    data.page_title = language('profile.title');
+%>
+
+<style>
+    html:not([theme=dark]) .root .main {
+        background: var(--gray-6);
+    }
+    .list {
+        max-width: 800px;
+    }
+        .list .stack > span:last-child {
+            color: var(--foreground-description);
+        }
+        .list .stack > button:last-child {
+            padding: 0;
+        }
+    
+    .profile {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 8em auto;
+        margin: 0 0 2em;
+        align-items: center;
+        gap: 1em 1.5em;
+    }
+        .profile button {
+            margin-top: 0.25em;
+        }
+        .profilePictureContainer {
+            text-align: center;
+        }
+        .profilePictureContainer .profilePicture {
+            position: relative;
+            border-radius: 100%;
+            overflow: hidden;
+            max-width: 150px;
+            margin: auto;
+        }
+        .profilePictureContainer .profilePicture.loading {
+            pointer-events: none;
+        }
+            .profilePictureContainer#editProfilePictureGrid .profilePicture::before {
+                content: "\edfc";
+                position: absolute;
+                bottom: 0;
+                display: grid;
+                font-family: var(--font-icon);
+                font-size: 1.3em;
+                width: 100%;
+                height: 35px;
+                background: #00000080;
+                color: white;
+                align-items: center;
+                justify-content: center;
+                transition: 0.5s var(--key-animation) transform;
+                transform: translateY(100%);
+                z-index: 1;
+            }
+            .profilePictureContainer#editProfilePictureGrid .profilePicture:not(.loading):hover::before {
+                transform: translateY(0);
+            }
+            .profilePictureContainer .profilePicture img {
+                display: block;
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                transition: 0.1s filter;
+            }
+            .profilePictureContainer#editProfilePictureGrid .profilePicture:hover img {
+                filter: var(--filter-accent-plain-hover);
+            }
+            .profilePictureContainer#editProfilePictureGrid .profilePicture:active img {
+                filter: var(--filter-accent-plain-active);
+            }
+            .profilePictureContainer#editProfilePictureGrid .profilePicture.loading img {
+                filter: brightness(0.3);
+            }
+            .profilePictureContainer .profilePicture .progressring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 30px;
+                transform: translate(-50%, -50%);
+                display: none;
+                z-index: 1;
+            }
+            .profilePictureContainer .profilePicture.loading .progressring {
+                display: block;
+            }
+        .profile .details {
+            display: block;
+        }
+            .profile .details .name {    
+                font-size: 1.5em;
+                font-family: var(--font-semibold);
+            }
+            .profile .details .description {    
+                font-size: 1.5em;
+                font-family: var(--font-semibold);
+                color: var(--foreground-description);
+            }
+            .profile .details button {
+                margin: 1em 0 0;
+            }
+
+    @media screen and (max-width: 500px) {
+        .profile {
+            grid-auto-flow: row;
+            grid-auto-columns: auto;
+            justify-items: center;
+            text-align: center;
+            margin-top: var(--padding);
+        }
+    }
+</style>
+
+<div class="header">
+    <div class="title"><%= language('profile.title') %></div>
+    <div class="buttons">
+        <button id="editProfileButton"><%= language('general.edit') %></button>
+    </div>
+</div>
+
+<div class="content">
+    <div class="profile">
+        <div class="profilePictureContainer">
+            <div class="profilePicture" ad-tooltip="Ganti Foto Profil">
+                <div class="progressring"></div>
+                <img id="profilePictureImage" src="/pp/<%= data.account?.id || 'default' %>"/>
+            </div>
+        </div>
+        <div class="details">
+            <div class="name"><%= data.account?.name %></div>
+            <div class="description"><%= data.account?.email %></div>
+            <button id="signOutButton" class="critical plain"><%= language('auth.signout.title') %></button>
+        </div>
+    </div> 
+    <div class="list">
+        <div class="stack">
+            <span><%= language('account.phone.title') %></span>
+            <span><%= data.account?.phone %></span>
+        </div>
+        <div class="stack">
+            <span><%= language('account.nik.title') %></span>
+            <span><%= data.account?.nik ?? "-" %></span>
+        </div>
+        <div class="stack">
+            <span><%= language('domicile.title') %></span>
+            <span><%= data.account?.domicile %></span>
+        </div>
+    </div>
+</div>
+
+<div class="popover" id="editProfilePopover">
+    <div class="activity">
+        <div class="header cascaded">
+            <span class="title"><%= language('profile.edit.title') %></span>
+            <div class="buttons">
+                <button><%= language('general.cancel') %></button>
+                <button><%= language('general.save') %></button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="editProfilePictureGrid" class="profilePictureContainer">
+                <div class="profilePicture" ad-tooltip="Ganti Foto Profil">
+                    <div class="progressring"></div>
+                    <img id="profilePictureImage" src="/pp/<%= data.account?.id || 'default' %>"/>
+                </div>
+                <button class="plain"><%= language('general.change') %></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    editProfileButton.onclick = function() {
+        editProfilePopover.open(this);
+    }
+    editProfilePictureGrid.onclick = function() {
+        const fileInput = document.createElement("input");
+        fileInput.classList.add("hidden");
+        fileInput.type = "file";
+        fileInput.accept = ".png, .jpg, .jpeg, .webp";
+        fileInput.onchange = function() {
+            const files = Array.from(this.files);
+
+            if (files.length == 0)
+                return;
+
+            if (files[0].size > 3000000)
+                return Components.Notification.Send({ 
+                    Id: "avatar_failed", 
+                    Title: "<%= language('settings.profile_picture.change.errors.title') %>", 
+                    Message: "<%= language('settings.profile_picture.change.errors.TOO_BIG') %>", 
+                    Icon: "\ufe64", 
+                    Buttons: [{Text: "<%= language('general.ok') %>"}] 
+                });
+                
+            const form = new FormData();
+            form.append("file", files[0]);
+
+            profilePictureImage.parentNode.classList.add("loading");
+
+            $.ajax({
+                type: "POST",
+                url: "/pp/",
+                data: form,
+                contentType: false,
+                processData: false,
+                success: async function(response) {
+                    // Added t to make sure that image is refreshed
+                    const url = "/pp/<%= data.account?.id %>?t=" + Date.now();
+                    profilePictureImage.src = url;
+                    profilePictureImage.onload = function() {
+                        Components.Notification.Remove({ Id: "avatar_failed" });
+                        profilePictureImage.parentNode.classList.remove("loading");   
+                    };
+                },
+                error: function(result) {
+                    Components.Notification.Send({ 
+                        Id: "avatar_failed", 
+                        Title: "<%= language('settings.profile_picture.change.errors.title') %>", 
+                        Message: result.responseJSON?.message || "<%= language('settings.profile_picture.change.errors.title') %>".format(result.status), 
+                        Icon: "\ufe64", 
+                        Buttons: [{Text: "<%= language('general.ok') %>"}] 
+                    });
+                    profilePictureImage.parentNode.classList.remove("loading");    
+                }
+            });
+        }
+        this.parentNode.append(fileInput);
+        fileInput.click();
+    }
+
+    signOutButton.onclick = function() {
+        Components.ActionSheet.Open({
+            Title: "<%= language('auth.signout.confirmation.title') %>",
+            Description: "<%= language('auth.signout.confirmation.description') %>",
+            Actions: [
+                { 
+                    Title: "<%= language('auth.signout.title') %>", Type: "Options.Critical", 
+                    Action: function() {
+                        return new Promise(function() {
+                            location.href = "/signout";
+                        });
+                    }
+                },
+                { 
+                    Title: "<%= language('general.cancel') %>", Type: "Footer"
+                }
+            ]
+        });     
+    }
+</script>

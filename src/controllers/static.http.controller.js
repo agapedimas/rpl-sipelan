@@ -48,13 +48,16 @@ async function sendStaticFile(req, res, next) {
                 return ResponseUtil.sendBuffer(res, output);
             }
         }
-        else {
+        else if (fs.existsSync(filePath)) {
             return ResponseUtil.sendFileResponse(res, filePath);
+        }
+        else {
+            return ResponseUtil.sendApiResponse(res, 404);
         }
     }
     else {
-        const htmlFilePath = path.resolve(publicFolderPath, refinedPath + ".html");
-        const htmlFilePathWithIndex = path.resolve(publicFolderPath, refinedPath, "index.html");
+        const htmlFilePath = path.resolve(publicFolderPath + refinedPath + ".html");
+        const htmlFilePathWithIndex = path.resolve(publicFolderPath + refinedPath, "index.html");
         
         if (fs.existsSync(htmlFilePath)) {
             return ResponseUtil.sendFileResponse(res, htmlFilePath);
