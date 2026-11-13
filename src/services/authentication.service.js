@@ -45,11 +45,11 @@ async function signOut(authenticationId) {
 }
 
 /**
- * @param { typeof Account.prototype.id } accountId 
+ * @param { typeof Authentication.prototype.id } authenticationId 
  * @param { Promise<boolean> }
  */
-async function isSignedIn(accountId) {
-    const isAuthenticated = await AuthenticationRepository.isAuthenticated(accountId);
+async function isSignedIn(authenticationId) {
+    const isAuthenticated = await AuthenticationRepository.isAuthenticated(authenticationId);
     return isAuthenticated;
 }
 

@@ -1,60 +1,60 @@
+const ResponseUtil = require("../utils/response.util");
+
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+
+/** @type {import("express").RequestHandler} */
 async function requestOtp(req, res, next) {
-    const phone = req.body.phone;
-    const account = await AccountService.findByPhone(phone);
-    const isSuccess = await AuthenticationService.requestOtp(account.phone);
+    const accountId = req.session.accountId;
+    const isSuccess = await AuthenticationService.requestOtp(accountId);
 
     if (isSuccess)
-        return res.send({ accountId: account.id });
+        return ResponseUtil.sendApiResponse(res, 200, null, { redirectUrl: "/signin/verify" });
     else
-        return res.status(500).send({ message: "Something went wrong." });
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
-async function signIn(req, res, next) {
-    const accountId = req.body.accountId;
+/** @type {import("express").RequestHandler} */
+async function verifyOtp(req, res, next) {
+    const accountId = req.session.accountId;
     const otpCode = req.body.otpCode;
 
     const isValid = await AuthenticationService.verifyOtp(accountId, otpCode);
     if (isValid) {
-        // If valid, sign the user in
-        const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
-        if (authenticationId) {
-            return res.status(201).send({ authenticationId: authenticationId });
-        }
-        else {
-            return res.status(400).send({ message: "Something went wrong. "});
-        }
+        return next();
     }
     else {
-        return res.status(401).send({ message: "Invalid OTP code. "});
+        return ResponseUtil.sendApiResponse(res, 401, "Invalid OTP code.");
     }
 }
 
-async function signUp(req, res, next) {
-    return res.api.sendError(501, "Not yet implemented.");
-    
-    const email = req.body.email;
-    const password = req.body.password;
-    const fullname = req.body.fullname;
-
-    const accountId = await Accounts.add(email, fullname, password, "member");
-    // Signs in new account
-    const authenticationId = await Authentications.add(accountId, req.ip);
-    req.session.authenticationId = authenticationId;
-    return res.api.sendSuccess();
+/** @type {import("express").RequestHandler} */
+async function signIn(req, res, next) {
+    const accountId = req.session.accountId;
+    const authenticationId = await AuthenticationService.signIn(accountId, req.ip);
+    if (authenticationId) {
+        // Store authentication id and account id to encrypted cookies
+        req.session.authenticationId = authenticationId;
+        return ResponseUtil.sendApiResponse(res, 201, null, { authenticationId: authenticationId });
+    }
+    else {
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
+    }
 }
 
+/** @type {import("express").RequestHandler} */
 async function signOut(req, res, next) {
-    if (req.session.authenticationId) {
+    if (req.session.authenticationId != null) {
         await Authentications.remove(req.session.authenticationId);
         delete req.session.authenticationId;
+        delete req.session.accountId;
     }
 
     return res.redirect("/signin");
 }
 
 module.exports = {
-    signIn, signUp, signOut
+    requestOtp, verifyOtp,
+    signIn, signOut
 }

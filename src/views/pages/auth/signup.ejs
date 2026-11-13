@@ -1,0 +1,58 @@
+<% 
+    data.page_title = language('auth.signup.title');
+    data.page_name = language('auth.signup.title');
+    data.page_description = null;
+    data.page_keywords = null;
+    data.page_thumbnail = null;
+%>
+
+<div class="title"><%= language('auth.signup.title') %></div>
+<div class="subtitle"><%= language('auth.signup.description') %></div>
+<div class="inputs">
+    <input type="text" ad-type="name" id="nameInput" ad-text="<%= language('account.name.title') %>"/>
+    <span class="error hidden" id="nameError"></span>
+    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
+    <div class="separator"><%= language('domicile.title') %></div>
+    <select id="provinceSelect" ad-text="<%= language('domicile.province.title') %>"></select>
+    <select id="citySelect" ad-text="<%= language('domicile.city.title') %>"></select>
+    <select id="districtSelect" ad-text="<%= language('domicile.district.title') %>"></select>
+</div>
+<div class="actions">
+    <span class="error hidden" id="generalError"></span>
+    <button class="accent" id="signUpButton" disabled>
+        <div class="progressring"></div>
+        <span><%= language('auth.signup.title') %></span>
+    </button>
+</div>
+
+<script>
+    provinceSelect.options.add(new Option("Provinsi 1", "1"));
+    const signUpForm = new Form([
+            new Field(nameInput, nameError),
+            new Field(phoneInput)
+        ], signUpButton);
+
+    signUpButton.onaction = function() {
+        return new Promise(function(resolve) {
+            generalError.classList.add("hidden");
+            $.ajax({
+                url: "/api/signup",
+                type: "POST",
+                data: { 
+                    email: emailInput.value, 
+                    password: passwordInput.value,
+                    fullname: fullnameInput.value
+                },
+                success: function(response) {
+                    window.location.replace(response.data.url);
+                    resolve(true);
+                },
+                error: function(result) {
+                    generalError.innerText = result.responseJSON?.error || "<%= language('auth.errors.something_went_wrong') %>";
+                    generalError.classList.remove("hidden");
+                    resolve(false);
+                }
+            });
+        });
+    }
+</script>

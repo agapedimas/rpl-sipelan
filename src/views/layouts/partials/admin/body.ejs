@@ -1,0 +1,28 @@
+<header class="titlebar">
+	<img class="icon" src="<%= app.path.logo_monochrome %>"/>
+	<span class="name"><%= app.admin_name %></span>
+</header>
+
+<div class="root">
+	<nav class="sidebar">
+        <%- include("./navigation") %>
+	</nav>
+	<script src="/admin.js"></script>
+	<section class="main">
+		<div class="activity">
+            <%- body %>
+		</div>
+	</section>
+</div>
+
+<script>
+	if (window.location.pathname != "/") {
+		if (window.matchMedia("(display-mode: standalone)").matches)
+			document.title = "<%= data.page_title %>";
+		else
+			document.title = "<%= data.page_title %> - <%= app.admin_name %>";
+	}
+	else {
+		document.title = "<%= app.admin_name %>";
+	}
+</script>

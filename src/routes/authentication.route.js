@@ -1,13 +1,38 @@
 const Routes = require("../routes");
-const Server = Routes.getServer();
 
-const Controller = require("../controllers/authentication.controller");
-const Middleware = require("../middlewares/authentication.middleware");
+const ResponseUtil = require("../utils/response.util");
 
-Server.post("/api/requestOtp", Middleware.doesNeedAuthentication)
-Server.post("/api/signin", Controller.signIn);
-Server.post("/api/signup", Controller.signUp);
+const PageController = require("../controllers/page.http.controller");
 
-Server.get("/signin", Middleware.doesNeedAuthenticationAndRedirect);
-Server.get("/signup", Middleware.doesNeedAuthenticationAndRedirect);
-Server.get("/signout", Controller.signOut);
+const AuthenticationController = require("../controllers/authentication.controller");
+const AuthenticationMiddleware = require("../middlewares/authentication.middleware");
+
+// API
+Routes.postMapping("/api/requestOtp", 
+    AuthenticationMiddleware.doesNeedAuthentication, 
+    AuthenticationMiddleware.checkAccountExistenceForOtp,
+    AuthenticationController.requestOtp);
+
+Routes.postMapping("/api/verifyOtp", 
+    AuthenticationMiddleware.doesNeedAuthentication, 
+    AuthenticationController.verifyOtp);
+
+Routes.postMapping("/api/signin",
+    AuthenticationController.signIn);
+
+
+// Frontend
+Routes.getMapping("/signin", 
+    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
+    PageController.sendRenderedPage({}, "signin", "auth"));
+
+Routes.getMapping("/signin/verify", 
+    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
+    PageController.sendRenderedPage({}, "signin/verify", "auth"));
+
+Routes.getMapping("/signup", 
+    AuthenticationMiddleware.doesNeedAuthenticationAndRedirect,
+    PageController.sendRenderedPage({}, "signup", "auth"));
+
+Routes.getMapping("/signout", 
+    AuthenticationController.signOut);

@@ -1,9 +1,9 @@
 <div class="branding">
-    <img class="logo" src="<%= variables.app.path.logo_wordmark %>"/>
+    <img class="logo" src="<%= app.path.logo_wordmark %>"/>
 </div>
 <div class="separator"></div>
 <nav id="mainNavigation">
-    <%- include("./navigationMain") %>
+    <%- include("./navigation") %>
 </nav>
 <div class="actions">
     <button ad-goto="/signin"><%= language('auth.signin.title') %></button>

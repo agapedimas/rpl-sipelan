@@ -1,5 +1,5 @@
 <% 
-    variables.session.page_title = language('home.title');
+    data.page_title = language('home.title');
 %>
 
 <style>
@@ -26,7 +26,7 @@
 </div>
 
 <div class="content">
-    <img id="profilePictureImage" ad-goto="/admin/settings" src="/pp/<%= variables.session.activeUser.id %>/<%= variables.session.activeUser.pictureId %>"/>
+    <img id="profilePictureImage" ad-goto="/admin/settings" src="/pp/<%= data.activeUser.id %>/<%= data.activeUser.pictureId %>"/>
 </div>
 
 <script></script>

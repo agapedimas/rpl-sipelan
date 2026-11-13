@@ -1,0 +1,35 @@
+<div class="panel">
+    <div class="error">
+        <img class="logo" src="<%= app.path.logo_wordmark %>"/>
+        <div id="title"><%= data.error.title %></div>
+        <div id="message"><%= data.error.message %></div>
+        <div id="actions">
+
+            <%  if (data.error.actions.includes("back")) {  %>
+                <button onclick="action.back()">
+                    <%= language('general.back') %>
+                </button>
+            <%  }  %>
+
+            <%  if (data.error.actions.includes("home")) {  %>
+                <button onclick="action.homepage()">
+                    <%= language('general.homepage') %>
+                </button>
+            <%  }  %>
+
+            <%  if (data.error.actions.includes("refresh")) {  %>
+                <button class="accent" onclick="action.refresh()">
+                    <%= language('general.refresh') %>
+                </button>
+            <%  }  %>
+        </div>
+    </div>
+    <img id="image" class="mascot" src="<%= app.host.assets %>/<%= data.error.image %>.webp"/>
+</div>
+<script>
+    const action = {
+        refresh: o => location.reload(),
+        back: o => history.back(),
+        homepage: o => location.href = "/"
+    }
+</script>

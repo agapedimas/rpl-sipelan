@@ -1,5 +1,5 @@
 <% 
-    variables.session.page_title = language('settings.title');
+    data.page_title = language('settings.title');
 %>
 
 <style>
@@ -172,13 +172,13 @@
         <div id="profilePictureGrid">
             <div class="profilePicture" ad-tooltip="Ganti Foto Profil">
                 <div class="progressring"></div>
-                <img id="profilePictureImage" src="/pp/<%= variables.session.activeUser.id %>/<%= variables.session.activeUser.pictureId %>"/>
+                <img id="profilePictureImage" src="/pp/<%= data.activeUser.id %>/<%= data.activeUser.pictureId %>"/>
             </div>
             <button class="plain"><%= language('general.edit') %></button>
         </div>
         <div class="details">
-            <div class="name"><%= variables.session.activeUser.fullname %></div>
-            <div class="description"><%= variables.session.activeUser.email %></div>
+            <div class="name"><%= data.activeUser.fullname %></div>
+            <div class="description"><%= data.activeUser.email %></div>
             <button id="signOutButton" class="critical plain"><%= language('auth.signout.title') %></button>
         </div>
     </div> 
@@ -207,14 +207,14 @@
     <div class="list" ad-header="<%= language('settings.about.title') %>">
         <div class="stack">
             <span><%= language('settings.about.repository.title') %></span>
-            <button class="plain" ad-goto="<%= variables.app.repository.url %>" ad-type="newtab">
-                <span><%= variables.app.repository.name %></span>
+            <button class="plain" ad-goto="<%= app.repository.url %>" ad-type="newtab">
+                <span><%= app.repository.name %></span>
                 <span class="icon">&#xebad;</span>
             </button>
         </div>
         <div class="stack">
             <span><%= language('settings.about.version.title') %></span>
-            <span><%= variables.app.version %></span>
+            <span><%= app.version %></span>
         </div>
         <div class="stack vertical">
             <span><%= language('settings.about.copyright.title') %></span>
@@ -285,12 +285,12 @@
 
             $.ajax({
                 type: "POST",
-                url: "/pp/<%= variables.session.activeUser.id %>",
+                url: "/pp/<%= data.activeUser.id %>",
                 data: form,
                 contentType: false,
                 processData: false,
                 success: async function(response) {
-                    const url = "/pp/<%= variables.session.activeUser.id %>/" + response.data.id;
+                    const url = "/pp/<%= data.activeUser.id %>/" + response.data.id;
                     profilePictureImage.src = url;
                     profilePictureImage.onload = function() {
                         Components.Notification.Remove({ Id: "avatar_failed" });

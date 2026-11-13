@@ -5,7 +5,10 @@
  * @returns { Array<new (...args: any[]) => T> }
  */
 function convertRowToClass(rows, model) {
-    return rows.map(row => Object.assign(new model(), row));
+    if (rows == null)
+        return [];
+    else
+        return rows.map(row => Object.assign(new model(), row));
 }
 
 module.exports = {

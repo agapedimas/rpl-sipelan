@@ -1,25 +1,44 @@
 const AccountService = require("../services/account.service");
 const AuthenticationService = require("../services/authentication.service");
 
+const ResponseUtil = require("../utils/response.util");
+
+/** @type {import("express").RequestHandler} */
+async function checkAccountExistenceForOtp(req, res, next) {
+    const phone = req.body.phone;
+    const account = await AccountService.findByPhone(phone);
+
+    if (account == null) {
+        // If account is not registered yet, then ask the user to sign up
+        return ResponseUtil.sendApiResponse(res, 200, null, { redirectUrl: "/signup" });
+    }
+    else {
+        // Save account id to user's session and continue to request OTP
+        req.session.accountId = account.id;
+        return next();
+    }
+}
+
+/** @type {import("express").RequestHandler} */
 async function doesNeedAuthentication(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
 
     // Check if user already signed in
-    if (await AuthenticationService.isSignedIn(accountId) === true) {
-        return res.status(400).send({ message: "User is already signed in." });
+    if (await AuthenticationService.isSignedIn(authenticationId) === true) {
+        return ResponseUtil.sendApiResponse(res, 400, "User is already signed in.");
     }
     else {
         return next();
     }
 }
-
+/** @type {import("express").RequestHandler} */
 async function doesNeedAuthenticationAndRedirect(req, res, next) {
     const accountId = req.session.accountId;
     const authenticationId = req.session.authenticationId;
 
     // Check if user already signed in
-    if (await AuthenticationService.isSignedIn(accountId) === true) {
+    if (await AuthenticationService.isSignedIn(authenticationId) === true) {
         // Redirect to their dashboard page
         const accountRole = AccountService.getRole(accountId);
         switch(accountRole) {
@@ -43,6 +62,7 @@ async function doesNeedAuthenticationAndRedirect(req, res, next) {
 } 
 
 module.exports = {
+    checkAccountExistenceForOtp,
     doesNeedAuthentication,
     doesNeedAuthenticationAndRedirect
 }

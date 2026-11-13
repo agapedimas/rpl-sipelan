@@ -1,31 +1,33 @@
+const ResponseUtil = require("../utils/response.util");
 const ValidatorUtil = require("../utils/validator.util");
 
 const AccountService = require("../services/account.service");
 
+/** @type {import("express").RequestHandler} */
 async function add(req, res) {
     let { phone, name, districtId, role, nik } = req.body;
 
     // Make sure required fields are providen
     if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role]) === false) {
-        return res.status(422).send({message: "Phone, Name, DistrictId, and Role are required."});
+        return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");
     }
 
     switch (ValidatorUtil.checkPhoneNumberValidity(phone)) {
         case "TOO_LONG": 
-            return res.status(400).send({message: "Phone number is too long."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too long.");
         case "TOO_SHORT": 
-            return res.status(400).send({message: "Phone number is too short."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too short.");
         case "INVALID": 
-            return res.status(400).send({message: "Phone number is invalid."});
+            return ResponseUtil.sendApiResponse(res, 400, "Phone number is invalid.");
     }
 
     switch (ValidatorUtil.checkEntityNameValidity(name)) {
         case "TOO_LONG": 
-            return res.status(400).send({message: "Name is too long."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is too long.");
         case "TOO_SHORT": 
-            return res.status(400).send({message: "Name is too short."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is too short.");
         case "INVALID": 
-            return res.status(400).send({message: "Name is invalid."});
+            return ResponseUtil.sendApiResponse(res, 400, "Name is invalid.");
     }
 
     // TO DO: 
@@ -33,24 +35,78 @@ async function add(req, res) {
     // DistrictService.doesDistrictExist(districtId);
 
     if (AccountService.doesRoleExist(role) === false)
-        return res.status(400).send({message: "Role " + role + "does not exist."});
+        return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");
 
     // NIK is optional. If providen, then check for its validity.
     if (nik !== null) {
         switch (ValidatorUtil.checkNikValidity(nik)) {
             case "INVALID": 
-                return res.status(400).send({message: "NIK is should be a number and 16 digits."});
+                return ResponseUtil.sendApiResponse(res, 400, "NIK is should be a number and 16 digits.");
         }
     }
 
     const isSuccess = await AccountService.add(phone, name, districtId, role, nik);
 
     if (isSuccess)
-        return res.status(201);
+        return ResponseUtil.sendApiResponse(res, 201);
     else
-        return res.status(500).send({message: "Something went wrong."});
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
+/** @type {import("express").RequestHandler} */
+async function updateInfo(req, res) {}
+
+/** @type {import("express").RequestHandler} */
+async function getPicture(req, res) {
+    const accountId = req.params.accountId;
+    const pictureBuffer = await AccountService.getPicture(accountId);
+
+    if (pictureBuffer != null) {
+        // Set cache of profile picture to 1 day
+        res.header("Cache-Control", "private, max-age=86400");
+        res.header("Content-Type", "image/webp");
+    
+        return ResponseUtil.sendBufferResponse(res, pictureBuffer);
+    }
+    // Send placeholder profile picture if not available
+    else {
+        const defaultProfilePictureFilePath = path.resolve(__dirname, "../assets/profilePicture.webp");
+        return ResponseUtil.sendFileResponse(res, defaultProfilePictureFilePath);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function setPicture(req, res) {
+    const accountId = req.params.accountId;
+    const pictureBuffer = req.files.file.data;
+
+    if (pictureBuffer != null) {
+        // Make sure the file size is not beyond limit,
+        // which is 3 MB at maximum
+        if (pictureBuffer.length > 3_000_000)
+            return ResponseUtil.sendApiResponse(res, 400, "File size should not exceed 3 MB.");
+        
+        const isSuccess = await AccountService.setPicture(accountId, pictureBuffer);
+        if (isSuccess)
+            return ResponseUtil.sendApiResponse(res, 201);
+        else
+            return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
+    }
+    else {
+        return ResponseUtil.sendApiResponse(res, 400, "No files are providen.");
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function removePicture(req, res) {
+    const accountId = req.session.accountId;
+    await AccountService.removePicture(accountId);
+    return ResponseUtil.sendApiResponse(res, 200);
+}
+
+
 module.exports = {
-    add
+    add,
+    updateInfo,
+    getPicture, setPicture, removePicture
 }

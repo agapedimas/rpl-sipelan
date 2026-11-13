@@ -8,9 +8,10 @@ const expressMySqlSession = require("express-mysql-session")(expressSession);
 const expressLayouts = require("express-ejs-layouts");
 const expressMinifyHtml = require("express-minify-html");
 
+const LanguageUtil = require("./utils/language.util");
+
 const Database = require("./database");
 const Configurations = require("./configurations");
-const Language = require("./utils/language.util");
 const Server = express();
 
 async function initialize() {
@@ -21,12 +22,10 @@ async function initialize() {
     initializeLayouts();
 
     // Read every routes components
-    require("./routes/ping.route");
-    require("./routes/language.route");
+    require("./routes/language.http.route");
     require("./routes/authentication.route");
-    require("./routes/admin.route");
     require("./routes/account.route");
-    require("./routes/main.route");
+    require("./routes/static.http.route");
 
 	const appPort = Configurations.get("app").port;
 
@@ -67,19 +66,6 @@ function initializeSessions() {
 }
 
 function initializeParser() {
-    Server.use(function(req, res, next) {
-        // Add custom helper
-        res.api = {
-            sendSuccess: function(data) {
-                return res.send({ isSuccess: true, data: data });
-            },
-            sendError: function(httpCode, error) {
-                return res.status(httpCode).send({ isSuccess: true, error: error });
-            }
-        }
-        next();
-    });
-    
     Server.use(expressBodyParser.urlencoded({ limit: "50mb", extended: true }));
     Server.use(expressBodyParser.json({ limit: "50mb" }));
     Server.use(expressFileUpload());
@@ -87,12 +73,7 @@ function initializeParser() {
 
     Server.use(function(req, res, next) {
         if (!req.session.languageId)
-            req.session.languageId = Language.SUPPORTED_LANGUAGES[0];
-
-        req.variables = {};
-
-        if (req.query.contentOnly == "true")
-            req.contentOnly = true;
+            req.session.languageId = LanguageUtil.SUPPORTED_LANGUAGES[0];
 
         next();
     });
@@ -128,8 +109,8 @@ function initializeCaching() {
     	
     	for (const [key, value] of Object.entries(file)) {
     		if (value.test(req.url)) {
-                // Cache for 7 days
-    			res.header("Cache-Control", "public, max-age=604800");
+                // Cache for 1 day
+    			res.header("Cache-Control", "public, max-age=86400");
 			}
 			else if (req.query.cache == "false") {
 				res.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -146,14 +127,21 @@ function initializeLayouts() {
     Server.set("view engine", "ejs");
     Server.set("views", path.join(__dirname, "./views"));
     Server.use(expressLayouts);
-    Server.set("layout", "layouts/main");
 }
 
-function getServer() {
-    return Server;
-}
+// Methods for accepting HTTP requests
+/** @type {typeof Server.get} */
+const getMapping = (...args) => Server.get(...args);
+/** @type {typeof Server.post} */
+const postMapping = (...args) => Server.post(...args);
+/** @type {typeof Server.put} */
+const putMapping = (...args) => Server.put(...args);
+/** @type {typeof Server.patch} */
+const patchMapping = (...args) => Server.patch(...args);
+/** @type {typeof Server.delete} */
+const deleteMapping = (...args) => Server.delete(...args);
 
 module.exports = {
     initialize,
-    getServer
+    getMapping, postMapping, putMapping, patchMapping, deleteMapping
 }

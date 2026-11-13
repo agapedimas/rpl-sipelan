@@ -1,0 +1,54 @@
+<% 
+    data.page_title = language('auth.signin.title');
+    data.page_name = language('auth.signin.title');
+    data.page_description = null;
+    data.page_keywords = null;
+    data.page_thumbnail = null;
+%>
+
+<div class="title"><%= language('auth.signin.title') %></div>
+<div class="subtitle"><%= language('auth.signin.description') %></div>
+<div class="inputs">
+    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
+</div>
+<div class="actions">
+    <span class="error hidden" id="generalError"></span>
+    <button class="accent" id="signInButton" disabled>
+        <div class="progressring"></div>
+        <span><%= language('general.next') %></span>
+    </button>
+</div>
+
+<script>
+    const signInForm = new Form([
+            new Field(phoneInput)
+        ], signInButton);
+
+    signInButton.onaction = function() {
+        return new Promise(function(resolve) {
+            generalError.classList.add("hidden");
+            $.ajax({
+                url: "/api/requestOtp",
+                type: "POST",
+                data: { 
+                    phone: phoneInput.value
+                },
+                success: function(response) {
+                    const redirectUrl = response.data?.redirectUrl;
+                    if (redirectUrl) {
+                        location.href = redirectUrl;
+                        resolve(true);
+                    }
+                    else {
+                        resolve(false);
+                    }
+                },
+                error: function(result) {
+                    generalError.innerText = result.responseJSON?.error || "<%= language('auth.errors.something_went_wrong') %>";
+                    generalError.classList.remove("hidden");
+                    resolve(false);
+                }
+            });
+        });
+    }
+</script>
