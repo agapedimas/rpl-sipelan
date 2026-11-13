@@ -9,7 +9,7 @@ function areFieldsEmpty(fields) {
     for (const field of fields) {
         if (typeof field === "string" && !field.trim())
             return true;
-        else if (Array.isArray(fields) && field.length == 0)
+        else if (Array.isArray(field) && field.length == 0)
             return true;
         else if (field == null)
             return true;

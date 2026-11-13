@@ -7,13 +7,12 @@ const LanguageUtil = require("../utils/language.util");
 
 /**
  * Create middleware to render a page located inside `./views`.
- * @param { object } data
  * @param { string } pageName EJS filename located inside `./views/pages`.
  * @param { string } [pageType="main"] Subfolder inside `./views/pages`.
  * @param { string } [layoutName="main"] Layout filename located inside `./views/layouts`.
  * @returns { import("express").RequestHandler }
  */
-function sendRenderedPage(data, pageName, pageType = "main", layoutName = "main") {
+function sendRenderedPage(pageName, pageType = "main", layoutName = "main") {
     const alphanumericRegex = /[A-Za-z0-9]/;
     const alphanumericPathRegex = /^[A-Za-z0-9]+(?:\/[A-Za-z0-9]+)*$/;
 
@@ -56,14 +55,21 @@ function sendRenderedPage(data, pageName, pageType = "main", layoutName = "main"
         const language = (key) => LanguageUtil.getString(languageId, key) || key;
         const app = Configurations.get("app");
 
+        // Allows strings to be formatted on .ejs files
+        String.prototype.format = function(...values) {
+            return this.replace(/{(\d+)}/g, function(match, index) {
+                return typeof values[index] !== 'undefined' ? values[index] : match;
+            });
+        }
+
         return res.render(
             "pages/" + pageType + "/" + pageName,
             {
                 layout: "layouts/" + layoutName,
-                data,
-                app,
-                language,
-                pageType
+                data: res.locals ?? {},
+                app: app,
+                language: language,
+                pageType: pageType
             }
         );
     };
@@ -74,7 +80,7 @@ function sendErrorPage(code = 500) {
         code = 500;
 
     return async function (req, res, next) {
-        return sendRenderedPage({}, code, "error", "error")(req, res, next);
+        return sendRenderedPage(code, "error", "error")(req, res, next);
     };
 }
 

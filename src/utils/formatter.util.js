@@ -66,6 +66,20 @@ function formatPhoneNumber(number, useFallback = true) {
 }
 
 /**
+ * Format censored phone number
+ * @param { number | string } number 
+ * @param { boolean } useFallback 
+ * @returns { string }
+ */
+function censorPhoneNumber(number, useFallback = true) {
+    const formattedPhoneNumber = formatPhoneNumber(number);
+    if (!formattedPhoneNumber)
+        return useFallback ? "-" : "";
+
+    return "+62********" + formattedPhoneNumber.slice(-3);
+}
+
+/**
  * Format short date and time
  * @param { Date | string | number } inputDate 
  * @param { boolean } useFallback 
@@ -189,6 +203,7 @@ module.exports = {
     formatAmount,
     formatDate,
     formatDateTime,
+    censorPhoneNumber,
     formatPhoneNumber,
     formatShortDateTime,
     formatTime

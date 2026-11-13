@@ -30,6 +30,8 @@ class Form {
                 if (currentFieldElement.tagName == "INPUT") {
                     if (currentFieldElement.type == "tel")
                         registerPhoneInput(currentFieldElement);
+                    else if (currentFieldElement.getAttribute("ad-type") == "otp")
+                        registerOtpInput(currentFieldElement);
                     
                     currentFieldElement.addEventListener("keydown", function(event) {
                         if (event.key == "Enter") {
@@ -124,7 +126,12 @@ class Form {
         else if (fieldElement.getAttribute("ad-type") == "name") {
             validityStatus = InputValidator.checkEntityName(fieldElement.value);
             if (errorElement)
-                errorElement.innerHTML = INPUT_VALIDATOR_ERRORS.fullname[validityStatus];
+                errorElement.innerHTML = INPUT_VALIDATOR_ERRORS.name[validityStatus];
+        }
+        else if (fieldElement.type == "tel") {
+            validityStatus = InputValidator.checkPhoneNumber(fieldElement.value);
+            if (errorElement)
+                errorElement.innerHTML = INPUT_VALIDATOR_ERRORS.phone[validityStatus];
         }
         
         return validityStatus;
@@ -253,5 +260,11 @@ function registerPhoneInput(input) {
         }
 
         this.setSelectionRange(newCursorPos, newCursorPos);
+    });
+}
+
+function registerOtpInput(input) {
+    input.addEventListener("input", function() {
+        this.value = this.value.replace(/[^0-9]/g, "");
     });
 }
