@@ -32,7 +32,7 @@ async function findAllByQuery(query) {
 
 /**
  * @param { typeof Province.prototype.id } provinceId
- * @returns { Promise<City?> }
+ * @returns { Promise<Array<City>> }
  */
 async function findAllByProvinceId(provinceId) {
     const queryResult = 
@@ -41,7 +41,7 @@ async function findAllByProvinceId(provinceId) {
             provinceId
         );
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, City);
-    return dataResults?.at(0) || null;
+    return dataResults || [];
 }
 
 /**
