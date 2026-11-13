@@ -9,6 +9,8 @@
     "previous": "Sebelumnya",
     "choose": "Pilih",
     "choose_ellipsis": "Pilih...",
+    "verify": "Verifikasi",
+    "change": "Ganti",
 
     "errors": {
         "page_not_found": {
