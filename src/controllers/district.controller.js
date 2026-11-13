@@ -10,7 +10,7 @@ async function add(req, res) {
     let { name, postalCode, cityId } = req.body;
 
     // Make sure required fields are providen
-    if (ValidatorUtil.areFieldsEmpty([name, postalCode, cityId]) === false) {
+    if (ValidatorUtil.areFieldsEmpty([name, postalCode, cityId])) {
         return ResponseUtil.sendApiResponse(res, 422, "Name, Postal Code, and City ID are required.");
     }
 
@@ -40,7 +40,7 @@ async function updateInfo(req, res) {
     let { districtId, name, postalCode, cityId } = req.body;
 
     // Make sure required fields are providen
-    if (ValidatorUtil.areFieldsEmpty([districtId]) === false) {
+    if (ValidatorUtil.areFieldsEmpty([districtId])) {
         return ResponseUtil.sendApiResponse(res, 422, "District ID is required.");
     }
 

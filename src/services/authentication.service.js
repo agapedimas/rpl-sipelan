@@ -11,8 +11,8 @@ const OtpService = require("../services/otp.service");
  * @returns { Promise<boolean> }
  */
 async function requestOtp(accountId) {
-    const isSuccess = OtpService.generateOtp(accountId);
-    return isSuccess;
+    OtpService.generateOtp(accountId);
+    return true;
 }
 
 /**

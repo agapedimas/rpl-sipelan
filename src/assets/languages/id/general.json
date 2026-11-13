@@ -7,6 +7,8 @@
     "edit": "Edit",
     "next": "Berikutnya",
     "previous": "Sebelumnya",
+    "choose": "Pilih",
+    "choose_ellipsis": "Pilih...",
 
     "errors": {
         "page_not_found": {

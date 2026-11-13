@@ -148,7 +148,7 @@ class Form {
                         isValid = false;
                 }
                 else if (fieldElement.tagName == "SELECT") {
-                    if (fieldElement.value.trim() == "")
+                    if (fieldElement.value.trim() == "" || fieldElement.value.trim() == "null")
                         isValid = false;
                 }
                 else {

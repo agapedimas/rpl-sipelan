@@ -4,6 +4,8 @@ const ResponseUtil = require("../utils/response.util");
 
 const PageController = require("../controllers/page.http.controller");
 
+const AccountController = require("../controllers/account.controller");
+
 const AuthenticationController = require("../controllers/authentication.controller");
 const AuthenticationMiddleware = require("../middlewares/authentication.middleware");
 
@@ -19,6 +21,10 @@ Routes.postMapping("/api/verifyOtp",
 
 Routes.postMapping("/api/signin",
     AuthenticationController.signIn);
+
+Routes.postMapping("/api/signup",
+    AuthenticationController.signUpAsCitizen,
+    AccountController.add);
 
 
 // Frontend

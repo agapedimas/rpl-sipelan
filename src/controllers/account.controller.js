@@ -8,8 +8,9 @@ const DistrictService = require("../services/district.service");
 async function add(req, res) {
     let { phone, name, districtId, role, nik } = req.body;
     
+    console.log(req.body)
     // Make sure required fields are providen
-    if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role]) === false) {
+    if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role])) {
         return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");
     }
 
@@ -38,7 +39,7 @@ async function add(req, res) {
         return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");
 
     // NIK is optional. If providen, then check for its validity.
-    if (nik !== null) {
+    if (nik != null) {
         switch (ValidatorUtil.checkNikValidity(nik)) {
             case "INVALID": 
                 return ResponseUtil.sendApiResponse(res, 400, "NIK is should be a number and 16 digits.");

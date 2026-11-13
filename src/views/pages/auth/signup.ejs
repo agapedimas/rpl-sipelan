@@ -9,13 +9,13 @@
 <div class="title"><%= language('auth.signup.title') %></div>
 <div class="subtitle"><%= language('auth.signup.description') %></div>
 <div class="inputs">
+    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>" disabled/>
     <input type="text" ad-type="name" id="nameInput" ad-text="<%= language('account.name.title') %>"/>
     <span class="error hidden" id="nameError"></span>
-    <input type="tel" id="phoneInput" ad-text="<%= language('account.phone.title') %>"/>
     <div class="separator"><%= language('domicile.title') %></div>
     <select id="provinceSelect" ad-text="<%= language('domicile.province.title') %>"></select>
-    <select id="citySelect" ad-text="<%= language('domicile.city.title') %>"></select>
-    <select id="districtSelect" ad-text="<%= language('domicile.district.title') %>"></select>
+    <select id="citySelect" ad-text="<%= language('domicile.city.title') %>" disabled></select>
+    <select id="districtSelect" ad-text="<%= language('domicile.district.title') %>" disabled></select>
 </div>
 <div class="actions">
     <span class="error hidden" id="generalError"></span>
@@ -26,10 +26,25 @@
 </div>
 
 <script>
-    provinceSelect.options.add(new Option("Provinsi 1", "1"));
+    // Check for phone number on params
+    const url = new URL(location.href);
+    const phone = url.searchParams.get("phone");
+    if (phone) {
+        phoneInput.value = phone;
+        // Remove phone parameter from URL
+        history.replaceState(null, null, url.pathname);
+    }
+    else {
+        // If user just locate the url directly to signup,
+        // then send them back to sign in page
+        location.replace("/signin");
+    }
+    
     const signUpForm = new Form([
             new Field(nameInput, nameError),
-            new Field(phoneInput)
+            new Field(provinceSelect),
+            new Field(citySelect),
+            new Field(districtSelect)
         ], signUpButton);
 
     signUpButton.onaction = function() {
@@ -39,12 +54,12 @@
                 url: "/api/signup",
                 type: "POST",
                 data: { 
-                    email: emailInput.value, 
-                    password: passwordInput.value,
-                    fullname: fullnameInput.value
+                    phone: phoneInput.value,
+                    name: nameInput.value,
+                    districtId: districtSelect.value
                 },
                 success: function(response) {
-                    window.location.replace(response.data.url);
+                    location.href = "/signin/verify";
                     resolve(true);
                 },
                 error: function(result) {
@@ -55,4 +70,68 @@
             });
         });
     }
+
+    async function fetchProvinces() {
+        const response = await $.get("/api/province");
+        return response?.data?.provinces || [];
+    }
+    async function fetchCities(provinceId) {
+        if (provinceId == null)
+            return [];
+
+        const response = await $.get("/api/city?provinceId=" + provinceId);
+        return response?.data?.cities || [];
+    }
+    async function fetchDistricts(cityId) {
+        if (cityId == null)
+            return [];
+
+        const response = await $.get("/api/district?cityId=" + cityId);
+        return response?.data?.districts || [];
+    }
+
+    function resetAndAppendOptions(selectElement, optionsData) {
+        // Reset options
+        selectElement.options.length = 0;
+        // Add default option
+        selectElement.options.add(new Option("<%= language('general.choose_ellipsis') %>", null, true));
+        // Append options
+        for (const optionData of optionsData || [])
+            selectElement.options.add(new Option(optionData.name, optionData.id));
+    }
+
+    document.addEventListener("DOMContentLoaded", async function() {
+        const provinces = await fetchProvinces();
+        resetAndAppendOptions(provinceSelect, provinces);
+        resetAndAppendOptions(citySelect, null);
+        resetAndAppendOptions(districtSelect, null);
+    });
+
+    provinceSelect.addEventListener("change", async function() {
+        const provinceId = this.value;
+        if (provinceId == "null") {
+            citySelect.disabled = true;
+            resetAndAppendOptions(citySelect, null);
+            resetAndAppendOptions(districtSelect, null);
+        }
+        else {
+            const cities = await fetchCities(provinceId);
+            citySelect.disabled = false;
+            resetAndAppendOptions(citySelect, cities);
+            resetAndAppendOptions(districtSelect, null);
+        }
+    });
+
+    citySelect.addEventListener("change", async function() {
+        const cityId = this.value;
+        if (cityId == "null") {
+            districtSelect.disabled = true;
+            resetAndAppendOptions(districtSelect, null);
+        }
+        else {
+            const districts = await fetchDistricts(cityId);
+            districtSelect.disabled = false;
+            resetAndAppendOptions(districtSelect, districts);
+        }
+    });
 </script>
