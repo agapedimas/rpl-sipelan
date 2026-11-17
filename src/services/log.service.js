@@ -119,6 +119,13 @@ async function removePicture(logId) {
 }
 
 /**
+ * @returns { Promise<Array<Log>> }
+ */
+async function findAll() {
+    return await LogRepository.findAll();
+}
+
+/**
  * @param { typeof Log.prototype.reportId } reportId
  * @returns { Promise<Array<Log>> }
  */
@@ -154,6 +161,6 @@ module.exports = {
     add,
     updateInfo, 
     setPicture, removePicture,
-    findAllByReportId, findAllByReporterId, findAllByLogCategoryId,
+    findAll, findAllByReportId, findAllByReporterId, findAllByLogCategoryId,
     remove
 };
