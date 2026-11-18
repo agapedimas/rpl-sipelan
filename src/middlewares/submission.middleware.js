@@ -1,0 +1,1 @@
+// Masih kurang ngerti bakal lanjut setelah baca2 kode yang lain
