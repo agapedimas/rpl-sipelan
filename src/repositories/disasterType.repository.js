@@ -1,5 +1,6 @@
 const Database = require("../database");
 const DisasterType = require("../models/disasterType.model");
+const SqlUtil = require("../utils/sql.util");
 
 /**
  * @returns {Promise<Array<DisasterType>>}
@@ -9,8 +10,10 @@ async function findAll() {
         "SELECT * FROM DisasterType"
     );
 
-    const dataResults = queryResult.rows?.map(row =>
-        new DisasterType(row.id, row.name,Boolean(row.isActive)));
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        DisasterType
+    );
 
     return dataResults || [];
 }
@@ -23,8 +26,10 @@ async function findAllActive() {
         "SELECT * FROM DisasterType WHERE isActive = TRUE"
     );
 
-    const dataResults = queryResult.rows?.map(row =>
-        new DisasterType(row.id, row.name,Boolean(row.isActive)));
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        DisasterType
+    );
 
     return dataResults || [];
 }
@@ -39,8 +44,10 @@ async function findByDisasterTypeId(disasterTypeId) {
         disasterTypeId
     );
 
-    const dataResults = queryResult.rows?.map(row =>
-        new DisasterType(row.id, row.name, Boolean(row.isActive)));
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        DisasterType
+    );
 
     return dataResults?.at(0) || null;
 }

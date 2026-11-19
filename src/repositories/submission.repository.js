@@ -1,15 +1,6 @@
 const Database = require("../database");
 const Submission = require("../models/submission.model");
-
-/**
- * @param { import("mysql2").RowDataPacket } row
- * @returns { Submission }
- */
-function convertRowToSubmission(row) {
-    return new Submission(
-        row.id, row.description, Number(row.time), row.picture,
-        Boolean(row.isArchived), row.districtId, row.citizenId, row.disasterTypeId);
-}
+const SqlUtil = require("../utils/sql.util");
 
 /**
  * @param { typeof Submission.prototype.citizenId } citizenId
@@ -20,7 +11,10 @@ async function findAllByCitizenId(citizenId) {
         "SELECT * FROM Submission WHERE citizenId = ? ORDER BY time DESC",
         citizenId);
 
-    const dataResults = queryResult.rows?.map(row => convertRowToSubmission(row));
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        Submission
+    );
 
     return dataResults || [];
 }
@@ -34,7 +28,10 @@ async function findAllByDistrictId(districtId) {
         "SELECT * FROM Submission WHERE districtId = ? ORDER BY time DESC",
         districtId);
 
-    const dataResults = queryResult.rows?.map(row => convertRowToSubmission(row));
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        Submission
+    );
 
     return dataResults || [];
 }
@@ -48,8 +45,9 @@ async function findBySubmissionId(submissionId) {
         "SELECT * FROM Submission WHERE id = ? LIMIT 1",
         submissionId);
 
-    const dataResults = queryResult.rows?.map(row =>
-        convertRowToSubmission(row)
+    const dataResults = SqlUtil.convertRowToClass(
+        queryResult.rows,
+        Submission
     );
 
     return dataResults?.at(0) || null;
