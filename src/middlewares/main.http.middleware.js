@@ -88,11 +88,17 @@ async function accessAsVolunteerOrOfficer(req, res, next) {
     return accessAs(["volunteer", "officer"], req, res, next);
 }
 
+/** @type {import("express").RequestHandler} */
+async function accessAsCitizenOrVolunteerOrOfficer(req, res, next) {
+    return accessAs(["citizen", "volunteer", "officer"], req, res, next);
+}
+
 
 
 
 module.exports = {
     viewAsCitizen, viewAsVolunteer, viewAsOfficer, viewAsAdmin,
     accessAsCitizen, accessAsVolunteer, accessAsOfficer, accessAsAdmin,
-    accessAsVolunteerOrOfficer
+    accessAsVolunteerOrOfficer,
+    accessAsCitizenOrVolunteerOrOfficer
 }
