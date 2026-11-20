@@ -1,10 +1,3 @@
-class Field {
-    constructor(fieldElement, errorElement) {
-        this.fieldElement = fieldElement;
-        this.errorElement = errorElement;
-    }
-}
-
 class PopOverForm {
     #isLoading = false;
 

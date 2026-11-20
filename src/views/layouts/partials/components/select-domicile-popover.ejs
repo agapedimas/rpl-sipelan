@@ -1,0 +1,33 @@
+<div class="popover" id="selectDomicilePopover">
+    <div class="activity">
+        <section>
+            <div class="header cascaded">
+                <span class="title"><%= language('domicile.select_dialog.province.title') %></span>
+                <div class="buttons">
+                    <button id="cancelEditProfileButton"><%= language('general.cancel') %></button>
+                </div>
+            </div>
+            <div class="content"> 
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    let domicileCallback;
+    
+    async function selectDomicileAsync(element) {
+        return new Promise(function(resolve) {
+            domicileCallback = resolve;
+            selectDomicilePopover.open(element);
+        })
+    }
+
+    selectDomicilePopover.onclosed = function() {
+        domicileCallback = null;
+    }
+
+    cancelEditProfileButton.onclick = function() {
+        selectDomicilePopover.close();
+    }
+</script>

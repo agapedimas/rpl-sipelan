@@ -1,0 +1,170 @@
+<style>
+    #editProfilePopover {
+        width: 600px;
+        --input-label-width: 8em;
+    }
+</style>
+
+<div class="popover" id="editProfilePopover">
+    <div class="activity">
+        <div class="header cascaded">
+            <span class="title"><%= language('profile.edit_dialog.title') %></span>
+            <div class="buttons">
+                <button id="cancelEditProfileButton"><%= language('general.cancel') %></button>
+                <button id="submitEditProfileButton">
+                    <div class="progressring"></div>
+                    <span><%= language('general.save') %></span>
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="profilePicture">
+                <img id="editProfilePictureImage"/>
+                <button id="editProfilePictureButton" class="plain"><%= language('general.change') %></button>
+            </div>
+            <div class="list form">
+                <div class="stack">
+                    <span><%= language('account.name.title') %></span>
+                    <input id="editNameInput" type="text" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.phone.title') %></span>
+                    <input id="editPhoneInput" type="tel" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.nik.short.title') %></span>
+                    <input id="editNikInput" type="text" ad-type="nik" class="plain"/>
+                </div>
+                <div id="selectDomicileButton" class="stack clickable">
+                    <span><%= language('domicile.title') %></span>
+                    <span id="editDomicileText"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    selectDomicileButton.onclick = async function() {
+        const selectedDomicile = await selectDomicileAsync(this);
+        console.log("Domisili yang dipilih:", selectedDomicile);
+    }
+    const editProfileForm = new PopOverForm(
+        [
+            new Field(editNameInput),
+            new Field(editPhoneInput),
+            // new Field(editNikInput) -> Optional
+        ],
+        submitEditProfileButton,
+        cancelEditProfileButton,
+        editProfilePopover
+    );
+    
+    let editProfilePictureForm = new FormData();
+
+    editProfilePopover.onbeforeopen = function() {
+        editProfilePictureImage.src = profilePictureImage.src;
+        editNameInput.value = "<%= data.account.name %>";
+        editPhoneInput.value = Formatter.PhoneNumber("<%= data.account.phone %>");
+        editNikInput.value = "<%= data.account.nik %>";
+    }
+
+    editProfilePictureButton.onclick = function() {
+        const fileInput = document.createElement("input");
+        fileInput.classList.add("hidden");
+        fileInput.type = "file";
+        fileInput.accept = ".png, .jpg, .jpeg, .webp";
+        fileInput.onchange = function() {
+            // Reset form each input's value changes
+            editProfilePictureForm = new FormData();
+            const files = Array.from(this.files);
+
+            if (files.length == 0)
+                return;
+
+            if (files[0].size > 3000000)
+                return Components.Notification.Send({ 
+                    Id: "avatar_failed", 
+                    Title: "<%= language('profile.profile_picture.change.errors.title') %>", 
+                    Message: "<%= language('profile.profile_picture.change.errors.TOO_BIG') %>", 
+                    Icon: "\ufe64", 
+                    Buttons: [{Text: "<%= language('general.ok') %>"}] 
+                });
+                
+            editProfilePictureForm.append("file", files[0]);
+            editProfilePictureImage.src = URL.createObjectURL(files[0]);
+            fileInput.remove();
+        }
+        this.parentNode.append(fileInput);
+        fileInput.click();
+    }
+
+    submitEditProfileButton.onaction = function() {
+        return new Promise(async function(resolve) {
+            const isEditProfilePictureSuccess = await submitProfilePicture();
+            
+            if (isEditProfilePictureSuccess === false)
+                return resolve(false);
+    
+            // const isEditProfileSuccess = await submitEditProfile();
+    
+            // if (isEditProfileSuccess === false)
+            //     return resolve(false);
+    
+            // Reload page after the profile is updated,
+            // and no need to return promise result.
+            location.reload();
+        })
+    }
+    
+    async function submitProfilePicture() {
+        // No need to do post request if user doesn't update their profile picture.
+        if ([...editProfilePictureForm.entries()].length == 0)
+            return true;
+
+        try {
+            const uploadPictureRequest = await $.ajax({
+                type: "post",
+                url: "/pp",
+                data: editProfilePictureForm,
+                contentType: false,
+                processData: false
+            })
+
+            return true;
+        }
+        catch (result) {
+            Components.Notification.Send({ 
+                Id: "avatar_failed", 
+                Title: "<%= language('profile.profile_picture.change.errors.title') %>", 
+                Message: result.responseJSON?.message || "<%= language('profile.profile_picture.change.errors.title') %>".format(result.status), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
+            return false;
+        }
+    }
+
+    async function submitEditProfile() {
+        try {
+            const submitRequest = await $.ajax({
+                type: "post",
+                url: "/account/<%= data.account?.id %>",
+                data: {
+
+                }
+            })
+
+            // Update fields
+
+            return true;
+        }
+        catch (result) {
+            // TO-DO
+            return false;
+        }
+    }
+</script>
+
+<%- include('./select-domicile-popover') %>

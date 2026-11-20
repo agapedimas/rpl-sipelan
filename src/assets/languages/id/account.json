@@ -11,6 +11,9 @@
     },
     "nik": {
         "title": "Nomor Induk Kependudukan",
+        "short": {
+            "title": "NIK"
+        },
         "errors": {
             "INVALID": "NIK harus terdiri dari 16 angka."
         }

@@ -1,3 +1,7 @@
+<script src="/js/utils/formatter.js"></script>
+<script src="/js/utils/forms.js"></script>
+<script src="/js/utils/input-validator.js"></script>
+
 <header class="titlebar">
 	<img class="icon" src="<%= app.path.logo_monochrome %>"/>
 	<span class="name"><%= app.name %></span>
@@ -7,7 +11,6 @@
 	<nav class="sidebar">
         <%- include("./navigation") %>
 	</nav>
-	<script src="/citizen.js"></script>
 	<section class="main">
 		<div class="activity">
             <%- body %>

@@ -1,9 +1,11 @@
-
 const Routes = require("../routes");
 
-const SubmissionController = require("../controllers/submission.controller");
 const MainMiddleware = require("../middlewares/main.http.middleware");
 const SubmissionMiddleware = require("../middlewares/submission.middleware");
+
+const SubmissionController = require("../controllers/submission.controller");
+const AccountController = require("../controllers/account.controller");
+const PageController = require("../controllers/page.http.controller");
 
 // Get Submission data
 Routes.getMapping("/api/submission",
@@ -60,4 +62,12 @@ Routes.deleteMapping("/api/submission/:submissionId/picture",
     MainMiddleware.accessAsCitizen,
     SubmissionMiddleware.checkCitizenSubmissionModification,
     SubmissionController.removePicture
+);
+
+
+// Frontend
+Routes.getMapping("/submissions",
+    MainMiddleware.viewAsCitizen,
+    AccountController.assignAccountInfo,
+    PageController.sendRenderedPage("submission", "citizen")
 );

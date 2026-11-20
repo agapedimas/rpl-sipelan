@@ -1,6 +1,19 @@
 {
     "title": "Domisili",
 
+    "select_dialog": {
+        "title": "Pilih Domisili",
+        "province": {
+            "title": "Pilih Provinsi"
+        },
+        "city": {
+            "title": "Pilih Kota"
+        },
+        "district": {
+            "title": "Pilih Kecamatan"
+        }
+    },
+
     "name": {
         "title": "Nama",
         "errors": {
