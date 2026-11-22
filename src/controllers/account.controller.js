@@ -39,6 +39,10 @@ async function add(req, res) {
     if (AccountService.doesRoleExist(role) === false)
         return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");
 
+    // Make sure phone number is not already used
+    if (await AccountService.findByPhone(phone) !== null)
+        return ResponseUtil.sendApiResponse(res, 400, "Account with phone number '" + phone + "' is already used on another account.");
+
     // NIK is optional. If providen, then check for its validity.
     if (nik != null) {
         switch (ValidatorUtil.checkNikValidity(nik)) {
