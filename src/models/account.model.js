@@ -15,6 +15,8 @@ class Account extends Model {
     #role;
     /** @type {number} */
     #districtId;
+    /** @type {string} */
+    #domicile;
     /** @type {boolean} */
     #isActive;
 
@@ -26,9 +28,10 @@ class Account extends Model {
      * @param {string} phone
      * @param {"citizen" | "volunteer" | "officer" | "admin"} role
      * @param {number} districtId
+     * @param {string} domicile
      * @param {boolean} isActive
      */
-    constructor(id, name, nik, picture, phone, role, districtId, isActive) {
+    constructor(id, name, nik, picture, phone, role, districtId, domicile, isActive) {
         super();
         this.#id = id;
         this.#name = name;
@@ -37,6 +40,7 @@ class Account extends Model {
         this.#phone = phone;
         this.#role = role;
         this.#districtId = districtId;
+        this.#domicile = domicile;
         this.#isActive = isActive;
     }
 
@@ -66,6 +70,10 @@ class Account extends Model {
 
     get districtId() {
         return this.#districtId;
+    }
+
+    get domicile() {
+        return this.#domicile;
     }
 
     get isActive() {

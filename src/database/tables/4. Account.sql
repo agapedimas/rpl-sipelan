@@ -34,6 +34,14 @@ SELECT
     phone, 
     role,
     districtId,
+    (
+        SELECT
+            displayName
+        FROM
+            Domicile d
+        WHERE
+            d.districtId = a.districtId
+    ) AS domicile,
     isActive
 FROM
-    Account;
+    Account a;

@@ -28,6 +28,7 @@ async function initialize() {
     require("./routes/province.route");
     require("./routes/city.route");
     require("./routes/district.route");
+    require("./routes/domicile.route");
     require("./routes/disasterType.route");
     require("./routes/report.dummy.route");
     require("./routes/submission.route");

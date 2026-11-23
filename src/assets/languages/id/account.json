@@ -28,8 +28,8 @@
         "title": "Nomor Telepon",
         "errors": {
             "INVALID": "Nomor telepon tidak valid.",
-            "TOO_SHORT": "Nomor telepon minimal 6 karakter.",
-            "TOO_LONG": "Nomor telepon maksimal 15 karakter."
+            "TOO_SHORT": "Nomor telepon minimal 6 digit.",
+            "TOO_LONG": "Nomor telepon maksimal 15 digit."
         }
     },
     "role": "Peran",

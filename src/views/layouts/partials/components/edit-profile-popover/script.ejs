@@ -1,14 +1,15 @@
 <script>
     selectDomicileButton.onclick = async function() {
         const selectedDomicile = await selectDomicileAsync(this);
-        editProfileFormData.append("districtId", selectedDomicile);
+        editProfileFormData.set("districtId", selectedDomicile.districtId);
+        editDomicileText.innerText = selectedDomicile.displayName;
         console.log("Domisili yang dipilih:", selectedDomicile);
     }
     const editProfileForm = new PopOverForm(
         [
             new Field(editNameInput),
             new Field(editPhoneInput),
-            // new Field(editNikInput) -> Optional
+            new Field(editNikInput)
         ],
         submitEditProfileButton,
         cancelEditProfileButton,
@@ -23,16 +24,17 @@
         editNameInput.value = "<%= data.account.name %>";
         editPhoneInput.value = Formatter.PhoneNumber("<%= data.account.phone %>");
         editNikInput.value = "<%= data.account.nik %>";
+        editDomicileText.innerText = "<%= data.account.domicile %>";
         
         editProfileFormData = new FormData();
         editNameInput.oninput = function() {
-            editProfileFormData.append("name", this.value);
+            editProfileFormData.set("name", this.value);
         }
         editPhoneInput.oninput = function() {
-            editProfileFormData.append("phone", this.value);
+            editProfileFormData.set("phone", this.value);
         }
         editNikInput.oninput = function() {
-            editProfileFormData.append("nik", this.value);
+            editProfileFormData.set("nik", this.value);
         }
     }
 
@@ -58,7 +60,7 @@
                     Buttons: [{Text: "<%= language('general.ok') %>"}] 
                 });
                 
-            editProfilePictureFormData.append("file", files[0]);
+            editProfilePictureFormData.set("file", files[0]);
             editProfilePictureImage.src = URL.createObjectURL(files[0]);
             fileInput.remove();
         }
@@ -80,8 +82,7 @@
     
             // Reload page after the profile is updated,
             // and no need to return promise result.
-            // location.reload();
-            return resolve(true);
+            location.reload();
         })
     }
     
@@ -115,6 +116,10 @@
     }
 
     async function submitEditProfile() {
+        // No need to do patch request if user doesn't update their profile.
+        if ([...editProfileFormData.entries()].length == 0)
+            return true;
+
         try {
             const submitRequest = 
                 await fetch("/api/account/<%= data.account?.id %>", {

@@ -53,63 +53,91 @@
         const data = responseBody?.data;
         return data?.cities || [];
     }
-    async function fetchDistricts(cityId) {
+    async function fetchDomiciles(cityId) {
         if (cityId == null)
             return [];
 
-        const response = await fetch("/api/district?cityId=" + cityId);
+        const response = await fetch("/api/domicile?cityId=" + cityId);
         const responseBody = await response.json();
         const data = responseBody?.data;
-        return data?.districts || [];
+        return data?.domiciles || [];
     }
     function resetAndAppendProvinceItems(listElement, itemsData) {
+        // Reset items
+        listElement.clearItems();
+        // Append items
+        for (const itemData of itemsData || []) {
+            const itemElement = renderCityOrProvinceItem(itemData);
+            itemElement.onclick = onselected;
+            listElement.append(itemElement);
+        }
         async function onselected() {
             const provinceId = this.dataset.id;
             const cities = await fetchCities(provinceId);
             resetAndAppendCityItems(selectCityList, cities);
             navigateDomicileActivityToCityList();
         }
-        return resetAndAppendItems(listElement, itemsData, onselected);
     }
     function resetAndAppendCityItems(listElement, itemsData) {
-        async function onselected() {
-            const cityId = this.dataset.id;
-            const districts = await fetchDistricts(cityId);
-            resetAndAppendDistrictItems(selectDistrictList, districts);
-            navigateDomicileActivityToDistrictList();
-        }
-        return resetAndAppendItems(listElement, itemsData, onselected);
-    }
-    function resetAndAppendDistrictItems(listElement, itemsData) {
-        return resetAndAppendItems(listElement, itemsData, function() {
-            return domicileCallback(this.dataset.id);
-        });
-    }
-    function resetAndAppendItems(listElement, itemsData, onclick) {
         // Reset items
         listElement.clearItems();
         // Append items
         for (const itemData of itemsData || []) {
-            const itemElement = renderItem(itemData);
-            itemElement.onclick = onclick;
+            const itemElement = renderCityOrProvinceItem(itemData);
+            itemElement.onclick = onselected;
+            listElement.append(itemElement);
+        }
+        async function onselected() {
+            const cityId = this.dataset.id;
+            const domiciles = await fetchDomiciles(cityId);
+            resetAndAppendDistrictItems(selectDistrictList, domiciles);
+            navigateDomicileActivityToDistrictList();
+        }
+    }
+    function resetAndAppendDistrictItems(listElement, itemsData) {
+        // Reset items
+        listElement.clearItems();
+        // Append items
+        for (const itemData of itemsData || []) {
+            const itemElement = renderDistrictItem(itemData);
+            itemElement.onclick = o => domicileCallback(itemElement.data.domicile);
             listElement.append(itemElement);
         }
     }
-    function renderItem(itemData) {
+    function renderCityOrProvinceItem(itemData) {
+        const labelElement = renderItemLabel(itemData.name);
+        const chevronElement = renderItemChevron();
+        const itemContainer = renderItemContainer(itemData.id, itemData.name, itemData.name);
+        itemContainer.append(labelElement);
+        itemContainer.append(chevronElement);
+        return itemContainer;
+    }
+    function renderDistrictItem(itemData) {
+        const labelElement = renderItemLabel(itemData.districtName);
+        const emptyElement = renderItemLabel("");
+        const itemContainer = renderItemContainer(itemData.id, itemData.districtName, itemData.displayName);
+        itemContainer.append(labelElement);
+        itemContainer.append(emptyElement);
+        itemContainer.data = { domicile: itemData };
+        return itemContainer;
+    }
+    function renderItemContainer(dataId, dataName, dataDisplayName) {
+        const itemContainer = document.createElement("div");
+        itemContainer.classList.add("stack", "clickable");
+        itemContainer.dataset.id = dataId;
+        itemContainer.dataset.name = dataName;
+        itemContainer.dataset.displayName = dataDisplayName;
+        return itemContainer;
+    }
+    function renderItemLabel(dataName) {
         const labelElement = document.createElement("span");
-        labelElement.innerText = itemData.name;
-
+        labelElement.innerText = dataName;
+        return labelElement;
+    }
+    function renderItemChevron() {
         const chevronElement = document.createElement("span");
         chevronElement.classList.add("icon");
         chevronElement.innerText = "\uef59";
-
-        const itemContainer = document.createElement("div");
-        itemContainer.classList.add("stack", "clickable");
-        itemContainer.append(labelElement);
-        itemContainer.append(chevronElement);
-        itemContainer.dataset.id = itemData.id;
-        itemContainer.dataset.name = itemData.name;
-
-        return itemContainer;
+        return chevronElement;
     }
 </script>
