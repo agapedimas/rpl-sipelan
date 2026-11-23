@@ -74,22 +74,28 @@
     }
 
     async function fetchProvinces() {
-        const response = await $.get("/api/province");
-        return response?.data?.provinces || [];
+        const response = await fetch("/api/province");
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.provinces || [];
     }
     async function fetchCities(provinceId) {
         if (provinceId == null)
             return [];
 
-        const response = await $.get("/api/city?provinceId=" + provinceId);
-        return response?.data?.cities || [];
+        const response = await fetch("/api/city?provinceId=" + provinceId);
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.cities || [];
     }
     async function fetchDistricts(cityId) {
         if (cityId == null)
             return [];
 
-        const response = await $.get("/api/district?cityId=" + cityId);
-        return response?.data?.districts || [];
+        const response = await fetch("/api/district?cityId=" + cityId);
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.districts || [];
     }
 
     function resetAndAppendOptions(selectElement, optionsData) {

@@ -1,52 +1,7 @@
-<style>
-    #editProfilePopover {
-        width: 600px;
-        --input-label-width: 8em;
-    }
-</style>
-
-<div class="popover" id="editProfilePopover">
-    <div class="activity">
-        <div class="header cascaded">
-            <span class="title"><%= language('profile.edit_dialog.title') %></span>
-            <div class="buttons">
-                <button id="cancelEditProfileButton"><%= language('general.cancel') %></button>
-                <button id="submitEditProfileButton">
-                    <div class="progressring"></div>
-                    <span><%= language('general.save') %></span>
-                </button>
-            </div>
-        </div>
-        <div class="content">
-            <div class="profilePicture">
-                <img id="editProfilePictureImage"/>
-                <button id="editProfilePictureButton" class="plain"><%= language('general.change') %></button>
-            </div>
-            <div class="list form">
-                <div class="stack">
-                    <span><%= language('account.name.title') %></span>
-                    <input id="editNameInput" type="text" class="plain"/>
-                </div>
-                <div class="stack">
-                    <span><%= language('account.phone.title') %></span>
-                    <input id="editPhoneInput" type="tel" class="plain"/>
-                </div>
-                <div class="stack">
-                    <span><%= language('account.nik.short.title') %></span>
-                    <input id="editNikInput" type="text" ad-type="nik" class="plain"/>
-                </div>
-                <div id="selectDomicileButton" class="stack clickable">
-                    <span><%= language('domicile.title') %></span>
-                    <span id="editDomicileText"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     selectDomicileButton.onclick = async function() {
         const selectedDomicile = await selectDomicileAsync(this);
+        editProfileFormData.append("districtId", selectedDomicile);
         console.log("Domisili yang dipilih:", selectedDomicile);
     }
     const editProfileForm = new PopOverForm(
@@ -59,14 +14,26 @@
         cancelEditProfileButton,
         editProfilePopover
     );
-    
-    let editProfilePictureForm = new FormData();
+
+    let editProfileFormData = new FormData();
+    let editProfilePictureFormData = new FormData();
 
     editProfilePopover.onbeforeopen = function() {
         editProfilePictureImage.src = profilePictureImage.src;
         editNameInput.value = "<%= data.account.name %>";
         editPhoneInput.value = Formatter.PhoneNumber("<%= data.account.phone %>");
         editNikInput.value = "<%= data.account.nik %>";
+        
+        editProfileFormData = new FormData();
+        editNameInput.oninput = function() {
+            editProfileFormData.append("name", this.value);
+        }
+        editPhoneInput.oninput = function() {
+            editProfileFormData.append("phone", this.value);
+        }
+        editNikInput.oninput = function() {
+            editProfileFormData.append("nik", this.value);
+        }
     }
 
     editProfilePictureButton.onclick = function() {
@@ -76,7 +43,7 @@
         fileInput.accept = ".png, .jpg, .jpeg, .webp";
         fileInput.onchange = function() {
             // Reset form each input's value changes
-            editProfilePictureForm = new FormData();
+            editProfilePictureFormData = new FormData();
             const files = Array.from(this.files);
 
             if (files.length == 0)
@@ -91,7 +58,7 @@
                     Buttons: [{Text: "<%= language('general.ok') %>"}] 
                 });
                 
-            editProfilePictureForm.append("file", files[0]);
+            editProfilePictureFormData.append("file", files[0]);
             editProfilePictureImage.src = URL.createObjectURL(files[0]);
             fileInput.remove();
         }
@@ -106,27 +73,28 @@
             if (isEditProfilePictureSuccess === false)
                 return resolve(false);
     
-            // const isEditProfileSuccess = await submitEditProfile();
+            const isEditProfileSuccess = await submitEditProfile();
     
-            // if (isEditProfileSuccess === false)
-            //     return resolve(false);
+            if (isEditProfileSuccess === false)
+                return resolve(false);
     
             // Reload page after the profile is updated,
             // and no need to return promise result.
-            location.reload();
+            // location.reload();
+            return resolve(true);
         })
     }
     
     async function submitProfilePicture() {
         // No need to do post request if user doesn't update their profile picture.
-        if ([...editProfilePictureForm.entries()].length == 0)
+        if ([...editProfilePictureFormData.entries()].length == 0)
             return true;
 
         try {
             const uploadPictureRequest = await $.ajax({
                 type: "post",
                 url: "/pp",
-                data: editProfilePictureForm,
+                data: editProfilePictureFormData,
                 contentType: false,
                 processData: false
             })
@@ -137,7 +105,7 @@
             Components.Notification.Send({ 
                 Id: "avatar_failed", 
                 Title: "<%= language('profile.profile_picture.change.errors.title') %>", 
-                Message: result.responseJSON?.message || "<%= language('profile.profile_picture.change.errors.title') %>".format(result.status), 
+                Message: result.responseJSON?.message || "<%= language('profile.profile_picture.change.errors.UNKNOWN') %>".format(result.status), 
                 Icon: "\ufe64", 
                 Buttons: [{Text: "<%= language('general.ok') %>"}] 
             }); 
@@ -148,23 +116,43 @@
 
     async function submitEditProfile() {
         try {
-            const submitRequest = await $.ajax({
-                type: "post",
-                url: "/account/<%= data.account?.id %>",
-                data: {
+            const submitRequest = 
+                await fetch("/api/account/<%= data.account?.id %>", {
+                    method: "PATCH",
+                    body: editProfileFormData
+                });
 
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                if (data?.requireOtp == true) {
+                    return await verifyOtpAsync();
                 }
-            })
-
-            // Update fields
-
-            return true;
+                else {
+                    return true;
+                }
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
         }
-        catch (result) {
-            // TO-DO
+        catch (error) {
+            Components.Notification.Send({ 
+                Id: "update_account_failed", 
+                Title: "<%= language('profile.errors.title') %>", 
+                Message: error.message || "<%= language('profile.errors.UNKNOWN') %>".format(error.cause.details), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
             return false;
         }
     }
 </script>
-
-<%- include('./select-domicile-popover') %>

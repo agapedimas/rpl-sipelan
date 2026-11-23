@@ -1,0 +1,74 @@
+<script>
+    const verifyOtpForm = new PopOverForm(
+        [
+            new Field(otpCodeInput, otpCodeError),
+        ],
+        submitVerifyOtpButton,
+        cancelVerifyOtpButton,
+        verifyOtpPopover
+    );
+
+    let verifyOtpCallback = null;
+    let verifyOtpFormData = new FormData();
+
+    verifyOtpPopover.onbeforeopen = function() {
+        otpCodeInput.value = "";
+        editProfileFormData.delete("otpCode");
+        
+        otpCodeInput.oninput = function() {
+            editProfileFormData.append("otpCode", this.value);
+        }
+        verifyOtpCallback = null;
+    }
+    verifyOtpPopover.onclosed = function() {
+        if (verifyOtpCallback) {
+            verifyOtpCallback(false);
+            verifyOtpCallback = null;
+        }
+        editProfileFormData.delete("otpCode");
+    }
+
+    submitVerifyOtpButton.onaction = submitEditProfileAndOtp;
+    
+    async function verifyOtpAsync() {
+        return new Promise(function(resolve) {
+            verifyOtpPopover.open();
+            verifyOtpCallback = function(result) {
+                resolve(result);
+            }
+        });
+    }
+
+    async function submitEditProfileAndOtp() {
+        try {
+            const submitRequest = 
+                await fetch("/api/account/<%= data.account?.id %>", {
+                    method: "PATCH",
+                    body: editProfileFormData
+                });
+
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                return verifyOtpCallback(true);
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
+        }
+        catch (error) {
+            if (error.message != null) {
+                otpCodeError.innerText = error.message;
+                otpCodeError.classList.remove("hidden");
+            }
+            return false;
+        }
+    }
+</script>

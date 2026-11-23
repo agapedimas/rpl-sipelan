@@ -132,6 +132,7 @@ function initializeCaching() {
 function initializeLayouts() {
     Server.set("view engine", "ejs");
     Server.set("views", path.join(__dirname, "./views"));
+    Server.set("view options", { root: path.join(__dirname, "./views") });
     Server.use(expressLayouts);
 }
 

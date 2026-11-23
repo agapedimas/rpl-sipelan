@@ -5,6 +5,11 @@
         "title": "Edit Profil"
     },
 
+    "verify_otp_dialog": {
+        "title": "Verifikasi OTP",
+        "description": "Masukkan kode OTP yang sudah kami kirimkan ke {0}."
+    },
+
     "profile_picture": {
         "change": {
             "title": "Ganti Foto Profil",
@@ -19,5 +24,10 @@
                 "description": "Foto profil berhasil diubah."
             }
         }
+    },
+
+    "errors": {
+        "title": "Gagal Mengubah Profil",
+        "UNKNOWN": "Terjadi kesalahan. Silakan coba lagi nanti. ({0})"
     }
 }

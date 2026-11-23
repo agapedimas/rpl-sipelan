@@ -1,0 +1,23 @@
+<%- include('./style') %>
+
+<div class="popover" id="verifyOtpPopover">
+    <div class="activity">
+        <div class="header cascaded">
+            <span class="title"><%= language('profile.verify_otp_dialog.title') %></span>
+            <div class="buttons">
+                <button id="cancelVerifyOtpButton"><%= language('general.cancel') %></button>
+                <button id="submitVerifyOtpButton">
+                    <div class="progressring"></div>
+                    <span><%= language('general.save') %></span>
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <%= language('profile.verify_otp_dialog.description').format(123) %>
+            <input type="text" id="otpCodeInput"/>
+            <span id="otpCodeError"></span>
+        </div>
+    </div>
+</div>
+
+<%- include('./script') %>

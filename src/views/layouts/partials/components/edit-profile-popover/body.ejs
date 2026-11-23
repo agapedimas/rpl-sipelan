@@ -1,0 +1,44 @@
+<%- include('./style') %>
+
+<div class="popover" id="editProfilePopover">
+    <div class="activity">
+        <div class="header cascaded">
+            <span class="title"><%= language('profile.edit_dialog.title') %></span>
+            <div class="buttons">
+                <button id="cancelEditProfileButton"><%= language('general.cancel') %></button>
+                <button id="submitEditProfileButton">
+                    <div class="progressring"></div>
+                    <span><%= language('general.save') %></span>
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="profilePicture">
+                <img id="editProfilePictureImage"/>
+                <button id="editProfilePictureButton" class="plain"><%= language('general.change') %></button>
+            </div>
+            <div class="list form">
+                <div class="stack">
+                    <span><%= language('account.name.title') %></span>
+                    <input id="editNameInput" type="text" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.phone.title') %></span>
+                    <input id="editPhoneInput" type="tel" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.nik.short.title') %></span>
+                    <input id="editNikInput" type="text" ad-type="nik" class="plain"/>
+                </div>
+                <div id="selectDomicileButton" class="stack clickable">
+                    <span><%= language('domicile.title') %></span>
+                    <span id="editDomicileText"><%= data.account.districtId %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./script') %>
+<%- include('./verify-otp-popover/body') %>
+<%- include('../select-domicile-popover/body') %>

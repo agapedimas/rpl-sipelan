@@ -1,0 +1,35 @@
+<%- include('./style') %>
+
+<div class="popover" id="selectDomicilePopover">
+    <div class="activity">
+        <section>
+            <div class="header cascaded">
+                <span class="title"><%= language('domicile.select_dialog.province.title') %></span>
+                <div class="buttons">
+                    <button id="cancelSelectDomicileButton"><%= language('general.cancel') %></button>
+                </div>
+            </div>
+            <div class="content">
+                <div id="selectProvinceList" class="list plain"></div>
+            </div>
+        </section>
+        <section>
+            <div class="header cascaded">
+                <span class="title"><%= language('domicile.select_dialog.city.title') %></span>
+            </div>
+            <div class="content"> 
+                <div id="selectCityList" class="list plain"></div>
+            </div>
+        </section>
+        <section>
+            <div class="header cascaded">
+                <span class="title"><%= language('domicile.select_dialog.district.title') %></span>
+            </div>
+            <div class="content"> 
+                <div id="selectDistrictList" class="list plain"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<%- include('./script') %>

@@ -1,0 +1,115 @@
+<script>
+    let domicileCallback;
+
+    document.addEventListener("DOMContentLoaded", async function() {
+        const provinces = await fetchProvinces();
+        resetAndAppendProvinceItems(selectProvinceList, provinces);
+    });
+    
+    async function selectDomicileAsync(element) {
+        return new Promise(function(resolve) {
+            domicileCallback = function(data) {
+                resolve(data);
+                selectDomicilePopover.close();
+            }
+            selectDomicilePopover.open(element);
+            navigateDomicileActivityToProvinceList();
+        })
+    }
+
+    selectDomicilePopover.onclosed = function() {
+        domicileCallback = null;
+    }
+
+    cancelSelectDomicileButton.onclick = function() {
+        selectDomicilePopover.close();
+    }
+
+    function navigateDomicileActivityToProvinceList() {
+        const activity = selectDomicilePopover.container.children[0];
+        activity.navigateTo(0, true);
+    }
+    function navigateDomicileActivityToCityList() {
+        const activity = selectDomicilePopover.container.children[0];
+        activity.navigateTo(1);
+    }
+    function navigateDomicileActivityToDistrictList() {
+        const activity = selectDomicilePopover.container.children[0];
+        activity.navigateTo(2);
+    }
+
+    async function fetchProvinces() {
+        const response = await fetch("/api/province");
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.provinces || [];
+    }
+    async function fetchCities(provinceId) {
+        if (provinceId == null)
+            return [];
+
+        const response = await fetch("/api/city?provinceId=" + provinceId);
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.cities || [];
+    }
+    async function fetchDistricts(cityId) {
+        if (cityId == null)
+            return [];
+
+        const response = await fetch("/api/district?cityId=" + cityId);
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.districts || [];
+    }
+    function resetAndAppendProvinceItems(listElement, itemsData) {
+        async function onselected() {
+            const provinceId = this.dataset.id;
+            const cities = await fetchCities(provinceId);
+            resetAndAppendCityItems(selectCityList, cities);
+            navigateDomicileActivityToCityList();
+        }
+        return resetAndAppendItems(listElement, itemsData, onselected);
+    }
+    function resetAndAppendCityItems(listElement, itemsData) {
+        async function onselected() {
+            const cityId = this.dataset.id;
+            const districts = await fetchDistricts(cityId);
+            resetAndAppendDistrictItems(selectDistrictList, districts);
+            navigateDomicileActivityToDistrictList();
+        }
+        return resetAndAppendItems(listElement, itemsData, onselected);
+    }
+    function resetAndAppendDistrictItems(listElement, itemsData) {
+        return resetAndAppendItems(listElement, itemsData, function() {
+            return domicileCallback(this.dataset.id);
+        });
+    }
+    function resetAndAppendItems(listElement, itemsData, onclick) {
+        // Reset items
+        listElement.clearItems();
+        // Append items
+        for (const itemData of itemsData || []) {
+            const itemElement = renderItem(itemData);
+            itemElement.onclick = onclick;
+            listElement.append(itemElement);
+        }
+    }
+    function renderItem(itemData) {
+        const labelElement = document.createElement("span");
+        labelElement.innerText = itemData.name;
+
+        const chevronElement = document.createElement("span");
+        chevronElement.classList.add("icon");
+        chevronElement.innerText = "\uef59";
+
+        const itemContainer = document.createElement("div");
+        itemContainer.classList.add("stack", "clickable");
+        itemContainer.append(labelElement);
+        itemContainer.append(chevronElement);
+        itemContainer.dataset.id = itemData.id;
+        itemContainer.dataset.name = itemData.name;
+
+        return itemContainer;
+    }
+</script>

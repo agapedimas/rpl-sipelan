@@ -32,7 +32,7 @@ async function add(phone, name, districtId, role, nik) {
  */
 async function updateInfo(accountId, updatedInfo) {
     if (updatedInfo.phone)
-        updatedInfo.phone = FormatterUtil.formatPhoneNumber(phone);
+        updatedInfo.phone = FormatterUtil.formatPhoneNumber(updatedInfo.phone);
 
     const isSuccess = 
         await AccountRepository.updateInfo(
