@@ -64,6 +64,24 @@ async function viewAsOfficer(req, res, next) {
 async function viewAsAdmin(req, res, next) {
     return viewAs("admin", req, res, next);
 }
+/** 
+ * Viewing page of their own data
+ * @type {import("express").RequestHandler} 
+ */
+async function viewTheirOwn(req, res, next) {
+    const requestedAccountId = req.params.accountId;
+    if (requestedAccountId == null)
+        throw new Error("Account ID should be specified on path, e.g. '/api/dataABC/:accountId'.");
+
+    const sessionAccountId = req.session.accountId;
+    if (sessionAccountId == null) 
+        return res.redirect("/signin?continue=" + decodeURIComponent(req.url));
+
+    if (sessionAccountId === requestedAccountId)
+        return next();
+    else
+        return PageController.sendErrorPage(403);
+}
 
 
 
@@ -87,18 +105,35 @@ async function accessAsAdmin(req, res, next) {
 async function accessAsVolunteerOrOfficer(req, res, next) {
     return accessAs(["volunteer", "officer"], req, res, next);
 }
-
 /** @type {import("express").RequestHandler} */
 async function accessAsCitizenOrVolunteerOrOfficer(req, res, next) {
     return accessAs(["citizen", "volunteer", "officer"], req, res, next);
+}
+/** 
+ * Manage their own data
+ * @type {import("express").RequestHandler} 
+ */
+async function accessTheirOwn(req, res, next) {
+    const requestedAccountId = req.params.accountId;
+    if (requestedAccountId == null)
+        throw new Error("Account ID should be specified on path, e.g. '/api/dataABC/:accountId'.");
+
+    const sessionAccountId = req.session.accountId;
+    if (sessionAccountId == null) 
+        return ResponseUtil.sendApiResponse(res, 403, "You do not have required access to perform this action.");
+
+    if (sessionAccountId == requestedAccountId)
+        return next();
+    else
+        return ResponseUtil.sendApiResponse(res, 403, "You do not have required access to perform this action.");
 }
 
 
 
 
 module.exports = {
-    viewAsCitizen, viewAsVolunteer, viewAsOfficer, viewAsAdmin,
-    accessAsCitizen, accessAsVolunteer, accessAsOfficer, accessAsAdmin,
+    viewAsCitizen, viewAsVolunteer, viewAsOfficer, viewAsAdmin, viewTheirOwn,
+    accessAsCitizen, accessAsVolunteer, accessAsOfficer, accessAsAdmin, accessTheirOwn,
     accessAsVolunteerOrOfficer,
     accessAsCitizenOrVolunteerOrOfficer
 }

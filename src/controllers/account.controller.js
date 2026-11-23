@@ -2,54 +2,14 @@ const path = require("path")
 
 const ResponseUtil = require("../utils/response.util");
 const ValidatorUtil = require("../utils/validator.util");
+const LanguageUtil = require("../utils/language.util");
 
 const AccountService = require("../services/account.service");
 const DistrictService = require("../services/district.service");
 
 /** @type {import("express").RequestHandler} */
 async function add(req, res) {
-    let { phone, name, districtId, role, nik } = req.body;
-    
-    // Make sure required fields are providen
-    if (ValidatorUtil.areFieldsEmpty([phone, name, districtId, role])) {
-        return ResponseUtil.sendApiResponse(res, 422, "Phone, Name, DistrictId, and Role are required.");
-    }
-
-    switch (ValidatorUtil.checkPhoneNumberValidity(phone)) {
-        case "TOO_LONG": 
-            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too long.");
-        case "TOO_SHORT": 
-            return ResponseUtil.sendApiResponse(res, 400, "Phone number is too short.");
-        case "INVALID": 
-            return ResponseUtil.sendApiResponse(res, 400, "Phone number is invalid.");
-    }
-
-    switch (ValidatorUtil.checkEntityNameValidity(name)) {
-        case "TOO_LONG": 
-            return ResponseUtil.sendApiResponse(res, 400, "Name is too long.");
-        case "TOO_SHORT": 
-            return ResponseUtil.sendApiResponse(res, 400, "Name is too short.");
-        case "INVALID": 
-            return ResponseUtil.sendApiResponse(res, 400, "Name is invalid.");
-    }
-
-    if (DistrictService.doesDistrictExist(districtId) == false)
-        return ResponseUtil.sendApiResponse(res, 400, "District with id '" + districtId + "' does not exist.");
-
-    if (AccountService.doesRoleExist(role) === false)
-        return ResponseUtil.sendApiResponse(res, 400, "Role '" + role + "' does not exist.");
-
-    // Make sure phone number is not already used
-    if (await AccountService.findByPhone(phone) !== null)
-        return ResponseUtil.sendApiResponse(res, 400, "Account with phone number '" + phone + "' is already used on another account.");
-
-    // NIK is optional. If providen, then check for its validity.
-    if (nik != null) {
-        switch (ValidatorUtil.checkNikValidity(nik)) {
-            case "INVALID": 
-                return ResponseUtil.sendApiResponse(res, 400, "NIK is should be a number and 16 digits.");
-        }
-    }
+    const { phone, name, districtId, role, nik } = req.body;
 
     const isSuccess = await AccountService.add(phone, name, districtId, role, nik);
 
@@ -60,7 +20,22 @@ async function add(req, res) {
 }
 
 /** @type {import("express").RequestHandler} */
-async function updateInfo(req, res) {}
+async function updateInfo(req, res) {
+    const accountId = req.session.accountId;
+    const { phone, name, districtId, role, nik } = req.body;
+
+    const isSuccess = await AccountService.updateInfo(accountId, {
+        phone: phone,
+        name: name,
+        districtId: districtId,
+        nik: nik
+    });
+
+    if (isSuccess)
+        return ResponseUtil.sendApiResponse(res, 200);
+    else
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
+}
 
 /** @type {import("express").RequestHandler} */
 async function getPicture(req, res) {
