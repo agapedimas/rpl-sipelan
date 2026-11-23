@@ -25,7 +25,7 @@ async function checkIfPhoneNumberChanged(req, res, next) {
         return ResponseUtil.sendApiResponse(res, 200, null, { requireOtp: true });
     }
     else {
-        const isValid = OtpService.verifyOtp(accountId, parseInt(otpCode));
+        const isValid = OtpService.verifyOtp(accountId, otpCode);
         if (isValid)
             return next();
         else
@@ -70,7 +70,7 @@ async function checkValidity(req, res, next) {
     }
 
     if (nik != null) {
-        const nikValidationResult = ValidatorUtil.checkEntityNameValidity(name);
+        const nikValidationResult = ValidatorUtil.checkNikValidity(nik);
         if (nikValidationResult !== "OK")
             return ResponseUtil.sendApiResponse(res, 400,
                 LanguageUtil.getString(req.session.languageId, "account.nik.errors." + nikValidationResult));

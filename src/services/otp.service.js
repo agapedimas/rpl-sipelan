@@ -45,6 +45,9 @@ function generateOtp(accountId) {
  * @returns { boolean } Validation result
  */
 function verifyOtp(accountId, code) {
+    if (typeof code !== "number")
+        code = parseInt(code);
+    
     const otp = otpList.get(code);
     if (otp == null)
         return false;

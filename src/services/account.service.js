@@ -16,6 +16,9 @@ async function add(phone, name, districtId, role, nik) {
     if (phone)
         phone = FormatterUtil.formatPhoneNumber(phone);
 
+    if (nik)
+        nik = FormatterUtil.formatNik(nik);
+
     const accountId = await AccountRepository.add(phone, name, districtId, role, nik);
     return accountId;
 }
@@ -33,6 +36,9 @@ async function add(phone, name, districtId, role, nik) {
 async function updateInfo(accountId, updatedInfo) {
     if (updatedInfo.phone)
         updatedInfo.phone = FormatterUtil.formatPhoneNumber(updatedInfo.phone);
+
+    if (updatedInfo.nik)
+        updatedInfo.nik = FormatterUtil.formatNik(updatedInfo.nik);
 
     const isSuccess = 
         await AccountRepository.updateInfo(

@@ -16,7 +16,7 @@
         editProfileFormData.delete("otpCode");
         
         otpCodeInput.oninput = function() {
-            editProfileFormData.append("otpCode", this.value);
+            editProfileFormData.set("otpCode", this.value);
         }
         verifyOtpCallback = null;
     }

@@ -32,6 +32,8 @@ class Form {
                         registerPhoneInput(currentFieldElement);
                     else if (currentFieldElement.getAttribute("ad-type") == "otp")
                         registerOtpInput(currentFieldElement);
+                    else if (currentFieldElement.getAttribute("ad-type") == "nik")
+                        registerNikInput(currentFieldElement);
                     
                     currentFieldElement.addEventListener("keydown", function(event) {
                         if (event.key == "Enter") {
@@ -266,5 +268,11 @@ function registerPhoneInput(input) {
 function registerOtpInput(input) {
     input.addEventListener("input", function() {
         this.value = this.value.replace(/[^0-9]/g, "");
+    });
+}
+
+function registerNikInput(input) {
+    input.addEventListener("input", function() {
+        this.value = Formatter.Nik(this.value, false);
     });
 }

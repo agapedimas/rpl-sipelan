@@ -179,5 +179,13 @@ const Formatter = {
                 timeZoneName: "shortGeneric"
             }
         ).format(date);
+    },
+    Nik: function(inputNik, useFallback = true) {
+        if (!inputNik || /[^0-9\+\-\s]/.test(inputNik))
+            return useFallback ? "-" : "";
+
+        inputNik = String(inputNik).replace(/\D/g, "");
+
+        return inputNik.replace(/(\d{4})(?=\d)/g, "$1 ");
     }
 }

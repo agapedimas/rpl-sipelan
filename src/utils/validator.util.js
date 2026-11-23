@@ -74,14 +74,14 @@ function checkPhoneNumberValidity(phone) {
     phone = phone.replace(/[\s\-]/g, "");
     
     // Check remaining characters
-    const regex = /^\+?[0-9]+$/;
+    const regex = /^\+[0-9]+$/;
     if (regex.test(phone) == false)
         return "INVALID";
 
     if (phone.length < 6)
         return "TOO_SHORT";
 
-    if (phone.length > 15)
+    if (phone.length > 16)
         return "TOO_LONG";
 
     return "OK";

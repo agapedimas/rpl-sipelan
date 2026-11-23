@@ -46,7 +46,11 @@ class PopOverForm {
                 if (currentFieldElement.tagName == "INPUT") {
                     if (currentFieldElement.type == "tel")
                         registerPhoneInput(currentFieldElement);
-                    
+                    else if (currentFieldElement.getAttribute("ad-type") == "otp")
+                        registerOtpInput(currentFieldElement);
+                    else if (currentFieldElement.getAttribute("ad-type") == "nik")
+                        registerNikInput(currentFieldElement);
+
                     currentFieldElement.addEventListener("keydown", function(event) {
                         if (event.key == "Enter") {
                             if (nextFieldElement == null)

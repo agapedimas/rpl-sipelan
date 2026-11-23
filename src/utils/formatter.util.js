@@ -80,6 +80,21 @@ function censorPhoneNumber(number, useFallback = true) {
 }
 
 /**
+ * Format NIK
+ * @param { number | string } number 
+ * @param { boolean } useFallback 
+ * @returns { string }
+ */
+function formatNik(nik, useFallback = true) {
+    if (!nik || /[^0-9\+\-\s]/.test(nik))
+        return useFallback ? "-" : "";
+
+    nik = String(nik).replace(/\D/g, "");
+
+    return nik.replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+/**
  * Format short date and time
  * @param { Date | string | number } inputDate 
  * @param { boolean } useFallback 
@@ -205,6 +220,7 @@ module.exports = {
     formatDateTime,
     censorPhoneNumber,
     formatPhoneNumber,
+    formatNik,
     formatShortDateTime,
     formatTime
 }

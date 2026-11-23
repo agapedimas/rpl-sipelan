@@ -1,8 +1,11 @@
 .popover .list.form {
 }
     .popover .list.form > .stack {
-        grid-auto-columns: var(--input-label-width, auto) auto;
+        grid-auto-columns: var(--input-label-width, auto) auto max-content;
     }
         .popover .list.form > .stack span:first-child {
             font-weight: 600;
+        }
+        .popover .list.form > .stack span.icon {
+            font-size: 0.7em;
         }
