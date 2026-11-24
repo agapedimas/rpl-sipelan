@@ -1,6 +1,6 @@
 const Configurations = require("../src/configurations");
 
-const { test } = require("node:test");
+const { test, suite, before, after, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 
 const baseUrl = "http://localhost:" + Configurations.get("app").port;
@@ -91,6 +91,11 @@ function deleteRequest(path, options = {}) {
 
 module.exports = {
     test,
+    suite,
+    before,
+    after,
+    beforeEach, 
+    afterEach,
     assert,
     request,
     getRequest,
