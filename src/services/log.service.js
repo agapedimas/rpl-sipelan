@@ -96,6 +96,14 @@ async function updateInfo(logId, updatedInfo) {
 }
 
 /**
+ * @param { typeof Log.prototype.id } logId
+ * @returns { Promise<typeof Log.prototype.picture> }
+ */
+async function getPicture(logId) {
+    return await LogRepository.getPicture(logId);
+}
+
+/**
  * @param { typeof Log.prototype.id } logId 
  * @param { typeof Log.prototype.picture } pictureBuffer 
  * @returns { Promise<boolean> }
@@ -123,6 +131,14 @@ async function removePicture(logId) {
  */
 async function findAll() {
     return await LogRepository.findAll();
+}
+
+/**
+ * @param { typeof Log.prototype.id } id
+ * @returns { Promise<Array<Log>> }
+ */
+async function findByLogId(logId) {
+    return await LogRepository.findByLogId(logId);
 }
 
 /**
@@ -160,7 +176,8 @@ async function remove(logId) {
 module.exports = {
     add,
     updateInfo, 
-    setPicture, removePicture,
-    findAll, findAllByReportId, findAllByReporterId, findAllByLogCategoryId,
+    getPicture, setPicture, removePicture,
+    findAll, findByLogId, findAllByReportId,
+    findAllByReporterId, findAllByLogCategoryId,
     remove
 };

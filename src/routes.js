@@ -32,6 +32,8 @@ async function initialize() {
     require("./routes/disasterType.route");
     require("./routes/report.route");
     require("./routes/verification.route");
+    require("./routes/log.route");
+    require("./routes/logCategory.route");
     require("./routes/submission.route");
     require("./routes/static.http.route");
 

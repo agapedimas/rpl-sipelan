@@ -67,7 +67,7 @@ async function findAllByLogCategoryId(logCategoryId) {
 async function findAllByReportId(reportId) {
     const queryResult = 
         await Database.doQuery(
-            `SELECT * FROM Log WHERE reporterId = ?
+            `SELECT * FROM Log WHERE reportId = ?
             ORDER BY time DESC`,
             reportId
         );
@@ -104,7 +104,7 @@ async function add(value, time, picture, reporterId, logCategoryId, reportId) {
                 (value, time, picture, reporterId, logCategoryId, reportId)
             VALUES 
                 (?, ?, ?, ?, ?, ?)
-        `, 
+        `,
         [value, time, picture, reporterId, logCategoryId, reportId]);
     return queryResult.insertId;
 }

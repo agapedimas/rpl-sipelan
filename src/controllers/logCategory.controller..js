@@ -1,57 +1,73 @@
+const ResponseUtil = require("../utils/response.util");
 const LogCategoryService = require("../services/logCategory.service");
 
-async function findAll(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function findAll(req, res) {
     const categories = await LogCategoryService.findAll();
-    return res.send(categories);
+    return ResponseUtil.sendApiResponse(res, 200, null, { categories });
 }
 
-async function findById(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function findById(req, res) {
     const categoryId = req.params.id;
     const category = await LogCategoryService.findById(categoryId);
-    if (!category) {
-        return res.status(404).send({ message: "Log category not found." });
-    }
-    return res.send(category);
+
+    if (!category)
+        return ResponseUtil.sendApiResponse(res, 404, "Log category not found.");
+
+    return ResponseUtil.sendApiResponse(res, 200, null, { category });
 }
 
-async function add(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function add(req, res) {
+    const { name, type, unit } = req.body;
+
     try {
-        const { name, type, unit } = req.body;
         const categoryId = await LogCategoryService.add(name, type, unit);
-        return res.status(201).send({ categoryId });
+
+        if (categoryId)
+            return ResponseUtil.sendApiResponse(res, 201, null, { categoryId });
+        else
+            return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
     } catch (error) {
-        return res.status(400).send({ message: error.message });
+        return ResponseUtil.sendApiResponse(res, 400, error.message);
     }
 }
 
-async function updateInfo(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function updateInfo(req, res) {
+    const categoryId = req.params.id;
+    const { name, type, unit } = req.body;
+
     try {
-        const categoryId = req.params.id;
-        const updatedInfo = req.body;
-        
-        const isSuccess = await LogCategoryService.updateInfo(categoryId, updatedInfo);
-        if (isSuccess) {
-            return res.send({ message: "Log category updated successfully." });
-        }
-        return res.status(400).send({ message: "Failed to update log category." });
+        const isSuccess = await LogCategoryService.updateInfo(categoryId, {
+            name,
+            type,
+            unit
+        });
+
+        if (isSuccess)
+            return ResponseUtil.sendApiResponse(res, 200);
+        else
+            return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
     } catch (error) {
-        return res.status(400).send({ message: error.message });
+        return ResponseUtil.sendApiResponse(res, 400, error.message);
     }
 }
 
-async function remove(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function remove(req, res) {
     const categoryId = req.params.id;
     const isSuccess = await LogCategoryService.remove(categoryId);
-    if (isSuccess) {
-        return res.send({ message: "Log category deleted successfully." });
-    }
-    return res.status(400).send({ message: "Failed to delete log category." });
+
+    if (isSuccess)
+        return ResponseUtil.sendApiResponse(res, 200);
+    else
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
 module.exports = {
-    findAll,
-    findById,
-    add,
-    updateInfo,
+    findAll, findById,
+    add, updateInfo,
     remove
 };
