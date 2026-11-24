@@ -12,6 +12,7 @@
     "verify": "Verifikasi",
     "change": "Ganti",
     "save": "Simpan",
+    "submit": "Kirim",
 
     "errors": {
         "page_not_found": {

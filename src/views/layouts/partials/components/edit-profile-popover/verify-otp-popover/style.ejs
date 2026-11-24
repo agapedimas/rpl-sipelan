@@ -1,0 +1,48 @@
+<style>
+    #verifyOtpPopover .hero {
+        display: grid;
+        text-align: center;
+        padding: 0 1em var(--padding);
+    }
+        #verifyOtpPopover .hero .icon {
+            font-size: 4em;
+            margin: 0.25em 0 0.5em;
+            color: var(--accent);
+        }
+    #verifyOtpPopover .inputs {
+        display: grid;
+        gap: 1em;
+    }
+        #verifyOtpPopover .inputs input {
+            text-align: center;
+            padding: 0.6em;
+            font-size: 1.2em;
+            letter-spacing: 1em;
+            font-weight: 800;
+        }
+        #verifyOtpPopover .inputs button {
+            padding: 0.5em 1em;
+        }
+        #verifyOtpPopover .inputs .error {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: max-content auto;
+            text-align: left;
+            color: var(--notice);
+            margin: 0 0 0.5em;
+            gap: 0.5em;
+            font-size: 0.8em;
+            letter-spacing: 0.025em;
+            justify-content: center;
+        }
+            #verifyOtpPopover .inputs .error::before {
+                content: "\f1aa";
+                font-family: var(--font-icon);
+            }
+            #verifyOtpPopover .inputs button .progressring {
+                width: 1em;
+            }
+            #verifyOtpPopover:not(.loading) .inputs button .progressring {
+                display: none;
+            }
+</style>
