@@ -1,101 +1,195 @@
+const ResponseUtil = require("../utils/response.util");
 const LogService = require("../services/log.service");
 
-async function findAll(req, res, next) {
-    const logs = await LogService.findAll();
-    return res.send(logs);
-}
+const MAX_FILE_SIZE = 10_000_000; // 10 MB
 
-async function findAllByReportId(req, res, next) {
-    const reportId = req.params.reportId;
-    const logs = await LogService.findAllByReportId(reportId);
-    return res.send(logs);
-}
-
-async function findAllByLogCategoryId(req, res, next) {
-    const logCategoryId = req.params.logCategoryId;
-    const logs = await LogService.findAllByLogCategoryId(logCategoryId);
-    return res.send(logs);
-}
-
-async function findAllByReporterId(req, res, next) {
-    const reporterId = req.params.reporterId;
-    const logs = await LogService.findAllByReporterId(reporterId);
-    return res.send(logs);
-}
-
-async function add(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function findAll(req, res) {
     try {
-        const { reportId, reporterId, logCategoryId, value, time } = req.body;
-        const pictureBuffer = req.file ? req.file.buffer : null; // Asumsi menggunakan multer untuk file upload
+        const logs = await LogService.findAll();
+        return ResponseUtil.sendApiResponse(res, 200, null, { logs });
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
 
+/** @type {import("express").RequestHandler} */
+async function findByLogId(req, res) {
+    try {
+        const log = await LogService.findByLogId(req.params.id);
+        if (!log)
+            return ResponseUtil.sendApiResponse(res, 404, "Log not found.");
+
+        return ResponseUtil.sendApiResponse(res, 200, null, { log });
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllByReportId(req, res) {
+    try {
+        const logs = await LogService.findAllByReportId(req.params.reportId);
+        return ResponseUtil.sendApiResponse(res, 200, null, { logs });
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllByLogCategoryId(req, res) {
+    try {
+        const logs = await LogService.findAllByLogCategoryId(req.params.logCategoryId);
+        return ResponseUtil.sendApiResponse(res, 200, null, { logs });
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllByReporterId(req, res) {
+    try {
+        const logs = await LogService.findAllByReporterId(req.params.reporterId);
+        return ResponseUtil.sendApiResponse(res, 200, null, { logs });
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function add(req, res) {
+    const { reportId, reporterId, logCategoryId, value, time } = req.body ?? {};
+    const pictureBuffer = req.files?.file?.data ?? null;
+
+    if (!reportId || !reporterId || !logCategoryId || value === undefined) {
+        return ResponseUtil.sendApiResponse(
+            res,
+            400,
+            "reportId, reporterId, logCategoryId, and value are required."
+        );
+    }
+
+    const parsedTime = time !== undefined && time !== null && time !== "" ? Number(time) : null;
+    if (parsedTime !== null && Number.isNaN(parsedTime)) {
+        return ResponseUtil.sendApiResponse(res, 400, "time must be a valid number.");
+    }
+
+    if (pictureBuffer != null && pictureBuffer.length > MAX_FILE_SIZE) {
+        return ResponseUtil.sendApiResponse(res, 400, "File size should not exceed 10 MB.");
+    }
+
+    try {
         const logId = await LogService.add(
-            reportId, 
-            reporterId, 
-            logCategoryId, 
-            value, 
-            time ? Number(time) : null, 
+            reportId,
+            reporterId,
+            logCategoryId,
+            value,
+            parsedTime,
             pictureBuffer
         );
-        return res.status(201).send({ logId });
+
+        if (!logId)
+            return ResponseUtil.sendApiResponse(res, 500, "Failed to create log.");
+
+        return ResponseUtil.sendApiResponse(res, 201, null, { logId });
     } catch (error) {
-        return res.status(400).send({ message: error.message });
+        return ResponseUtil.sendApiResponse(res, 400, error.message);
     }
 }
 
-async function updateInfo(req, res, next) {
-    try {
-        const logId = req.params.id;
-        const updatedInfo = req.body;
-        
-        const isSuccess = await LogService.updateInfo(logId, updatedInfo);
-        if (isSuccess) {
-            return res.send({ message: "Log updated successfully." });
-        }
-        return res.status(400).send({ message: "Failed to update log." });
-    } catch (error) {
-        return res.status(400).send({ message: error.message });
-    }
-}
-
-async function setPicture(req, res, next) {
-    try {
-        const logId = req.params.id;
-        if (!req.file) {
-            return res.status(400).send({ message: "No picture provided." });
-        }
-
-        const isSuccess = await LogService.setPicture(logId, req.file.buffer);
-        if (isSuccess) {
-            return res.send({ message: "Picture updated successfully." });
-        }
-        return res.status(400).send({ message: "Failed to update picture." });
-    } catch (error) {
-        return res.status(400).send({ message: error.message });
-    }
-}
-
-async function removePicture(req, res, next) {
+/** @type {import("express").RequestHandler} */
+async function updateInfo(req, res) {
     const logId = req.params.id;
-    const isSuccess = await LogService.removePicture(logId);
-    if (isSuccess) {
-        return res.send({ message: "Picture removed successfully." });
+    const { value, time, logCategoryId } = req.body ?? {};
+
+    const parsedTime = time !== undefined && time !== null ? Number(time) : undefined;
+    if (parsedTime !== undefined && Number.isNaN(parsedTime)) {
+        return ResponseUtil.sendApiResponse(res, 400, "time must be a valid number.");
     }
-    return res.status(400).send({ message: "Failed to remove picture." });
+
+    try {
+        const isSuccess = await LogService.updateInfo(logId, {
+            value,
+            time: parsedTime,
+            logCategoryId
+        });
+
+        if (!isSuccess)
+            return ResponseUtil.sendApiResponse(res, 404, "Log not found or no changes applied.");
+
+        return ResponseUtil.sendApiResponse(res, 200);
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 400, error.message);
+    }
 }
 
-async function remove(req, res, next) {
-    const logId = req.params.id;
-    const isSuccess = await LogService.remove(logId);
-    if (isSuccess) {
-        return res.send({ message: "Log deleted successfully." });
+/** @type {import("express").RequestHandler} */
+async function getPicture(req, res) {
+    try {
+        const pictureBuffer = await LogService.getPicture(req.params.id);
+
+        if (pictureBuffer != null) {
+            res.header("Content-Type", "image/webp");
+            return ResponseUtil.sendBufferResponse(res, pictureBuffer);
+        }
+
+        return ResponseUtil.sendApiResponse(res, 404, "Picture not found.");
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
     }
-    return res.status(400).send({ message: "Failed to delete log." });
+}
+
+/** @type {import("express").RequestHandler} */
+async function setPicture(req, res) {
+    const pictureBuffer = req.files?.file?.data;
+
+    if (!pictureBuffer)
+        return ResponseUtil.sendApiResponse(res, 400, "No file was provided.");
+
+    if (pictureBuffer.length > MAX_FILE_SIZE)
+        return ResponseUtil.sendApiResponse(res, 400, "File size should not exceed 10 MB.");
+
+    try {
+        const isSuccess = await LogService.setPicture(req.params.id, pictureBuffer);
+        if (!isSuccess)
+            return ResponseUtil.sendApiResponse(res, 404, "Log not found.");
+
+        return ResponseUtil.sendApiResponse(res, 200);
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 400, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function removePicture(req, res) {
+    try {
+        const isSuccess = await LogService.removePicture(req.params.id);
+        if (!isSuccess)
+            return ResponseUtil.sendApiResponse(res, 404, "Log not found.");
+
+        return ResponseUtil.sendApiResponse(res, 200);
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
+}
+
+/** @type {import("express").RequestHandler} */
+async function remove(req, res) {
+    try {
+        const isSuccess = await LogService.remove(req.params.id);
+        if (!isSuccess)
+            return ResponseUtil.sendApiResponse(res, 404, "Log not found.");
+
+        return ResponseUtil.sendApiResponse(res, 200);
+    } catch (error) {
+        return ResponseUtil.sendApiResponse(res, 500, error.message);
+    }
 }
 
 module.exports = {
-    findAll, findAllByReportId, findAllByLogCategoryId, findAllByReporterId,
-    add, 
-    updateInfo,
-    setPicture, removePicture, 
+    findAll, findByLogId,
+    findAllByReportId, findAllByLogCategoryId, findAllByReporterId,
+    add, updateInfo,
+    getPicture, setPicture, removePicture,
     remove
 };
