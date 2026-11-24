@@ -11,13 +11,13 @@ Routes.getMapping("/api/reports",
     ReportController.findAll
 );
 
-Routes.getMapping("/api/reports/disaster",
+Routes.getMapping("/api/reports/disaster/:disasterTypeId",
     MainMiddleware.accessAsVolunteerOrOfficer,
     ReportMiddleware.checkAccessDistrict,
     ReportController.findAllByDisasterTypeId
 );
 
-Routes.getMapping("/api/reports/archive/:isArchived",
+Routes.getMapping("/api/reports/archive",
     MainMiddleware.accessAsVolunteerOrOfficer,
     ReportMiddleware.checkAccessDistrict,
     ReportController.findAllByIsArchivedStatus
@@ -51,7 +51,7 @@ Routes.putMapping("/api/reports/:reportId/archive",
 
 Routes.putMapping("/api/reports/:reportId/status",
     MainMiddleware.accessAsVolunteerOrOfficer,
-    MainMiddleware.validateReportStatus,
+    ReportMiddleware.validateReportStatus,
     ReportMiddleware.checkAccessDistrict,
     ReportController.updateStatus
 );
