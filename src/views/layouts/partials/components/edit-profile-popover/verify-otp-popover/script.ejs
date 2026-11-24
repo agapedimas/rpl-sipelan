@@ -1,7 +1,7 @@
 <script>
     const verifyOtpForm = new PopOverForm(
         [
-            new Field(otpCodeInput, otpCodeError),
+            new Field(otpCodeInput),
         ],
         submitVerifyOtpButton,
         cancelVerifyOtpButton,
@@ -13,6 +13,7 @@
 
     verifyOtpPopover.onbeforeopen = function() {
         otpCodeInput.value = "";
+        otpCodeError.classList.add("hidden");
         editProfileFormData.delete("otpCode");
         
         otpCodeInput.oninput = function() {
@@ -32,6 +33,8 @@
     
     async function verifyOtpAsync() {
         return new Promise(function(resolve) {
+            otpCodeError.classList.add("hidden");
+            verifyPhoneNumberText.innerText = editProfileFormData.get("phone");
             verifyOtpPopover.open();
             verifyOtpCallback = function(result) {
                 resolve(result);
