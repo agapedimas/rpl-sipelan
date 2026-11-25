@@ -5,6 +5,30 @@ const Configurations = require("../configurations");
 
 const LanguageUtil = require("../utils/language.util");
 
+function renderPage(req, res, pageName, pageType, layoutName, httpCode = 200) {
+    const languageId = req.session.languageId;
+    const language = (key) => LanguageUtil.getString(languageId, key) || key;
+    const app = Configurations.get("app");
+
+    // Allows strings to be formatted on .ejs files
+    String.prototype.format = function(...values) {
+        return this.replace(/{(\d+)}/g, function(match, index) {
+            return typeof values[index] !== 'undefined' ? values[index] : match;
+        });
+    }
+
+    return res.status(httpCode).render(
+        "pages/" + pageType + "/" + pageName,
+        {
+            layout: "layouts/" + layoutName,
+            data: res.locals ?? {},
+            app: app,
+            language: language,
+            pageType: pageType
+        }
+    );
+}
+
 /**
  * Create middleware to render a page located inside `./views`.
  * @param { string } pageName EJS filename located inside `./views/pages`.
@@ -50,28 +74,8 @@ function sendRenderedPage(pageName, pageType = "main", layoutName = "main") {
                 return sendErrorPage(404)(req, res, next);
             }
         }
-
-        const languageId = req.session.languageId;
-        const language = (key) => LanguageUtil.getString(languageId, key) || key;
-        const app = Configurations.get("app");
-
-        // Allows strings to be formatted on .ejs files
-        String.prototype.format = function(...values) {
-            return this.replace(/{(\d+)}/g, function(match, index) {
-                return typeof values[index] !== 'undefined' ? values[index] : match;
-            });
-        }
-
-        return res.render(
-            "pages/" + pageType + "/" + pageName,
-            {
-                layout: "layouts/" + layoutName,
-                data: res.locals ?? {},
-                app: app,
-                language: language,
-                pageType: pageType
-            }
-        );
+        
+        return renderPage(req, res, pageName, pageType, layoutName);
     };
 }
 
@@ -80,7 +84,7 @@ function sendErrorPage(code = 500) {
         code = 500;
 
     return async function (req, res, next) {
-        return sendRenderedPage(code, "error", "error")(req, res, next);
+        return renderPage(req, res, code, "error", "error", code);
     };
 }
 
