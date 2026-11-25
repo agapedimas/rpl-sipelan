@@ -195,9 +195,15 @@ function sendGetApiResponseReports(res, data) {
     );
 }
 
+/** @type {import("express").RequestHandler} */
+async function redirectToReportPage(req, res) {
+    return res.redirect("/reports");
+}
+
 module.exports = {
     add,
     findAll, findAllByDisasterTypeId, findAllByIsArchivedStatus, findAllByTime, findByReportId, 
     updateIsArchived, updateStatus, updateDescription,
-    removeReport
+    removeReport,
+    redirectToReportPage
 };

@@ -2,6 +2,9 @@ const Routes = require("../routes");
 
 const MainMiddleware = require("../middlewares/main.http.middleware");
 const ReportMiddleware = require("../middlewares/report.middleware");
+
+const AccountController = require("../controllers/account.controller");
+const PageController = require("../controllers/page.http.controller");
 const ReportController = require("../controllers/report.controller");
 
 // GET
@@ -67,4 +70,13 @@ Routes.deleteMapping("/api/reports/:reportId",
     MainMiddleware.accessAsVolunteerOrOfficer,
     ReportMiddleware.checkAccessDistrict,
     ReportController.removeReport
+);
+
+// Frontend
+Routes.getMapping("/",
+    ReportController.redirectToReportPage
+);
+Routes.getMapping("/reports",
+    AccountController.assignAccountInfo,
+    PageController.sendRenderedPage("report", "citizen")
 );
