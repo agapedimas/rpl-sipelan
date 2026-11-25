@@ -1,0 +1,41 @@
+<% 
+    data.page.title = language('profile.title') 
+%>
+<%- include('./style') %>
+
+<div class="header">
+    <div class="title"><%= data.page.title %></div>
+    <div class="buttons">
+        <button id="editProfileButton"><%= language('general.edit') %></button>
+    </div>
+</div>
+
+<div class="content">
+    <div class="profile">
+        <div class="profilePicture">
+            <img id="profilePictureImage" src="/pp/<%= data.account?.id || 'default' %>"/>
+        </div>
+        <div class="details">
+            <div class="name"><%= data.account?.name %></div>
+            <div class="description"><%= data.account?.email %></div>
+            <button id="signOutButton" class="critical plain"><%= language('auth.signout.title') %></button>
+        </div>
+    </div> 
+    <div class="list">
+        <div class="stack">
+            <span><%= language('account.phone.title') %></span>
+            <span><%= data.account?.phone %></span>
+        </div>
+        <div class="stack">
+            <span><%= language('account.nik.title') %></span>
+            <span><%= data.account?.nik ?? "-" %></span>
+        </div>
+        <div class="stack"
+            <span><%= language('domicile.title') %></span>
+            <span><%= data.account?.domicile %></span>
+        </div>
+    </div>
+</div>
+
+<%- include('/layouts/partials/components/edit-profile-popover/body') %>
+<%- include('./script') %>

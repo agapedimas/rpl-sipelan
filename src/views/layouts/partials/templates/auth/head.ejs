@@ -3,4 +3,8 @@
 <link rel="stylesheet" type="text/css" href="/css/forms.css" />
 <link rel="stylesheet" type="text/css" href="/css/auth.css" />
 <link rel="icon" href="<%= app.path.logo %>" />
-<title><%= app.admin_name %></title>
+<% if (data.page.title) { %>
+    <title><%= data.page.title + " - " + app.name %></title>
+<% } else { %>
+    <title><%= app.name %></title>
+<% } %>

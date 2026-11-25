@@ -8,11 +8,13 @@
 			<span class='icon'>&#xfcd6;</span>
 			<span><%= language('submission.title') %></span>
 		</a>
-		<a ad-goto="/profile">
-			<span class='icon'>&#xf83e;</span>
-			<span><%= language('profile.title') %></span>
-		</a>
 	</div> 
+	<div class="footer">
+		<a ad-goto="/profile">
+			<img class='icon' ad-goto="/profile" src="/pp/<%= data.account?.id || 'default' %>"/>
+			<span><%= data.account?.name || language('auth.signin.title') %></span>
+		</a>
+	</div>
 </section>
 
 <section class="mobile">

@@ -112,6 +112,17 @@ async function deactivate(accountId) {
 }
 
 /**
+ * @param { typeof Account.prototype.id } accountId 
+ * @returns { Promise<typeof Account.prototype.districtId> }
+ */
+async function getDistrictId(accountId) {
+    if (accountId == null)
+        return null;
+    const districtId = await AccountRepository.getDistrictId(accountId);
+    return districtId;
+}
+
+/**
  * @param { string } role 
  * @returns { boolean }
  */
@@ -119,14 +130,54 @@ async function doesRoleExist(role) {
     return ["citizen", "volunteer", "officer", "admin"].includes(role);
 }
 
-
 /**
  * @param { typeof Account.prototype.id } accountId 
  * @returns { Promise<typeof Account.prototype.role> }
  */
 async function getRole(accountId) {
+    if (accountId == null)
+        return null;
     const role = await AccountRepository.getRole(accountId);
     return role;
+}
+
+/**
+ * @param { typeof Account.prototype.role } role
+ * @param { string? } query
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRole(role, query) {
+    if (role == null)
+        return null;
+
+    if (!query) {
+        const accounts = await AccountRepository.findAllByRole(role);
+        return accounts;
+    }
+    else {
+        const accounts = await AccountRepository.findAllByRoleAndQuery(role, query);
+        return accounts;    
+    }
+}
+
+/**
+ * @param { typeof Account.prototype.role } role
+ * @param { typeof Account.prototype.districtId } districtId
+ * @param { string? } query
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRoleAndDistrictId(role, districtId, query) {
+    if (role == null || districtId == null)
+        return null;
+
+    if (!query) {
+        const accounts = await AccountRepository.findAllByRoleAndDistrictId(role, districtId);
+        return accounts;
+    }
+    else {
+        const accounts = await AccountRepository.findAllByRoleAndDistrictIdAndQuery(role, districtId, query);
+        return accounts;    
+    }
 }
 
 /**
@@ -154,6 +205,6 @@ module.exports = {
     getPicture, setPicture, removePicture,
     activate, deactivate,
     doesRoleExist,
-    getRole,
-    findByAccountId, findByPhone
+    getRole, getDistrictId,
+    findAllByRole, findAllByRoleAndDistrictId, findByAccountId, findByPhone
 }

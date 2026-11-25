@@ -1,28 +1,26 @@
+<script src="/js/utils/formatter.js"></script>
+<script src="/js/utils/forms.js"></script>
+<script src="/js/utils/input-validator.js"></script>
+
 <header class="titlebar">
 	<img class="icon" src="<%= app.path.logo_monochrome %>"/>
-	<span class="name"><%= app.name %></span>
+	<span class="name"><%= app.name_for_admin %></span>
 </header>
 
 <div class="root">
 	<nav class="sidebar">
         <%- include("./navigation") %>
 	</nav>
-	<script src="/admin.js"></script>
 	<section class="main">
-		<div class="activity">
+		<div class="activity" id="mainActivity">
             <%- body %>
 		</div>
+	<% if (data.page.secondaryActivity) { %>
+		<style>@import url('/css/secondary-activity.css');</style>
+		<div class="activity" id="secondaryActivity">
+			<%- data.page.secondaryActivity %>
+		</div>
+		<script src="/js/secondary-activity.js"></script>
+	<% } %>
 	</section>
 </div>
-
-<script>
-	if (window.location.pathname != "/") {
-		if (window.matchMedia("(display-mode: standalone)").matches)
-			document.title = "<%= data.page_title %>";
-		else
-			document.title = "<%= data.page_title %> - <%= app.admin_name %>";
-	}
-	else {
-		document.title = "<%= app.admin_name %>";
-	}
-</script>

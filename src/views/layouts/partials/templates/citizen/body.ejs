@@ -12,20 +12,15 @@
         <%- include("./navigation") %>
 	</nav>
 	<section class="main">
-		<div class="activity">
+		<div class="activity" id="mainActivity">
             <%- body %>
 		</div>
+	<% if (data.page.secondaryActivity) { %>
+		<style>@import url('/css/secondary-activity.css');</style>
+		<div class="activity" id="secondaryActivity">
+			<%- data.page.secondaryActivity %>
+		</div>
+		<script src="/js/secondary-activity.js"></script>
+	<% } %>
 	</section>
 </div>
-
-<script>
-	if (window.location.pathname != "/") {
-		if (window.matchMedia("(display-mode: standalone)").matches)
-			document.title = "<%= data.page_title %>";
-		else
-			document.title = "<%= data.page_title %> - <%= app.name %>";
-	}
-	else {
-		document.title = "<%= app.name %>";
-	}
-</script>

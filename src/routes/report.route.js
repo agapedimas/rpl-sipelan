@@ -73,10 +73,7 @@ Routes.deleteMapping("/api/reports/:reportId",
 );
 
 // Frontend
-Routes.getMapping("/",
-    ReportController.redirectToReportPage
-);
 Routes.getMapping("/reports",
     AccountController.assignAccountInfo,
-    PageController.sendRenderedPage("report", "citizen")
+    PageController.sendRenderedPage("reports", "citizen")
 );

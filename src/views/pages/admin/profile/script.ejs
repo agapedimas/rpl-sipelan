@@ -1,0 +1,25 @@
+<script>
+    editProfileButton.onclick = function() {
+        editProfilePopover.open();
+    }
+
+    signOutButton.onclick = function() {
+        Components.ActionSheet.Open({
+            Title: "<%= language('auth.signout.confirmation.title') %>",
+            Description: "<%= language('auth.signout.confirmation.description') %>",
+            Actions: [
+                { 
+                    Title: "<%= language('auth.signout.title') %>", Type: "Options.Critical", 
+                    Action: function() {
+                        return new Promise(function() {
+                            location.href = "/signout";
+                        });
+                    }
+                },
+                { 
+                    Title: "<%= language('general.cancel') %>", Type: "Footer"
+                }
+            ]
+        });     
+    }
+</script>

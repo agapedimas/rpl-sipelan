@@ -37,5 +37,9 @@
 
     "postalCode": {
         "title": "Kode Pos"
+    },
+
+    "filter_active" : {
+        "notice": "Menampilkan untuk domisili {0}"
     }
 }

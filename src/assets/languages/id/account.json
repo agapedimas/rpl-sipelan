@@ -32,6 +32,20 @@
             "TOO_LONG": "Nomor telepon maksimal 15 digit."
         }
     },
-    "role": "Peran",
+    "role": {
+        "title": "Peran",
+        "officer": {
+            "title": "Petugas"
+        },
+        "volunteer": {
+            "title": "Relawan"
+        },
+        "admin": {
+            "title": "Admin"
+        },
+        "citizen": {
+            "title": "Warga"
+        }
+    },
     "domicile": "Domisili"
 }

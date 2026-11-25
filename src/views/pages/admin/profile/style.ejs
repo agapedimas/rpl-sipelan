@@ -1,0 +1,59 @@
+<style>
+    html:not([theme=dark]) .root .main {
+        background: var(--gray-6);
+    }
+    .list {
+        max-width: 800px;
+    }
+        .list .stack > span:last-child {
+            color: var(--foreground-description);
+        }
+        .list .stack > button:last-child {
+            padding: 0;
+        }
+
+    .profile {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 8em auto;
+        margin: 0 0 2em;
+        align-items: center;
+        gap: 1em 1.5em;
+    }
+        .profile button {
+            margin-top: 0.25em;
+        }
+        .profilePicture {
+            position: relative;
+            text-align: center;
+        }
+            .profilePicture img {
+                display: block;
+                width: 100%;
+                max-width: 150px;
+                margin: auto;
+                border-radius: 100%;
+                aspect-ratio: 1 / 1;
+            }
+        .profile .details {
+            display: block;
+        }
+            .profile .details .name {    
+                font-size: 1.5em;
+                font-family: var(--font-semibold);
+            }
+            .profile .details button {
+                margin: 1em 0 0;
+                padding: 0.45em 1.25em;
+            }
+
+    @media screen and (max-width: 500px) {
+        .profile {
+            grid-auto-flow: row;
+            grid-auto-columns: auto;
+            justify-items: center;
+            text-align: center;
+            margin-top: var(--padding);
+        }
+    }
+</style>

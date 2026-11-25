@@ -13,6 +13,8 @@
     "change": "Ganti",
     "save": "Simpan",
     "submit": "Kirim",
+    "clear": "Bersihkan",
+    "search": "Cari",
 
     "errors": {
         "page_not_found": {

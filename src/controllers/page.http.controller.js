@@ -21,7 +21,10 @@ function renderPage(req, res, pageName, pageType, layoutName, httpCode = 200) {
         "pages/" + pageType + "/" + pageName,
         {
             layout: "layouts/" + layoutName,
-            data: res.locals ?? {},
+            data: {
+                ...res.locals, 
+                page: {}
+            },
             app: app,
             language: language,
             pageType: pageType

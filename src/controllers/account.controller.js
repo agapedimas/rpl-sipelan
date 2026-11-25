@@ -84,6 +84,52 @@ async function removePicture(req, res) {
 }
 
 /** @type {import("express").RequestHandler} */
+async function findByAccountId(req, res) {
+    const accountId = req.params.accountId;
+    const account = await AccountService.findByAccountId(accountId);
+    return ResponseUtil.sendApiResponse(res, 200, null, { account });
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllOfficers(req, res) {
+    // Allows admins to filter officers by query and district id
+    const { query, districtId } = req.query;
+    let accounts;
+    
+    if (!districtId)
+        accounts = await AccountService.findAllByRole("officer", query);
+    else
+        accounts = await AccountService.findAllByRoleAndDistrictId("officer", districtId, query);
+
+    return ResponseUtil.sendApiResponse(res, 200, null, { accounts });
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllVolunteers(req, res) {
+    // Allows admins to filter volunteers by query and district id
+    const { query, districtId } = req.query;
+    let accounts;
+
+    if (!districtId)
+        accounts = await AccountService.findAllByRole("volunteer", query);
+    else
+        accounts = await AccountService.findAllByRoleAndDistrictId("volunteer", districtId, query);
+
+    return ResponseUtil.sendApiResponse(res, 200, null, { accounts });
+}
+
+/** @type {import("express").RequestHandler} */
+async function findAllVolunteersByDistrictId(req, res) {
+    // Allows officers to get volunteers on their district only
+    const { query } = req.query;
+
+    const accountId = req.session.accountId;
+    const districtId = await AccountService.getDistrictId(accountId);
+    const accounts = await AccountService.findAllByRoleAndDistrictId("volunteer", districtId, query);
+    return ResponseUtil.sendApiResponse(res, 200, null, { accounts });
+}
+
+/** @type {import("express").RequestHandler} */
 async function assignAccountInfo(req, res, next) {
     const accountId = req.session.accountId;
 
@@ -99,5 +145,6 @@ module.exports = {
     add,
     updateInfo,
     getPicture, setPicture, removePicture,
-    assignAccountInfo
+    assignAccountInfo,
+    findAllOfficers, findAllVolunteers, findAllVolunteersByDistrictId
 }

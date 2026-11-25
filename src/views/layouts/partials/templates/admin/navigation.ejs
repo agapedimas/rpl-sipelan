@@ -1,17 +1,55 @@
 <section class="desktop">
 	<div class="navigation">
-		<a ad-goto="/admin/home">
-			<span class='icon'>&#xfe8a;</span>
-			<span><%= language('home.title') %></span>
+		<a ad-goto="/admin/officers">
+			<span class='icon'>&#xed9b;</span>
+			<span><%= language('account.role.officer.title') %></span>
+		</a>
+		<a ad-goto="/admin/volunteers">
+			<span class='icon'>&#xf215;</span>
+			<span><%= language('account.role.volunteer.title') %></span>
+		</a>
+		<a ad-goto="/admin/domiciles">
+			<span class='icon'>&#xf67a;</span>
+			<span><%= language('domicile.title') %></span>
+		</a>
+		<a ad-goto="/admin/trackrecordtypes">
+			<span class='icon'>&#xf8e8;</span>
+			<span><%= language('log_category.title') %></span>
+		</a>
+		<a ad-goto="/admin/disastertypes">
+			<span class='icon'>&#xfdf8;</span>
+			<span><%= language('disaster_type.title') %></span>
 		</a>
 	</div> 
+	<div class="footer">
+		<a ad-goto="/admin/profile">
+			<img class='icon' ad-goto="/profile" src="/pp/<%= data.account?.id || 'default' %>"/>
+			<span><%= data.account?.name || language('auth.signin.title') %></span>
+		</a>
+	</div>
 </section>
 
 <section class="mobile">
 	<span class="navigation">	
-		<a ad-goto="/admin/home">
-			<span class='icon'>&#xfe8b;</span>
-			<span><%= language('home.title') %></span>
+		<a ad-goto="/admin/officers">
+			<span class='icon'>&#xed9a;</span>
+			<span><%= language('account.role.officer.title') %></span>
+		</a>
+		<a ad-goto="/admin/volunteers">
+			<span class='icon'>&#xf215;</span>
+			<span><%= language('account.role.volunteer.title') %></span>
+		</a>
+		<a ad-goto="/admin/domiciles">
+			<span class='icon'>&#xf67a;</span>
+			<span><%= language('domicile.title') %></span>
+		</a>
+		<a ad-goto="/admin/trackrecordtypes">
+			<span class='icon'>&#xf8e8;</span>
+			<span><%= language('log_category.title') %></span>
+		</a>
+		<a ad-goto="/admin/disastertypes">
+			<span class='icon'>&#xfdf8;</span>
+			<span><%= language('disaster_type.title') %></span>
 		</a>
 	</span> 
 </section>

@@ -22,7 +22,7 @@ async function viewAs(allowedRole, req, res, next) {
     if (accountRole === allowedRole)
         return next();
     else
-        return PageController.sendErrorPage(403);
+        return PageController.sendErrorPage(403)(req, res, next);
 }
 
 /**
@@ -80,7 +80,7 @@ async function viewTheirOwn(req, res, next) {
     if (sessionAccountId === requestedAccountId)
         return next();
     else
-        return PageController.sendErrorPage(403);
+        return PageController.sendErrorPage(403)(req, res, next);
 }
 
 
@@ -109,6 +109,10 @@ async function accessAsVolunteerOrOfficer(req, res, next) {
 async function accessAsCitizenOrVolunteerOrOfficer(req, res, next) {
     return accessAs(["citizen", "volunteer", "officer"], req, res, next);
 }
+/** @type {import("express").RequestHandler} */
+async function accessAsVolunteerOrOfficerOrAdmin(req, res, next) {
+    return accessAs(["volunteer", "officer", "admin"], req, res, next);
+}
 /** 
  * Manage their own data
  * @type {import("express").RequestHandler} 
@@ -135,5 +139,6 @@ module.exports = {
     viewAsCitizen, viewAsVolunteer, viewAsOfficer, viewAsAdmin, viewTheirOwn,
     accessAsCitizen, accessAsVolunteer, accessAsOfficer, accessAsAdmin, accessTheirOwn,
     accessAsVolunteerOrOfficer,
-    accessAsCitizenOrVolunteerOrOfficer
+    accessAsCitizenOrVolunteerOrOfficer, 
+    accessAsVolunteerOrOfficerOrAdmin
 }

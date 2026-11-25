@@ -28,6 +28,51 @@ async function findAllByRole(role) {
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
     return dataResults || [];
 }
+/**
+ * @param { typeof Account.prototype.role } role
+ * @param { string } query
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRoleAndQuery(role, query) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM AccountView WHERE role = ? AND LOWER(name) LIKE ?", 
+            [role, "%" + query + "%"]
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults || [];
+}
+
+/**
+ * @param { typeof Account.prototype.role } role
+ * @param { typeof Account.prototype.districtId } districtId
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRoleAndDistrictId(role, districtId) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM AccountView WHERE role = ? AND districtId = ?", 
+            [role, districtId]
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults || [];
+}
+
+/**
+ * @param { typeof Account.prototype.role } role
+ * @param { typeof Account.prototype.districtId } districtId
+ * @param { string } query
+ * @returns { Promise<Array<Account>> }
+ */
+async function findAllByRoleAndDistrictIdAndQuery(role, districtId, query) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT * FROM AccountView WHERE role = ? AND districtId = ? AND LOWER(name) LIKE ?", 
+            [role, districtId, "%" + query + "%"]
+        );
+    const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Account);
+    return dataResults || [];
+}
 
 /**
  * @param { typeof Account.prototype.id } accountId
@@ -86,7 +131,7 @@ async function getPicture(accountId) {
 
 /**
  * @param { typeof Account.prototype.id } accountId
- * @returns { Promise<typeof Account.prototype.role> }
+ * @returns { Promise<typeof Account.prototype.role?> }
  */
 async function getRole(accountId) {
     const queryResult = 
@@ -95,6 +140,19 @@ async function getRole(accountId) {
             accountId
         );
     return queryResult.rows?.at(0)?.role;
+}
+
+/**
+ * @param { typeof Account.prototype.id } accountId
+ * @returns { Promise<typeof Account.prototype.districtId?> }
+ */
+async function getDistrictId(accountId) {
+    const queryResult = 
+        await Database.doQuery(
+            "SELECT districtId FROM AccountView WHERE id = ? LIMIT 1",
+            accountId
+        );
+    return queryResult.rows?.at(0)?.districtId;
 }
 
 /**
@@ -196,8 +254,10 @@ async function remove(accountId) {
 }
 
 module.exports = {
-    findAll, findAllByRole, findByAccountId, findByNik, findByPhone,
-    getPicture, getRole,
+    findAll, 
+    findAllByRole, findAllByRoleAndQuery, findAllByRoleAndDistrictId, findAllByRoleAndDistrictIdAndQuery, 
+    findByAccountId, findByNik, findByPhone,
+    getPicture, getRole, getDistrictId,
     add, 
     updateInfo, updatePicture, updateActiveState,
     remove

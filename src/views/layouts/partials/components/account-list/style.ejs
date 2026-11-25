@@ -1,0 +1,38 @@
+<style>
+    .list.account {
+        transition: 0.25s opacity;
+        margin: 0;
+    }
+    .activity.searching .list.account.loading {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+    .list.account.loading + .progressring {
+        width: 25px;
+        margin: 0 auto;
+    }
+    .list.account:not(.loading) + .progressring {
+        display: none;
+    }
+        .list.account .stack {
+            grid-auto-columns: 40px auto max-content;
+            padding: 0.75em var(--padding) !important;
+        }
+            .list.account .stack .profilePicture {
+                width: 100%;
+            }
+            .list.account .stack .vertical {
+                display: grid;
+            }
+                .list.account .stack .vertical > span {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                .list.account .stack .vertical .name {
+                    font-weight: 500;
+                }
+                .list.account .stack .vertical .domicile {
+                    color: var(--foreground-description);
+                }
+</style>

@@ -1,8 +1,10 @@
-<% data.page_title = language('profile.title') %>
+<% 
+    data.page.title = language('profile.title') 
+%>
 <%- include('./style') %>
 
 <div class="header">
-    <div class="title"><%= language('profile.title') %></div>
+    <div class="title"><%= data.page.title %></div>
     <div class="buttons">
         <button id="editProfileButton"><%= language('general.edit') %></button>
     </div>

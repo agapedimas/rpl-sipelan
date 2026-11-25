@@ -1,0 +1,121 @@
+<script type="module">
+    const component = JSON.parse('<%- JSON.stringify(component) %>');
+    const listElement = document.getElementById(component.id);
+    let searchInputElement = null;
+    let filterByQuery = null;
+    let filterByDistrictId = null;
+
+    async function fetchAccounts() {
+        let url = new URL(location.origin + "/api/account/" + component.role);
+        if (component.isFilteredByDistrict === true) {
+            url.pathname += "/district";
+        }
+        else {
+            if (filterByDistrictId !== null)
+                url.searchParams.append("districtId", filterByDistrictId);
+        }
+
+        if (filterByQuery !== null)
+            url.searchParams.append("query", filterByQuery);
+        
+        const response = await fetch(url.href);
+        const responseBody = await response.json();
+        const data = responseBody?.data;
+        return data?.accounts || [];
+    }
+
+    function resetAndAppendItems(listElement, itemsData) {
+        // Reset items
+        listElement.clearItems();
+        // Append items
+        for (const itemData of itemsData || []) {
+            const itemElement = renderItem(itemData);
+            // itemElement.onclick = o => domicileCallback(itemElement.data.domicile);
+            listElement.append(itemElement);
+        }
+    }
+
+    function renderItem(itemData) {
+        const profilePictureElement = document.createElement("img");
+        profilePictureElement.classList.add("profilePicture");
+        profilePictureElement.src = "/pp/" + itemData.id;
+
+        const nameElement = document.createElement("span");
+        nameElement.classList.add("name");
+        nameElement.innerText = itemData.name;
+        bindItem(nameElement, itemData, "name", function(newValue) {
+            nameElement.innerText = newValue;
+        });
+
+        const domicileElement = document.createElement("span");
+        domicileElement.classList.add("domicile");
+        domicileElement.innerText = itemData.domicile;
+        bindItem(domicileElement, itemData, "domicile", function(newValue) {
+            domicileElement.innerText = newValue;
+        });
+
+        const textGroupElement = document.createElement("div");
+        textGroupElement.classList.add("vertical");
+        textGroupElement.append(nameElement);
+        textGroupElement.append(domicileElement);
+
+        const itemContainer = document.createElement("div");
+        itemContainer.classList.add("stack", "clickable", "iconed");
+        itemContainer.append(profilePictureElement);
+        itemContainer.append(textGroupElement);
+
+        return itemContainer;
+    }
+
+    // Allows element to update itself each time object's property updated
+    function bindItem(itemElement, itemData, propertyName, onchange) {
+        Object.defineProperty(itemData, propertyName, {
+            set(value) {
+                onchange(value);
+            }
+        });
+    }
+
+    // Refresh list
+    async function refreshAccountList() {
+        listElement.classList.add("loading");
+        const accounts = await fetchAccounts();
+        resetAndAppendItems(listElement, accounts);
+        listElement.classList.remove("loading");
+    }
+
+    // Assign external search input
+    function setSearchBox(element) {
+        searchInputElement = element;
+        searchInputElement.addEventListener("input", async function() {
+            const query = this.value.trim();
+
+            if (query === "") {
+                filterByQuery = null;
+                return await refreshAccountList();
+            }
+
+            if (query === filterByQuery)
+                return;
+
+            filterByQuery = query;
+            return await refreshAccountList();
+        });
+    }
+
+    function setFilter(info) {
+        if (info == null) {
+            filterByDistrictId = null;
+        }
+        else {
+            const { districtId } = info;   
+            filterByDistrictId = districtId;    
+        }
+        refreshAccountList();
+    }
+
+    // Export methods
+    listElement.refreshList = refreshAccountList;
+    listElement.setFilter = setFilter;
+    listElement.setSearchBox = setSearchBox;
+</script>

@@ -1,4 +1,4 @@
-<script>
+<script type="module">
     let domicileCallback;
 
     document.addEventListener("DOMContentLoaded", async function() {
@@ -140,4 +140,7 @@
         chevronElement.innerText = "\uef59";
         return chevronElement;
     }
+
+    // Export methods
+    window.selectDomicileAsync = selectDomicileAsync;
 </script>

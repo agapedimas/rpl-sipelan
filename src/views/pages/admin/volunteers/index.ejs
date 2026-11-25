@@ -1,0 +1,31 @@
+<% 
+    data.page.title = language('account.role.volunteer.title');
+    data.page.secondaryActivity = include("./view");
+%>
+
+<style>
+</style>
+
+<div class="header">
+    <span class="title"><%= data.page.title %></span>
+    <input id="volunteerSearchInput" type="search" placeholder="<%= language('general.search')%>" ad-cancellabel="<%= language('general.cancel')%>"/>
+</div>
+
+<div class="content">
+    <%- 
+        include('/layouts/partials/components/account-list/body', {
+            component: {
+                id: "volunteerList",
+                role: "volunteer",
+                isFilteredByDistrict: false
+            }
+        }) 
+    %>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function() {
+        volunteerList.refreshList();
+        volunteerList.setSearchBox(volunteerSearchInput);
+    });
+</script>

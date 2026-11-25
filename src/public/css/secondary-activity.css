@@ -1,0 +1,14 @@
+.root .main {
+    grid-auto-flow: column;
+    grid-auto-columns: auto 0;
+}
+
+@media screen and (width >= 1140px) {
+    .root .main {
+        grid-auto-columns: 400px auto;
+    }
+    .root .main > .activity:nth-child(1) {
+        background: var(--gray-7);
+        box-shadow: inset -10px 0 5px -10px var(--border-sidebar);
+    }
+}

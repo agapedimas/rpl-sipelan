@@ -24,6 +24,7 @@ async function initialize() {
     // Read every routes components
     require("./routes/language.http.route");
     require("./routes/authentication.route");
+    require("./routes/dashboard.route");
     require("./routes/account.route");
     require("./routes/province.route");
     require("./routes/city.route");
