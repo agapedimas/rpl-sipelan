@@ -52,7 +52,7 @@ async function findAllByStatus(res, status, districtId) {
 /** @type {import("express").RequestHandler} */
 async function findAllByDisasterTypeId(req, res) {
     const districId = res.locals.districtId;
-    const disasterTypeId = req.query.disasterTypeId; // dari js, dibuat form dengan method get
+    const disasterTypeId = req.params.disasterTypeId; // dari js, dibuat form dengan method get
 
     const reports = await ReportService.findAllByDisasterTypeId(disasterTypeId, districId);
 
@@ -62,10 +62,12 @@ async function findAllByDisasterTypeId(req, res) {
 /** @type {import("express").RequestHandler} */
 async function findAllByIsArchivedStatus(req, res) {
     const disctrictId = res.locals.districtId;
-    const isArchived = req.params.isArchived;
+    const isArchived = req.query.status === "true" ? 
+                    "1" : req.query.status === "false" ? 
+                    "0" : null;
 
-    if(!["0", "1"].includes(isArchived)){
-        return ResponseUtil.sendApiResponse(res, 500, "Retrive fail, invalid is archive status");
+    if(!isArchived || isArchived.length === 0 || !["0", "1"].includes(isArchived)){
+        return ResponseUtil.sendApiResponse(res, 400, "Retrive fail, invalid is archive status");
     }
 
     const reports = await ReportService.findAllByIsArchivedStatus(isArchived, disctrictId);
@@ -75,7 +77,7 @@ async function findAllByIsArchivedStatus(req, res) {
 /** @type {import("express").RequestHandler} */
 async function findAllByTime(req, res){
     const districtId = res.locals.districtId;
-    const time = req.query.time; // in milis, assume this is already converted from front end
+    const time = req.query.milis; // in milis, assume this is already converted from front end
 
     const reports = await ReportService.findAllByTime(time, districtId);
     return sendGetApiResponseReports(res, reports);

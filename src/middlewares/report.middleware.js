@@ -1,4 +1,5 @@
 const ResponseUtil = require("../utils/response.util");
+const AccountService = require("../services/account.service");
 
 /**
  * Menyediakan districtId untuk Controller.
@@ -7,7 +8,7 @@ const ResponseUtil = require("../utils/response.util");
  * @type {import("express").RequestHandler}
  */
 function checkAccessDistrict(req, res, next) {
-    const districtId = req.session.districtId;
+    const districtId = AccountService.findByAccountId(req.session.id).districtId;
 
     if (!districtId) {
         return ResponseUtil.sendApiResponse(res, 403, "District access unavailable");

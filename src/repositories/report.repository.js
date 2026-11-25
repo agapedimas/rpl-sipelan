@@ -139,7 +139,7 @@ async function add(isArchived, status, description, time, disasterTypeId) {
 async function updateIsArhived(id, isArchived) {
     const queryResult = 
         await Database.doQuery(`
-            UPDATE FROM Report
+            UPDATE Report
             SET
                 isArchive = ?
             WHERE
@@ -158,7 +158,7 @@ async function updateIsArhived(id, isArchived) {
 async function updateStatus(id, status) {
     const queryResult = 
         await Database.doQuery(`
-            UPDATE FROM Report
+            UPDATE Report
             SET
                 status = ?
             WHERE 
@@ -177,7 +177,7 @@ async function updateStatus(id, status) {
 async function updateDescription(id, description) {
     const queryResult = 
         await Database.doQuery(`
-            UPDATE FROM Report
+            UPDATE Report
             SET
                 description = ?
             WHERE
