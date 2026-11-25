@@ -3,62 +3,16 @@
     data.page.secondaryActivity = include("./view");
 %>
 
-<style>
-    #filterActiveNotice {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: max-content auto max-content;
-        background-color: var(--overlay-7);
-        border-radius: 13px;
-        padding: 0.9em 1.2em;
-        align-items: center;
-        gap: 1em;
-    }
-        #filterActiveNotice .icon {
-            color: var(--foreground-description);
-        }
-        #filterActiveNotice button {
-            font-size: 0.75em;
-            border-radius: 100px;
-            text-transform: uppercase;
-            font-weight: 500;
-            letter-spacing: 0.075em;
-        }
-    #filterByDomicileButton {
-        border-radius: 100%;
-        aspect-ratio: 1;
-        padding: 0.425em;
-        background-color: var(--background-input);
-        transition: 0.15s background-color;
-        margin-right: 0;
-    }
-    #filterByDomicileButton:hover {
-        background-color: var(--background-input-hover);
-    }
-    #filterByDomicileButton:active {
-        background-color: var(--background-input-active);
-    }
-    #filterByDomicileButton.active {
-        background-color: var(--accent);
-        color: white;
-    }
-</style>
-
 <div class="header">
     <div class="buttons">
         <button></button>
-        <button id="filterByDomicileButton" class="icon accent">&#xf5bf;</button>
+        <button id="filterByDomicileButton" class="icon">&#xf5bf;</button>
     </div>
     <span class="title"><%= data.page.title %></span>
     <input id="officerSearchInput" type="search" placeholder="<%= language('general.search')%>" ad-cancellabel="<%= language('general.cancel')%>"/>
 </div>
 
 <div class="content">
-    <div class="hidden" id="filterActiveNotice">
-        <span class="icon">&#xf47e;</span>
-        <span><%- language('domicile.filter_active.notice').format('<b id="activeDomicileNameText"></b>')%></span>
-        <button id="clearFilterByDomicileButton" class="plain accent"><%= language('general.clear') %></button>
-    </div>
     <%- 
         include('/layouts/partials/components/account-list/body', {
             component: {
@@ -71,40 +25,18 @@
 </div>
 
 <script>
-    let selectedDomicile = null;
-
     document.addEventListener("DOMContentLoaded", async function() {
         officerList.refreshList();
         officerList.setSearchBox(officerSearchInput);
+        officerList.setItemClickAction(function() {
+            console.log(this);
+        })
     });
 
     filterByDomicileButton.onclick = async function() {
-        if (selectedDomicile === null) {
-            selectedDomicile = await selectDomicileAsync(filterByDomicileButton);
-            setFilterByDomicile(selectedDomicile);
-        }
-        else {
-            clearFilterByDomicile();
-        }
-    }
-
-    clearFilterByDomicileButton.onclick = function() {
-        clearFilterByDomicile();
-    }
-
-    function setFilterByDomicile(domicile) {
-        activeDomicileNameText.innerText = domicile.districtName + ", " + domicile.cityName;
-        filterByDomicileButton.classList.add("active");
-        filterActiveNotice.classList.remove("hidden");
-        officerList.setFilter({
-            districtId: domicile.districtId
-        });
-    }
-    function clearFilterByDomicile() {
-        selectedDomicile = null;
-        filterByDomicileButton.classList.remove("active");
-        filterActiveNotice.classList.add("hidden");
-        officerList.setFilter();
+        const domicile = await selectDomicileAsync(filterByDomicileButton);
+        const domicileName = domicile.districtName + ", " + domicile.cityName;
+        officerList.setFilter(domicile.districtId, domicileName);
     }
 </script>
 

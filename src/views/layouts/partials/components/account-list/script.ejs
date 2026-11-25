@@ -1,9 +1,17 @@
 <script type="module">
     const component = JSON.parse('<%- JSON.stringify(component) %>');
     const listElement = document.getElementById(component.id);
+    const noticeElement = document.getElementById(component.id + "Notice");
+    const noticeButtonElement = noticeElement.children[2];
+    const noticeDomicileNameElement = noticeElement.children[1].children[0];
     let searchInputElement = null;
     let filterByQuery = null;
     let filterByDistrictId = null;
+    let onitemclick = null;
+
+    noticeButtonElement.onclick = function() {
+        setFilter(null);
+    }
 
     async function fetchAccounts() {
         let url = new URL(location.origin + "/api/account/" + component.role);
@@ -30,7 +38,7 @@
         // Append items
         for (const itemData of itemsData || []) {
             const itemElement = renderItem(itemData);
-            // itemElement.onclick = o => domicileCallback(itemElement.data.domicile);
+            itemElement.onclick = onitemclick;
             listElement.append(itemElement);
         }
     }
@@ -86,36 +94,49 @@
 
     // Assign external search input
     function setSearchBox(element) {
+        let searchTimeout = null;
         searchInputElement = element;
         searchInputElement.addEventListener("input", async function() {
             const query = this.value.trim();
+            if (query === filterByQuery)
+                return;
+
+            listElement.classList.add("loading");
+            clearTimeout(searchTimeout);
 
             if (query === "") {
                 filterByQuery = null;
                 return await refreshAccountList();
             }
 
-            if (query === filterByQuery)
-                return;
-
             filterByQuery = query;
-            return await refreshAccountList();
+            searchTimeout = setTimeout(function() {
+                refreshAccountList();
+            }, 500);
         });
     }
 
-    function setFilter(info) {
-        if (info == null) {
+    function setFilter(districtId, domicileName) {
+        if (districtId == null) {
             filterByDistrictId = null;
+            noticeElement.classList.add("hidden");
         }
         else {
-            const { districtId } = info;   
             filterByDistrictId = districtId;    
+            noticeElement.classList.remove("hidden");
+            noticeDomicileNameElement.innerText = domicileName;
         }
         refreshAccountList();
     }
+
+    function setItemClickAction(clickAction) {
+        onitemclick = clickAction;
+    }
+
 
     // Export methods
     listElement.refreshList = refreshAccountList;
     listElement.setFilter = setFilter;
     listElement.setSearchBox = setSearchBox;
+    listElement.setItemClickAction = setItemClickAction;
 </script>

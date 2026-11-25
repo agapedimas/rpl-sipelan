@@ -44,4 +44,5 @@ SELECT
     ) AS domicile,
     isActive
 FROM
-    Account a;
+    Account a
+ORDER BY name;

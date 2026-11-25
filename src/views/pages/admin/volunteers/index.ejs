@@ -3,10 +3,11 @@
     data.page.secondaryActivity = include("./view");
 %>
 
-<style>
-</style>
-
 <div class="header">
+    <div class="buttons">
+        <button></button>
+        <button id="filterByDomicileButton" class="icon">&#xf5bf;</button>
+    </div>
     <span class="title"><%= data.page.title %></span>
     <input id="volunteerSearchInput" type="search" placeholder="<%= language('general.search')%>" ad-cancellabel="<%= language('general.cancel')%>"/>
 </div>
@@ -27,5 +28,16 @@
     document.addEventListener("DOMContentLoaded", async function() {
         volunteerList.refreshList();
         volunteerList.setSearchBox(volunteerSearchInput);
+        volunteerList.setItemClickAction(function() {
+            console.log(this);
+        })
     });
+
+    filterByDomicileButton.onclick = async function() {
+        const domicile = await selectDomicileAsync(filterByDomicileButton);
+        const domicileName = domicile.districtName + ", " + domicile.cityName;
+        volunteerList.setFilter(domicile.districtId, domicileName);
+    }
 </script>
+
+<%- include('/layouts/partials/components/select-domicile-popover/body'); %>

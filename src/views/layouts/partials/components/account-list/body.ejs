@@ -1,4 +1,9 @@
 <%- include('./style.ejs', { component }) %>
+<div class="notice hidden" id="<%= component.id %>Notice">
+    <span class="icon">&#xf47e;</span>
+    <span><%- language('domicile.filter_active.notice').format('<b></b>')%></span>
+    <button class="plain accent"><%= language('general.clear') %></button>
+</div>
 <div class="list plain loading account" id="<%= component.id %>"></div>
 <div class="progressring"></div>
 <%- include('./script.ejs', { component }) %>

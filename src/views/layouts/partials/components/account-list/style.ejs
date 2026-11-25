@@ -1,7 +1,29 @@
 <style>
+    .notice:has(+ .list.account) {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: max-content auto max-content;
+        background-color: var(--overlay-7);
+        border-radius: 13px;
+        padding: 0.9em 1.2em;
+        margin-bottom: var(--padding);
+        align-items: center;
+        gap: 1em;
+    }
+        .notice:has(+ .list.account) .icon {
+            color: var(--foreground-description);
+        }
+        .notice:has(+ .list.account) button {
+            font-size: 0.75em;
+            border-radius: 100px;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.075em;
+        }
+
     .list.account {
         transition: 0.25s opacity;
-        margin: 0;
+        margin: -0.75em 0 0;
     }
     .activity.searching .list.account.loading {
         opacity: 0.5;
@@ -13,6 +35,9 @@
     }
     .list.account:not(.loading) + .progressring {
         display: none;
+    }
+    .list.account:has(.stack) + .progressring {
+        margin-top: var(--padding);
     }
         .list.account .stack {
             grid-auto-columns: 40px auto max-content;
