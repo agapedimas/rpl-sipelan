@@ -136,12 +136,12 @@ async function add(isArchived, status, description, time, disasterTypeId) {
  * @param { typeof Report.prototype.isArchived } isArchived 
  * @returns { Promise<Boolean> }
  */
-async function updateIsArhived(id, isArchived) {
+async function updateIsArchived(id, isArchived) {
     const queryResult = 
         await Database.doQuery(`
             UPDATE Report
             SET
-                isArchive = ?
+                isArchived = ?
             WHERE
                 id = ?    
         `, [isArchived, id]);
@@ -209,7 +209,7 @@ module.exports = {
     findAll, findAllByIsArchivedStatus, findAllByStatus, findAllByTime, findAllByDisasterTypeId, 
     findByReportId,
     add,
-    updateIsArhived,
+    updateIsArchived,
     updateStatus,
     updateDescription,
     removeReport

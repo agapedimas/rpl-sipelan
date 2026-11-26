@@ -83,8 +83,8 @@ async function findByReportId(id, districtId) {
  * @param { typeof Report.prototype.isArchived } isArchived
  * @returns { Promise<Boolean> }
  */
-async function updateIsArhived(id, isArchived) {
-    const isSuccess = await ReportRepository.updateIsArhived(id, isArchived);
+async function updateIsArchived(id, isArchived) {
+    const isSuccess = await ReportRepository.updateIsArchived(id, isArchived);
     return isSuccess;
 }
 
@@ -124,7 +124,7 @@ module.exports = {
     findAll, findAllByIsArchivedStatus, findAllByStatus, findAllByTime, findAllByDisasterTypeId, 
     findByReportId,
     add,
-    updateIsArhived,
+    updateIsArchived,
     updateStatus,
     updateDescription,
     removeReport

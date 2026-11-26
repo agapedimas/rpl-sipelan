@@ -116,7 +116,7 @@ async function updateIsArchived(req, res) {
         return ResponseUtil.sendApiResponse(res, 409, "Report already has this archive status");
     }
 
-    const isSuccess = await ReportService.updateIsArchived(reportId, isArchived, districtId);
+    const isSuccess = await ReportService.updateIsArchived(reportId, isArchived);
 
     return isSuccess ? 
         ResponseUtil.sendApiResponse(res, 200, "Report updated") : 
