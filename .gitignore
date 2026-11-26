@@ -3,6 +3,7 @@ node_modules
 package-lock.json
 .htaccess
 .env
+.env.test
 .DS_STORE
 data/*
 !data/.keep

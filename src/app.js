@@ -2,8 +2,9 @@ console.log("Starting Server |", new Date().toLocaleDateString(), "|", new Date(
 
 // Get the .env first
 const path = require("path");
+const envPath = process.env.NODE_ENV === "test" ? "../.env.test" : "../.env"
 require("dotenv").config({
-    path: path.join(__dirname, "../.env")
+    path: path.join(__dirname, envPath)
 });
 
 const Database = require("./database");

@@ -24,6 +24,23 @@ Routes.postMapping("/api/signup",
     AuthenticationController.signUpAsCitizen,
     AccountController.add);
 
+// Test only: signs in without OTP
+if (process.env.NODE_ENV === "test") {
+    Routes.postMapping("/api/test/signin", (req, res) => {
+        req.session.accountId = req.body.accountId;
+        res.status(200).json({ message: "Signed in for testing" });
+    });
+
+    Routes.getMapping("/api/test/whoami", async (req, res) => {
+        const AccountService = require("../services/account.service");
+
+        const accountId = req.session.accountId;
+        const role = accountId == null ? null : await AccountService.getRole(accountId);
+
+        res.json({ accountId: accountId ?? null, role: role ?? null });
+    });
+}
+
 
 // Frontend
 Routes.getMapping("/signin", 
