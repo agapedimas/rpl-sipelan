@@ -34,18 +34,34 @@
     },
     "role": {
         "title": "Peran",
-        "officer": {
-            "title": "Petugas"
-        },
-        "volunteer": {
-            "title": "Relawan"
-        },
-        "admin": {
-            "title": "Admin"
-        },
-        "citizen": {
-            "title": "Warga"
-        }
+        "officer": "Petugas",
+        "volunteer": "Relawan",
+        "admin": "Admin",
+        "citizen": "Warga"
     },
-    "domicile": "Domisili"
+    "domicile": "Domisili",
+
+    "officer": {
+        "title": "Petugas",
+        
+        "new_officer_dialog": {
+            "title": "Petugas Baru"
+        },
+        "edit_officer_dialog": {
+            "title": "Edit Petugas"
+        },
+        "not_selected": "Belum ada petugas yang dipilih"
+    },
+
+    "volunteer": {
+        "title": "Relawan"
+    },
+
+    "admin": {
+        "title": "Admin"
+    },
+
+    "citizen": {
+        "title": "Warga"
+    }
 }

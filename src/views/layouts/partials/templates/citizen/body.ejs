@@ -15,12 +15,13 @@
 		<div class="activity" id="mainActivity">
             <%- body %>
 		</div>
-	<% if (data.page.secondaryActivity) { %>
+	<% if (data.page.usesSecondaryActivity == true) { %>
 		<style>@import url('/css/secondary-activity.css');</style>
 		<div class="activity" id="secondaryActivity">
-			<%- data.page.secondaryActivity %>
+			<div class="header"></div>
+			<div class="content"></div>
 		</div>
-		<script src="/js/secondary-activity.js"></script>
+		<script src="/js/secondary-activity.js" type="module"></script>
 	<% } %>
 	</section>
 </div>

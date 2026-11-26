@@ -1,0 +1,57 @@
+<% 
+    data.page.title = language('account.volunteer.title');
+    data.page.usesSecondaryActivity = true;
+%>
+
+<section id="volunteerListSection">
+    <div class="header">
+        <div class="buttons">
+            <button></button>
+            <button id="filterByDomicileButton" class="icon">&#xf5bf;</button>
+        </div>
+        <span class="title"><%= data.page.title %></span>
+        <input id="volunteerSearchInput" type="search" placeholder="<%= language('general.search')%>" ad-cancellabel="<%= language('general.cancel')%>"/>
+    </div>
+
+    <div class="content">
+        <%- 
+            include('/layouts/partials/components/account-list/body', {
+                component: {
+                    id: "volunteerList",
+                    role: "volunteer",
+                    isFilteredByDistrict: false
+                }
+            }) 
+        %>
+    </div>
+</section>
+<section id="volunteerViewSection">
+    <%- 
+        include('/layouts/partials/components/account-view/body', {
+            component: {
+                id: "volunteerView",
+                role: "volunteer",
+                allowEditing: false
+            }
+        }) 
+    %>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async function() {
+        volunteerList.refreshList();
+        volunteerList.setSearchBox(volunteerSearchInput);
+        volunteerList.setItemClickAction(function(volunteerData) {
+            setAccountView(volunteerData);
+        });
+        setSectionAsSecondActivity(volunteerViewSection);
+    });
+
+    filterByDomicileButton.onclick = async function() {
+        const domicile = await selectDomicileAsync(filterByDomicileButton);
+        const domicileName = domicile.districtName + ", " + domicile.cityName;
+        volunteerList.setFilter(domicile.districtId, domicileName);
+    }
+</script>
+
+<%- include('/layouts/partials/components/select-domicile-popover/body'); %>

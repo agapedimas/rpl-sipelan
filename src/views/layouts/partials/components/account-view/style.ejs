@@ -1,0 +1,47 @@
+<style>
+    .root .main,
+    .activity:has(section > #accountViewContent.show) {
+        background: inherit;
+    }
+
+    section:has(> #accountViewContent:not(.show)) 
+    > .header > .buttons {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    section:has(> #accountViewContent:not(.show)) {
+        display: grid;
+        grid-auto-rows: 0 auto;
+
+        .content {
+            display: grid;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            grid-auto-rows: auto;
+        }
+        
+        .content > .noSelectionView {
+            display: block;
+        }
+            .content > .noSelectionView > span{
+                font-size: 1.5em;
+                color: var(--foreground-description);
+            }
+        .content > .selected {
+            display: none;
+        }
+    }
+
+    section:has(> #accountViewContent.show) {
+        background: inherit;
+
+        .content > .noSelectionView {
+            display: none;
+        }
+        .content > .selected {
+            display: block;
+        }
+    }
+</style>

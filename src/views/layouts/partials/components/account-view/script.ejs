@@ -1,0 +1,36 @@
+<script type="module">
+    const component = JSON.parse('<%- JSON.stringify(component) %>');
+    let activeAccount = null;
+
+    function setAccountView(account) {
+        if (account == null) {
+            accountViewContent.classList.remove("show");
+            return;
+        }
+
+        const accountViewActivity = accountViewContent.parentElement.parentElement;
+
+        if (activeAccount == account && accountViewActivity == secondaryActivity) {
+            return;
+        }
+
+        activeAccount = account;
+
+        accountViewContent.parentElement.name = account.name;
+        accountViewNameText.innerText = account.name;
+        accountProfilePictureImage.src = "/pp/" + account.id;
+        accountPhoneText.innerText = account.phone;
+        accountNikText.innerText = account.nik;
+        accountDomicileText.innerText = account.domicile;
+
+        accountViewContent.classList.add("show");
+        accountViewContent.parentElement.scrollTop = 0;
+
+        if (accountViewActivity == mainActivity)
+            mainActivity.navigateTo(1);
+
+        console.log("anjing", account);
+    }
+
+    window.setAccountView = setAccountView;
+</script>

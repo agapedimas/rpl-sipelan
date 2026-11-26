@@ -38,7 +38,7 @@
         // Append items
         for (const itemData of itemsData || []) {
             const itemElement = renderItem(itemData);
-            itemElement.onclick = onitemclick;
+            itemElement.onclick = onitemclick.bind(itemElement, itemData);
             listElement.append(itemElement);
         }
     }
@@ -77,8 +77,13 @@
 
     // Allows element to update itself each time object's property updated
     function bindItem(itemElement, itemData, propertyName, onchange) {
+        let _value = itemData[propertyName];
         Object.defineProperty(itemData, propertyName, {
+            get() {
+                return _value;
+            },
             set(value) {
+                _value = value;
                 onchange(value);
             }
         });

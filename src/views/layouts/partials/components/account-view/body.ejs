@@ -1,0 +1,43 @@
+<div class="header cascaded">
+    <span class="title hide"></span>
+    <div class="buttons">
+        <button id="editAccountButton"><%= language('general.edit') %></button>
+    </div>
+</div>
+<%- include('./style.ejs', { component }) %>
+<div class="content" id="accountViewContent">
+    <div class="noSelectionView">
+        <span>
+            <% if (component.role == "admin") { %>
+                <%= language('account.admin.not_selected') %>
+            <% } else if (component.role == "officer") { %>
+                <%= language('account.officer.not_selected') %>
+            <% } else if (component.role == "volunteer") { %>
+                <%= language('account.volunteer.not_selected') %>
+            <% } else if (component.role == "citizen") { %>
+                <%= language('account.citizen.not_selected') %>
+            <% } %>
+        </span>
+    </div>
+    <div class="selected">
+        <div class="profilePicture">
+            <img id="accountProfilePictureImage">
+        </div>
+        <span id="accountViewNameText"></span>
+        <div class="list">
+            <div class="stack">
+                <span><%= language('account.phone.title') %></span>
+                <span id="accountPhoneText"></span>
+            </div>
+            <div class="stack">
+                <span><%= language('account.nik.short.title') %></span>
+                <span id="accountNikText"></span>
+            </div>
+            <div class="stack">
+                <span><%= language('domicile.title') %></span>
+                <span id="accountDomicileText"></span>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('./script.ejs', { component }) %>
