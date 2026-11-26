@@ -14,7 +14,7 @@ suite("Test GET API reports", async(t) => {
         cookieJar = createCookieJar();
 
         const response = await postRequest("/api/test/signin", {
-            body: { accountId: 8 },
+            body: { accountId: 8 }, // gunakan user dengan role yang punya otoritas ini
             cookieJar
         });
 
@@ -67,7 +67,7 @@ suite("Test GET API reports", async(t) => {
         })
     
         test("get report by report id", async() => {
-            const reportId = 3;
+            const reportId = 1; // sesuaikan report id dan district id yang ada di reportVIew
             const response = await getRequest(`/api/reports/${reportId}`, { cookieJar });
             assert.equal(response.status, 200);
         })
@@ -84,19 +84,18 @@ suite("Test GET API reports", async(t) => {
             console.log("Location:", response.headers.get("location"));
             console.log("Body:", body);
 
-            assert.equal(body.status, 200);
-            assert.equal(body.message, "Report not found");
+            assert.equal(response.status, 200);
+            assert.equal(body.message, "No reports found");
         });
         
-
-        test("get report by report id, but the id is not in the database or id mismatch", async() => {
+        test("get report by report id, but the id is not in the database or id missmatch", async() => {
             const reportId = 1000000000;
             const response = await getRequest(`/api/reports/${reportId}`, { cookieJar });
             
             const body = await response.json();
             
             assert.equal(response.status, 404);
-            assert.equal(body.message, "Report not found");
+            assert.equal(body.message, "No reports found");
         })
     })
 

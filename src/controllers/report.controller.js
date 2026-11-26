@@ -92,7 +92,7 @@ async function findByReportId(req, res) {
 
 
     return report == null ? 
-        ResponseUtil.sendApiResponse(res, 404, "Report not found") : 
+        ResponseUtil.sendApiResponse(res, 404, "No reports found") : 
         ResponseUtil.sendApiResponse(res, 200, "Report found", { report: report });
 }
 
