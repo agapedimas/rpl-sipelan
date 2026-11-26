@@ -7,8 +7,10 @@ const AccountService = require("../services/account.service");
  *
  * @type {import("express").RequestHandler}
  */
-function checkAccessDistrict(req, res, next) {
-    const districtId = AccountService.findByAccountId(req.session.id).districtId;
+async function checkAccessDistrict(req, res, next) {
+    const account = await AccountService.findByAccountId(req.session.accountId);
+    
+    const districtId = account.districtId;
 
     if (!districtId) {
         return ResponseUtil.sendApiResponse(res, 403, "District access unavailable");
