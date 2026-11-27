@@ -62,7 +62,6 @@ async function findAllVerification(req, res) {
     // Diisi lewat input box (drop box), kemudian gunakan GET supaya data diubah ke URL jadi query parameter
     const { status } = req.query;
 
-    let verifications;
     // kalo ada status yang di pass ke controller maka jalankan handle findbystatus
     if (status) {
         if (typeof status !== "string" || !["verified", "rejected"].includes(status)) {
@@ -98,7 +97,7 @@ async function findByVerificationId(req, res) {
  */
 function sendApiResponseVerifications(res, verifications){
     if(!Array.isArray(verifications) || !verifications.length){
-        return ResponseUtil.sendApiResponse(res, 500, "Couldnt load the data");
+        return ResponseUtil.sendApiResponse(res, 404, "Couldnt load the data");
     } else {
         return ResponseUtil.sendApiResponse(res, 200, "Getting verifications data", { verifications: verifications });
     }
@@ -111,7 +110,7 @@ function sendApiResponseVerifications(res, verifications){
  */
 function sendApiResponseVerification(res, verification){
     if(verification === null){
-        return ResponseUtil.sendApiResponse(res, 500, "Couldnt load the data");
+        return ResponseUtil.sendApiResponse(res, 404, "Couldnt load the data");
     } else {
         return ResponseUtil.sendApiResponse(res, 200, "Getting verification data", { verification: verification });
     }

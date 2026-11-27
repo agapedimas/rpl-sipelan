@@ -1,5 +1,7 @@
 const ResponseUtil = require("../utils/response.util");
 const VerificationService = require("../services/verification.service");
+const AccountService = require("../services/account.service");
+const SubmissionService = require("../services/submission.service");
 /**
  * check akses ke lokasi district
  * @type {import("express").RequestHandler}
@@ -8,15 +10,19 @@ const VerificationService = require("../services/verification.service");
 async function checkDistrictAccess(req, res, next) {
     // ambil account id dari session
     const accountId = req.session.accountId;
-    // asumsikan district id diambli dari session, karena akan kepakai di banyak page contoh: submission, report, verification
-    // sehingga butuh simpan data waktu satu kali sesi jabat tangan, supaya tidak selalu hit db
-    const districtId = req.session.districtId;
-    const account = await AccountRepository.findByAccountId(accountId);
 
-    if (account == null) // null dan undifiend
-        return ResponseUtil.sendApiResponse(res, 403, "Account is not found.");
+    // ambil account di db untuk cek districtnya nanti
+    const account = await AccountService.findByAccountId(accountId);
+
+    const submission = await SubmissionService.findBySubmissionId(req.body.submissionId);
+
+    if (account == null || submission == null) // jika account null atau undifiend
+        return ResponseUtil.sendApiResponse(res, 403, "Account or Submission is not found.");
     
-    if (String(account.districtId) !== String(districtId))
+    console.log("verifier districtId", account.districtId);
+    console.log("districtId dari submission", submission.districtId);
+
+    if (String(account.districtId) !== String(submission.districtId))
         return ResponseUtil.sendApiResponse(res, 403, "You do not have access to this district.");
     
     return next();
@@ -33,7 +39,7 @@ async function checkIsVerifiedBefore(req, res, next) {
     const verifications = await VerificationService.findAllBySubmissionId(submissionId);
 
     if (verifications.length !== 0) {
-        return ResponseUtil.sendApiResponse(res, 403, "This submission is already verified");
+        return ResponseUtil.sendApiResponse(res, 403, "This submission is already verified or rejected before");
     }
     
     return next();

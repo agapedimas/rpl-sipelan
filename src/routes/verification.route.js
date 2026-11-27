@@ -16,20 +16,17 @@ Routes.postMapping("/api/verification",
 // pakai session dari verifier id + query parameter yang opsional
 Routes.getMapping("/api/verification",
     MainMiddleware.accessAsVolunteerOrOfficer,
-    VerificationMiddleware.checkDistrictAccess,
     VerificationController.findAllVerification
 );
 
 // pakai path variable berisi submissionId
 Routes.getMapping("/api/verification/submission/:submissionId",
     MainMiddleware.accessAsVolunteerOrOfficer,
-    VerificationMiddleware.checkDistrictAccess,
     VerificationController.findAllBySubmissionId
 );
 
 // pakai path variable berisi verificationId
 Routes.getMapping("/api/verification/:verificationId",
     MainMiddleware.accessAsVolunteerOrOfficer,
-    VerificationMiddleware.checkDistrictAccess,
     VerificationController.findByVerificationId
 );
