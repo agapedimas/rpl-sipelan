@@ -11,15 +11,16 @@ const ReportRepository = require("../repositories/report.repository");
  * @param { typeof Report.prototype.disasterTypeId } disasterTypeId 
  * @returns { Promise<typeof Report.prototype.id> }
  */
-async function add(isArchived, status, description, disasterTypeId) {
+async function add(status, description, disasterTypeId, submissionArray) {
     const timeStampMs = Date.now();
 
-    const reportId = await ReportRepository.add(isArchived, status, description, timeStampMs, disasterTypeId);
+    const reportId = await ReportRepository.add(status, description, timeStampMs, disasterTypeId, submissionArray);
     return reportId;
 }
 
 /**
  * Get all the report records
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAll(districtId) {
@@ -30,6 +31,7 @@ async function findAll(districtId) {
 /**
  * Get all report records that matched with the given status
  * @param { typeof Report.prototype.status } status 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByStatus(status, districtId){
@@ -40,6 +42,7 @@ async function findAllByStatus(status, districtId){
 /**
  * Get all report records that matched with the given disaster type id
  * @param { typeof Report.prototype.disasterTypeId } disasterTypeId 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByDisasterTypeId(disasterTypeId, districtId) {
@@ -50,6 +53,7 @@ async function findAllByDisasterTypeId(disasterTypeId, districtId) {
 /**
  * Get all report records that matched with the given is archived status
  * @param { typeof Report.prototype.isArchived } isArchived 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByIsArchivedStatus(isArchived, districtId) {
@@ -81,10 +85,11 @@ async function findByReportId(id, districtId) {
  * Update isArchived status by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.isArchived } isArchived
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateIsArchived(id, isArchived) {
-    const isSuccess = await ReportRepository.updateIsArchived(id, isArchived);
+async function updateIsArchived(id, isArchived, districtId) {
+    const isSuccess = await ReportRepository.updateIsArchived(id, isArchived, districtId);
     return isSuccess;
 }
 
@@ -92,10 +97,11 @@ async function updateIsArchived(id, isArchived) {
  * Update report status by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.status } status 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateStatus(id, status) {
-    const isSuccess = await ReportRepository.updateStatus(id, status);
+async function updateStatus(id, status, districtId) {
+    const isSuccess = await ReportRepository.updateStatus(id, status, districtId);
     return isSuccess;
 }
 
@@ -103,20 +109,22 @@ async function updateStatus(id, status) {
  * Update description by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.description } description 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateDescription(id, description) {
-    const isSuccess = await ReportRepository.updateDescription(id, description);
+async function updateDescription(id, description, districtId) {
+    const isSuccess = await ReportRepository.updateDescription(id, description, districtId);
     return isSuccess;
 }
 
 /**
  * Delete report by report id
  * @param { typeof Report.prototype.id } id 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function removeReport(id) {
-    const isSuccess = await ReportRepository.removeReport(id);
+async function removeReport(id, districId) {
+    const isSuccess = await ReportRepository.removeReport(id, districId);
     return isSuccess;
 }
 

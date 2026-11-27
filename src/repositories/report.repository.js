@@ -7,6 +7,7 @@ const Report = require("../models/report.model");
 
 /**
  * Show all the report records in the database
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAll(districtId){
@@ -22,6 +23,7 @@ async function findAll(districtId){
 /**
  * Show all report records in the database that matched with the given status
  * @param { typeof Report.prototype.status } status 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByStatus(status, districtId) {
@@ -40,6 +42,7 @@ async function findAllByStatus(status, districtId) {
 /**
  * Show all report records in the database that matched with the given disaster type id
  * @param { typeof Report.prototype.disasterTypeId } disasterTypeId 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByDisasterTypeId(disasterTypeId, districtId) {
@@ -57,6 +60,7 @@ async function findAllByDisasterTypeId(disasterTypeId, districtId) {
 /**
  * Show all report records in the database that matched with the given is archived status
  * @param { typeof Report.prototype.isArchived } isArchived 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByIsArchivedStatus(isArchived, districtId) {
@@ -75,6 +79,7 @@ async function findAllByIsArchivedStatus(isArchived, districtId) {
 /**
  * Show all report records in the database that matched with the given is time
  * @param { typeof Report.prototype.time } time 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Array<Report>> }
  */
 async function findAllByTime(time, districtId){
@@ -93,9 +98,10 @@ async function findAllByTime(time, districtId){
 /**
  * Show a single report record in the database that matched with the given report id
  * @param { typeof Report.prototype.id } id 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Report?> }
  */
-async function findByReportId(id, districtId) {
+async function findByReportId(id, districtId) {    
     const queryResult = 
         await Database.doQuery(`
             SELECT * FROM ReportView 
@@ -105,6 +111,7 @@ async function findByReportId(id, districtId) {
         `, [id, districtId]);
 
     const dataResults = SqlUtil.convertRowToClass(queryResult.rows, Report);
+
     return dataResults?.at(0) || null;
 }
 
@@ -117,16 +124,42 @@ async function findByReportId(id, districtId) {
  * @param { typeof Report.prototype.description } description 
  * @param { typeof Report.prototype.time } time 
  * @param { typeof Report.prototype.disasterTypeId } disasterTypeId 
+ * @param { typeof Array<Submission> } submissionArray 
  * @returns { Promise<typeof Report.prototype.id> }
  */
-async function add(isArchived, status, description, time, disasterTypeId) {
+async function add(status, description, time, disasterTypeId, submissionArray) {
     const queryResult = 
         await Database.doQuery(`
-            INSERT INTO Report(isArchived, status, description, time, disasterType)
-            VALUES(?, ?, ?, ?, ?)
-        `, [isArchived, status, description, time, disasterTypeId]);
+            INSERT INTO Report(isArchived, status, description, time, disasterTypeId)
+            VALUES(FALSE, ?, ?, ?, ?)
+            `, [status, description, time, disasterTypeId]);
+    
+    const reportId = queryResult.insertId;
 
-    return queryResult.insertId;
+    if(!reportId) return null; 
+
+    await addPartOfReport(reportId, submissionArray);
+    
+    return reportId;
+}
+
+/**
+ * 
+ * @param {typeof Report.prototype.id} reportId 
+ * @param {typeof Array<Submission>} submissionArray 
+ */
+async function addPartOfReport(reportId, submissionArray) {
+    // populate partOfReport
+    for(const submissionId of submissionArray){
+        console.log("submss: " + submissionId);
+        
+        const qs = await Database.doQuery(`
+            INSERT INTO partOfReport(reportId, submissionId)
+            VALUES(?, ?)    
+        `, [reportId, submissionId]);
+
+        console.log("inserted id " + qs.insertId);
+    }
 }
 
 // ===================== UPDATE QUERIES ============================
@@ -134,28 +167,42 @@ async function add(isArchived, status, description, time, disasterTypeId) {
  * Update isArchive status by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.isArchived } isArchived 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateIsArchived(id, isArchived) {
+async function updateIsArchived(id, isArchived, districtId) {
+    const existing = await findByReportId(id, districtId);
+
+    if(!existing){
+        return false;
+    }
+
     const queryResult = 
         await Database.doQuery(`
             UPDATE Report
             SET
                 isArchived = ?
             WHERE
-                id = ?    
+                id = ?
         `, [isArchived, id]);
 
-    return queryResult.isSuccess;
+    return queryResult?.isSuccess;
 }
 
 /**
  * Update report status by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.status } status 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateStatus(id, status) {
+async function updateStatus(id, status, districtId) {
+    const existing = await findByReportId(id, districtId);
+
+    if(!existing){
+        return false;
+    }
+
     const queryResult = 
         await Database.doQuery(`
             UPDATE Report
@@ -172,9 +219,16 @@ async function updateStatus(id, status) {
  * Update description by report id
  * @param { typeof Report.prototype.id } id 
  * @param { typeof Report.prototype.description } description 
+ * @param { typeof Report.prototype.districtId } districtId 
  * @returns { Promise<Boolean> }
  */
-async function updateDescription(id, description) {
+async function updateDescription(id, description, districtId) {
+    const existing = await findByReportId(id, districtId);
+
+    if(!existing){
+        return false;
+    }
+
     const queryResult = 
         await Database.doQuery(`
             UPDATE Report
@@ -184,7 +238,7 @@ async function updateDescription(id, description) {
                 id = ?
         `, [description, id]);
 
-    return queryResult.isSuccess;
+    return queryResult?.isSuccess;
 }
 
 // ===================== DELETE QUERIES ============================
@@ -192,17 +246,42 @@ async function updateDescription(id, description) {
 /**
  * Delete report by report id
  * @param { typeof Report.prototype.id } id 
+ * @param { typeof Report.prototype.districtId } disctrictId 
  * @returns { Promise<Boolean> }
  */
-async function removeReport(id) {
-    const queryResult = 
-        await Database.doQuery(`
-            DELETE FROM Report
-            WHERE 
-                id = ?
+async function removeReport(id, disctrictId) {
+    const existing = await findByReportId(id, disctrictId);
+
+    console.log("ini existing: " + JSON.stringify(existing));
+    
+    if (!existing) {
+        return false;
+    }
+    
+    const delPartOfReport = await deletePartOfReport(id);
+
+    if(!delPartOfReport) return false;
+
+    const queryResult = await Database.doQuery(`
+        DELETE FROM Report
+        WHERE id = ?
+    `,id);    
+
+    return Boolean(queryResult?.isSuccess);
+}
+
+/**
+ * 
+ * @param {typeof Report.prototype.id} id 
+ * @returns 
+ */
+async function deletePartOfReport(id) {
+    const queryResult = await Database.doQuery(`
+        DELETE FROM partOfReport 
+        WHERE reportId = ?    
         `, id);
     
-    return queryResult.isSuccess;
+    return queryResult?.isSuccess;
 }
 
 module.exports = {

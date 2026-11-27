@@ -5,10 +5,10 @@ const ReportService = require("../services/report.service");
 
 /** @type {import("express").RequestHandler} */
 async function add(req, res) {
-    const { isArchived, status, description, disasterTypeId } = req.body;
+    const { status, description, disasterTypeId, submissionArray } = req.body;
     // fields tidak kosong ?
-    if(ValidatorUtil.areFieldsEmpty([isArchived, status, description, disasterTypeId])){
-        return ResponseUtil.sendApiResponse(res, 422, "isArchived, status, description, disasterTypeId are required fields ");
+    if(ValidatorUtil.areFieldsEmpty([status, description, disasterTypeId])){
+        return ResponseUtil.sendApiResponse(res, 422, "status, description, disasterTypeId are required fields ");
     }
 
     // valid description type ?
@@ -16,8 +16,12 @@ async function add(req, res) {
         return ResponseUtil.sendApiResponse(res, 400, "Description must be in a type of string");
     }
 
+    if(!Array.isArray(submissionArray) || submissionArray.length === 0){
+        return ResponseUtil.sendApiResponse(res, 400, "Submission cannot be empty");
+    }
+
     // get the reportId that is added
-    const reportId = await ReportService.add(isArchived, status, description, disasterTypeId);
+    const reportId = await ReportService.add(status, description, disasterTypeId, submissionArray);
 
     return ResponseUtil.sendApiResponse(res, 200, "Saved to database", { reportId: reportId });
 }
@@ -89,7 +93,7 @@ async function findByReportId(req, res) {
     const reportId = req.params.reportId;
 
     const report = await ReportService.findByReportId(reportId, districtId);
-
+    console.log(JSON.stringify(report));
 
     return report == null ? 
         ResponseUtil.sendApiResponse(res, 404, "No reports found") : 
@@ -116,7 +120,7 @@ async function updateIsArchived(req, res) {
         return ResponseUtil.sendApiResponse(res, 409, "Report already has this archive status");
     }
 
-    const isSuccess = await ReportService.updateIsArchived(reportId, isArchived);
+    const isSuccess = await ReportService.updateIsArchived(reportId, isArchived, districtId);
 
     return isSuccess ? 
         ResponseUtil.sendApiResponse(res, 200, "Report updated") : 
@@ -171,13 +175,13 @@ async function removeReport(req, res) {
     const reportId = req.params.reportId;
 
     const report = await ReportService.findByReportId(reportId, districtId);
-
+    
     if (!report) {
         return ResponseUtil.sendApiResponse(res, 404, "Report not found");
     }
 
     const isSuccess = await ReportService.removeReport(reportId, districtId);
-
+    
     return isSuccess ? 
         ResponseUtil.sendApiResponse(res, 200, "Report removed") : 
         ResponseUtil.sendApiResponse(res, 500, "Remove failed");
