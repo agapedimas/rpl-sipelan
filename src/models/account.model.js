@@ -41,7 +41,7 @@ class Account extends Model {
         this.#role = role;
         this.#districtId = districtId;
         this.#domicile = domicile;
-        this.#isActive = isActive;
+        this.#isActive = isActive == 1;
     }
 
     get id() {

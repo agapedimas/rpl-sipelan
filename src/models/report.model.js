@@ -28,7 +28,7 @@ class Report extends Model {
     constructor(id, isArchived, status, description, time, disasterTypeId, districtId) {
         super();
         this.#id = id;
-        this.#isArchived = isArchived;
+        this.#isArchived = isArchived == 1;
         this.#status = status;
         this.#description = description;
         this.#time = time;

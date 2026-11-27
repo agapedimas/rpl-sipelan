@@ -17,7 +17,7 @@ class DisasterType extends Model {
         super();
         this.#id = id;
         this.#name = name;
-        this.#isActive = isActive;
+        this.#isActive = isActive == 1;
     }
 
     get id() { return this.#id; }

@@ -43,7 +43,7 @@ class Submission extends Model {
         this.#description = description;
         this.#time = time;
         this.#picture = picture;
-        this.#isArchived = isArchived;
+        this.#isArchived = isArchived == 1;
         this.#districtId = districtId;
         this.#citizenId = citizenId;
         this.#disasterTypeId = disasterTypeId;

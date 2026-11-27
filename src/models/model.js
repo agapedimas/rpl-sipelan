@@ -33,7 +33,13 @@ class Model {
      * @returns { Object }
      */
     modelToObject() {
-        return this.#rawObject;
+        const prototype = Object.getPrototypeOf(this);
+        const properties = Object.getOwnPropertyDescriptors(prototype);
+        return Object.fromEntries(
+            Object.entries(properties)
+                .filter(([key, descriptor]) => typeof descriptor.get === "function")
+                .map(([key, descriptor]) => [key, descriptor.get.call(this)])
+        );
     }
 
     toJSON() {
