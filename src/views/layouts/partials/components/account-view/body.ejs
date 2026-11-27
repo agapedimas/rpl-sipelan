@@ -1,7 +1,9 @@
 <div class="header cascaded">
     <span class="title hide"></span>
     <div class="buttons">
-        <button id="editAccountButton"><%= language('general.edit') %></button>
+        <% if (component.allowEditing === true) { %> 
+            <button id="editAccountButton"><%= language('general.edit') %></button>
+        <% } %>
     </div>
 </div>
 <%- include('./style.ejs', { component }) %>
@@ -20,10 +22,12 @@
         </span>
     </div>
     <div class="selected">
-        <div class="profilePicture">
-            <img id="accountProfilePictureImage">
+        <div class="profile">
+            <div class="profilePicture">
+                <img id="accountProfilePictureImage">
+            </div>
+            <span class="name" id="accountViewNameText"></span>
         </div>
-        <span id="accountViewNameText"></span>
         <div class="list">
             <div class="stack">
                 <span><%= language('account.phone.title') %></span>
@@ -37,6 +41,11 @@
                 <span><%= language('domicile.title') %></span>
                 <span id="accountDomicileText"></span>
             </div>
+        </div>
+        <div class="buttons">
+            <button id="deactivateAccountButton" class="critical plain"><%= language('general.deactivate') %></button>
+            <button id="activateAccountButton"><%= language('general.activate') %></button>
+            <button id="deleteAccountButton" class="critical"><%= language('general.delete') %></button>
         </div>
     </div>
 </div>

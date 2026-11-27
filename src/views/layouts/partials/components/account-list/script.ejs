@@ -51,20 +51,37 @@
         const nameElement = document.createElement("span");
         nameElement.classList.add("name");
         nameElement.innerText = itemData.name;
-        bindItem(nameElement, itemData, "name", function(newValue) {
+        addObjectBinding(itemData, "name", function(newValue) {
             nameElement.innerText = newValue;
         });
+
+        const activeStatusElement = document.createElement("span");
+        activeStatusElement.classList.add("status");
+        activeStatusElement.innerText = "<%= language('general.not_active') %>";
+        if (itemData.isActive)
+            activeStatusElement.classList.add("hidden");
+        addObjectBinding(itemData, "isActive", function(newValue) {
+            if (newValue)
+                activeStatusElement.classList.add("hidden");
+            else
+                activeStatusElement.classList.remove("hidden");
+        })
+
+        const headerElement = document.createElement("div");
+        headerElement.classList.add("header");
+        headerElement.append(nameElement);
+        headerElement.append(activeStatusElement);
 
         const domicileElement = document.createElement("span");
         domicileElement.classList.add("domicile");
         domicileElement.innerText = itemData.domicile;
-        bindItem(domicileElement, itemData, "domicile", function(newValue) {
+        addObjectBinding(itemData, "domicile", function(newValue) {
             domicileElement.innerText = newValue;
         });
 
         const textGroupElement = document.createElement("div");
-        textGroupElement.classList.add("vertical");
-        textGroupElement.append(nameElement);
+        textGroupElement.classList.add("textGroup");
+        textGroupElement.append(headerElement);
         textGroupElement.append(domicileElement);
 
         const itemContainer = document.createElement("div");
@@ -73,20 +90,6 @@
         itemContainer.append(textGroupElement);
 
         return itemContainer;
-    }
-
-    // Allows element to update itself each time object's property updated
-    function bindItem(itemElement, itemData, propertyName, onchange) {
-        let _value = itemData[propertyName];
-        Object.defineProperty(itemData, propertyName, {
-            get() {
-                return _value;
-            },
-            set(value) {
-                _value = value;
-                onchange(value);
-            }
-        });
     }
 
     // Refresh list

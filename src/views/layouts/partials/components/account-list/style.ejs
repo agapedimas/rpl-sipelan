@@ -46,18 +46,33 @@
             .list.account .stack .profilePicture {
                 width: 100%;
             }
-            .list.account .stack .vertical {
+            .list.account .stack .textGroup {
                 display: grid;
             }
-                .list.account .stack .vertical > span {
+                .list.account .stack .textGroup .header {
+                    display: grid;
+                    grid-auto-flow: column;
+                    grid-auto-columns: auto max-content;
+                }
+                .list.account .stack .textGroup span {
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                 }
-                .list.account .stack .vertical .name {
+                .list.account .stack .textGroup .name {
                     font-weight: 500;
                 }
-                .list.account .stack .vertical .domicile {
+                .list.account .stack .textGroup .domicile {
                     color: var(--foreground-description);
+                }
+                .list.account .stack .textGroup .status {
+                    font-size: 0.75rem;
+                    color: var(--foreground-description);
+                    background: var(--background-input);
+                    padding: 0.25em 0.65em;
+                    border-radius: 6px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.025em;
                 }
 </style>

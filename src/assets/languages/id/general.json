@@ -2,6 +2,7 @@
     "back": "Kembali",
     "refresh": "Muat Ulang",
     "homepage": "Beranda",
+    "delete": "Hapus",
     "cancel": "Batal",
     "ok": "Oke",
     "edit": "Edit",
@@ -15,6 +16,10 @@
     "submit": "Kirim",
     "clear": "Bersihkan",
     "search": "Cari",
+    "active": "Aktif",
+    "not_active": "Tidak Aktif",
+    "activate": "Aktifkan",
+    "deactivate": "Nonaktifkan",
 
     "errors": {
         "page_not_found": {

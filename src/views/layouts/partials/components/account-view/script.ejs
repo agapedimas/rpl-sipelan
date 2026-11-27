@@ -15,7 +15,16 @@
         }
 
         activeAccount = account;
+        assignAccountInfo(account);
 
+        accountViewContent.classList.add("show");
+        accountViewContent.parentElement.scrollTop = 0;
+
+        if (accountViewActivity == mainActivity)
+            mainActivity.navigateTo(1);
+    }
+
+    function assignAccountInfo(account) {
         accountViewContent.parentElement.name = account.name;
         accountViewNameText.innerText = account.name;
         accountProfilePictureImage.src = "/pp/" + account.id;
@@ -23,13 +32,23 @@
         accountNikText.innerText = account.nik;
         accountDomicileText.innerText = account.domicile;
 
-        accountViewContent.classList.add("show");
-        accountViewContent.parentElement.scrollTop = 0;
+        if (account.isActive) {
+            activateAccountButton.classList.add("hidden");
+            deactivateAccountButton.classList.remove("hidden");
+        }
+        else {
+            activateAccountButton.classList.remove("hidden");
+            deactivateAccountButton.classList.add("hidden");
+        }
+    }
 
-        if (accountViewActivity == mainActivity)
-            mainActivity.navigateTo(1);
-
-        console.log("anjing", account);
+    deactivateAccountButton.onclick = function() {
+        activeAccount.isActive = false;
+        assignAccountInfo(activeAccount);
+    }
+    activateAccountButton.onclick = function() {
+        activeAccount.isActive = true;
+        assignAccountInfo(activeAccount);
     }
 
     window.setAccountView = setAccountView;

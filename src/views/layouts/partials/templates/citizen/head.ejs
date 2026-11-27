@@ -8,3 +8,7 @@
 <% } else { %>
     <title><%= app.name %></title>
 <% } %>
+<% if (data.page.usesSecondaryActivity === true) { %>
+    <link rel="stylesheet" type="text/css" href="/css/secondary-activity.css" />
+    <script src="/js/utils/secondary-activity.js" type="module"></script>
+<% } %>

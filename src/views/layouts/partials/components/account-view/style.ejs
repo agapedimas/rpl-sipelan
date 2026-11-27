@@ -42,6 +42,43 @@
         }
         .content > .selected {
             display: block;
+            
+            .profile {        
+                display: grid;
+                max-width: 800px;
+                justify-items: center;
+                margin-bottom: var(--padding);
+                text-align: center;
+                gap: 1em;
+            }
+                .profile .profilePicture {
+                    width: 150px;
+                    aspect-ratio: 1;
+                    border-radius: 100%;
+                    overflow: hidden;
+                }
+                    .profile .profilePicture img {
+                        width: 100%;
+                        aspect-ratio: 1;
+                    }
+                .profile .name {
+                    font-size: 1.7em;
+                    font-weight: bold;
+                    line-height: 1;
+                    text-align: center;
+                }
+        
+            .buttons {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: 1fr;
+                gap: 7px;
+            }
+                .buttons button {
+                    padding: 0.75em 1.25em;
+                    border-radius: 12px;
+                }
         }
     }
+    
 </style>
