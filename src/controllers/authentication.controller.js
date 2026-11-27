@@ -52,12 +52,6 @@ async function signIn(req, res, next) {
 }
 
 /** @type {import("express").RequestHandler} */
-async function signUpAsCitizen(req, res, next) {
-    req.body.role = "citizen";
-    return next();
-}
-
-/** @type {import("express").RequestHandler} */
 async function signOut(req, res, next) {
     const authenticationId = req.session.authenticationId;
     if (authenticationId != null) {
@@ -71,5 +65,5 @@ async function signOut(req, res, next) {
 
 module.exports = {
     requestOtp, verifyOtp, cancelOtp,
-    signIn, signUpAsCitizen, signOut
+    signIn, signOut
 }

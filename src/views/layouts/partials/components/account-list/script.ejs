@@ -40,6 +40,9 @@
             const itemElement = renderItem(itemData);
             itemElement.onclick = onitemclick.bind(itemElement, itemData);
             listElement.append(itemElement);
+            // Check if current item is currently showing
+            if (window["matchActiveAccountView"])
+                matchActiveAccountView(itemData);
         }
     }
 
@@ -78,6 +81,9 @@
         addObjectBinding(itemData, "domicile", function(newValue) {
             domicileElement.innerText = newValue;
         });
+        addObjectBinding(itemData, "districtId", function(newValue) {
+            domicileElement.innerText = itemData.domicile;
+        });
 
         const textGroupElement = document.createElement("div");
         textGroupElement.classList.add("textGroup");
@@ -88,6 +94,14 @@
         itemContainer.classList.add("stack", "clickable", "iconed");
         itemContainer.append(profilePictureElement);
         itemContainer.append(textGroupElement);
+
+        itemData.isItemActive = false;
+        addObjectBinding(itemData, "isItemActive", function(newValue) {
+            if (newValue)
+                itemContainer.classList.add("active");
+            else
+                itemContainer.classList.remove("active");
+        });
 
         return itemContainer;
     }

@@ -4,7 +4,11 @@
 
     function setAccountView(account) {
         if (account == null) {
+            if (activeAccount)
+                activeAccount.isItemActive = false;
+            activeAccount = null;
             accountViewContent.classList.remove("show");
+            accountViewContent.parentElement.classList.remove("grid");
             return;
         }
 
@@ -14,10 +18,14 @@
             return;
         }
 
+        if (activeAccount)
+            activeAccount.isItemActive = false;
         activeAccount = account;
+        activeAccount.isItemActive = true;
         assignAccountInfo(account);
 
         accountViewContent.classList.add("show");
+        accountViewContent.parentElement.classList.add("grid");
         accountViewContent.parentElement.scrollTop = 0;
 
         if (accountViewActivity == mainActivity)
@@ -40,16 +48,147 @@
             activateAccountButton.classList.remove("hidden");
             deactivateAccountButton.classList.add("hidden");
         }
+
+        if (account.isDeletable) {
+            deleteAccountButton.disabled = false;
+        }
+        else {
+            deleteAccountButton.disabled = true;
+        }
     }
 
-    deactivateAccountButton.onclick = function() {
-        activeAccount.isActive = false;
-        assignAccountInfo(activeAccount);
-    }
-    activateAccountButton.onclick = function() {
-        activeAccount.isActive = true;
-        assignAccountInfo(activeAccount);
+    deactivateAccountButton.onclick = async function() {
+        Components.ActionSheet.Open({
+            Title: "<%= language('account.' + component.role + '.deactivate_dialog.confirmation.title') %>".format(activeAccount.name),
+            Description: "<%= language('account.' + component.role + '.deactivate_dialog.confirmation.description') %>".format(activeAccount.name),
+            Actions: [
+                { 
+                    Title: "<%= language('general.deactivate') %>", 
+                    Type: "Options.Critical", 
+                    Action: async function() {
+                        const isSuccess = await deactivateAccount();
+                        if (isSuccess) {
+                            activeAccount.isActive = false;
+                            assignAccountInfo(activeAccount);
+                        }
+                    }
+                },
+                { 
+                    Title: "<%= language('general.cancel') %>", 
+                    Type: "Footer"
+                }
+            ]
+        });
     }
 
+    activateAccountButton.onclick = async function() {
+        Components.ActionSheet.Open({
+            Title: "<%= language('account.' + component.role + '.activate_dialog.confirmation.title') %>".format(activeAccount.name),
+            Description: "<%= language('account.' + component.role + '.activate_dialog.confirmation.description') %>".format(activeAccount.name),
+            Actions: [
+                { 
+                    Title: "<%= language('general.activate') %>", 
+                    Type: "Options.Accent", 
+                    Action: async function() {
+                        const isSuccess = await activateAccount();
+                        if (isSuccess) {
+                            activeAccount.isActive = true;
+                            assignAccountInfo(activeAccount);
+                        }
+                    }
+                },
+                { 
+                    Title: "<%= language('general.cancel') %>", 
+                    Type: "Footer"
+                }
+            ]
+        });
+    }
+
+    if (window["editAccountButton"])
+        editAccountButton.onclick = async function() {
+            await editAccountAsync(this, activeAccount);
+            assignAccountInfo(activeAccount);
+        }
+
+    // Check if there's updated info from server while Account View
+    // is currently showing account info
+    function matchActiveAccountView(account) {
+        if (activeAccount && activeAccount.id == account.id) {
+            activeAccount = account;
+            activeAccount.isItemActive = true;
+            assignAccountInfo(account);
+        }
+    }
+
+    async function deactivateAccount() {
+        try {
+            const url = "/api/account/<%= component.role %>/" + activeAccount.id + "/deactivate";
+            const submitRequest = await fetch(url, { method: "PATCH" });
+
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                return true;
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
+        }
+        catch (error) {
+            Components.Notification.Send({ 
+                Id: "update_account_failed", 
+                Title: "<%= language('profile.errors.title') %>", 
+                Message: error.message || "<%= language('profile.errors.UNKNOWN') %>".format(error.cause.details), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
+            return false;
+        }
+    }
+
+    async function activateAccount() {
+        try {
+            const url = "/api/account/<%= component.role %>/" + activeAccount.id + "/activate";
+            const submitRequest = await fetch(url, { method: "PATCH" });
+
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                return true;
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
+        }
+        catch (error) {
+            Components.Notification.Send({ 
+                Id: "update_account_failed", 
+                Title: "<%= language('profile.errors.title') %>", 
+                Message: error.message || "<%= language('profile.errors.UNKNOWN') %>".format(error.cause.details), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
+            return false;
+        }
+    }
+
+    window.matchActiveAccountView = matchActiveAccountView;
     window.setAccountView = setAccountView;
 </script>

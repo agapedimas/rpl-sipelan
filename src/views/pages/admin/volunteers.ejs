@@ -6,7 +6,7 @@
 <section id="volunteerListSection">
     <div class="header">
         <div class="buttons">
-            <button></button>
+            <button id="addVolunteerButton"><%= language('general.add') %></button>
             <button id="filterByDomicileButton" class="icon">&#xf5bf;</button>
         </div>
         <span class="title"><%= data.page.title %></span>
@@ -31,7 +31,7 @@
             component: {
                 id: "volunteerView",
                 role: "volunteer",
-                allowEditing: false
+                allowEditing: true
             }
         }) 
     %>
@@ -51,6 +51,11 @@
         const domicile = await selectDomicileAsync(filterByDomicileButton);
         const domicileName = domicile.districtName + ", " + domicile.cityName;
         volunteerList.setFilter(domicile.districtId, domicileName);
+    }
+
+    addVolunteerButton.onclick = async function() {
+        await addAccountAsync(this);
+        volunteerList.refreshList();
     }
 </script>
 

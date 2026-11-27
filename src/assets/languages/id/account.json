@@ -43,25 +43,75 @@
 
     "officer": {
         "title": "Petugas",
-        
-        "new_officer_dialog": {
+        "not_selected": "Belum ada petugas yang dipilih",
+        "add_dialog": {
             "title": "Petugas Baru"
         },
-        "edit_officer_dialog": {
+        "edit_dialog": {
             "title": "Edit Petugas"
         },
-        "not_selected": "Belum ada petugas yang dipilih"
+        "delete_dialog": {
+            "title": "Hapus Petugas",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin menghapus {0}?",
+                "description": "{0} tidak melakukan aktivitas yang berdampak ke submisi laporan dan laporan resmi."
+            }
+        },
+        "deactivate_dialog": {
+            "title": "Nonaktifkan Petugas",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin menonaktifkan {0}?",
+                "description": "Setelahnya, {0} tidak dapat melakukan aktivitas apapun. Tindakan ini tidak akan berpengaruh ke data lain yang pernah dibuat. Admin bisa mengaktifkan kembali kapan saja."
+            }
+        },
+        "activate_dialog": {
+            "title": "Aktifkan Petugas",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin mengaktifkan {0}?",
+                "description": "{0} akan dapat mengakses kembali ke akunnya dan melakukan aktivitas seperti pada umumnya."
+            }
+        }
     },
 
     "volunteer": {
-        "title": "Relawan"
+        "title": "Relawan",
+        "add_dialog": {
+            "title": "Relawan Baru"
+        },
+        "edit_dialog": {
+            "title": "Edit Relawan"
+        },
+        "not_selected": "Belum ada relawan yang dipilih",
+        "delete_dialog": {
+            "title": "Hapus Relawan",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin menghapus {0}?",
+                "description": "{0} tidak melakukan aktivitas yang berdampak ke submisi laporan dan laporan resmi."
+            }
+        },
+        "deactivate_dialog": {
+            "title": "Nonaktifkan Relawan",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin menonaktifkan {0}?",
+                "description": "Setelahnya, {0} tidak dapat melakukan aktivitas apapun. Tindakan ini tidak akan berpengaruh ke data lain yang pernah dibuat. Admin bisa mengaktifkan kembali kapan saja."
+            }
+        },
+        "activate_dialog": {
+            "title": "Aktifkan Relawan",
+            "confirmation": {
+                "title": "Apakah Anda yakin ingin mengaktifkan {0}?",
+                "description": "{0} akan dapat mengakses kembali ke akunnya dan melakukan aktivitas seperti pada umumnya."
+            }
+        }
     },
 
     "admin": {
-        "title": "Admin"
+        "title": "Admin",
+        "not_selected": "Belum ada admin yang dipilih"
     },
 
     "citizen": {
-        "title": "Warga"
+        "title": "Warga",
+        "not_selected": "Belum ada warga yang dipilih"
     }
 }

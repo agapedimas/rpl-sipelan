@@ -199,6 +199,16 @@ async function findByPhone(phone) {
     return account;
 }
 
+/**
+ * @param { typeof Account.prototype.nik } nik
+ * @returns { Promise<Account> }
+ */
+async function findByNik(nik) {
+    nik = FormatterUtil.formatNik(nik);
+    const account = await AccountRepository.findByNik(nik);
+    return account;
+}
+
 module.exports = {
     add, 
     updateInfo, 
@@ -206,5 +216,5 @@ module.exports = {
     activate, deactivate,
     doesRoleExist,
     getRole, getDistrictId,
-    findAllByRole, findAllByRoleAndDistrictId, findByAccountId, findByPhone
+    findAllByRole, findAllByRoleAndDistrictId, findByAccountId, findByPhone, findByNik
 }

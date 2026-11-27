@@ -100,13 +100,12 @@ async function checkExistence(req, res, next) {
 }
 
 /** 
- * Make sure Phone Number is not already used
+ * Make sure Phone Number and NIK is not already used
  * @type {import("express").RequestHandler} 
  */
 async function checkDuplicates(req, res, next) {
     const { phone, name, districtId, role, nik } = req.body;
 
-    // Make sure phone number is not already used
     const phoneOwner = await AccountService.findByPhone(phone);
     if (phoneOwner !== null) {
         // If the phone number is their own, ignore then
@@ -118,6 +117,35 @@ async function checkDuplicates(req, res, next) {
         }
     }
 
+    const nikOwner = await AccountService.findByNik(nik);
+    if (nikOwner !== null) {
+        // If the nik is their own, ignore then
+        if (nikOwner.id == req.session.accountId) {
+            delete req.body.nik;
+        }
+        else {
+            return ResponseUtil.sendApiResponse(res, 409, "Account with NIK '" + nik + "' is already used on another account.");
+        }
+    }
+
+    return next();
+}
+
+/** @type {import("express").RequestHandler} */
+async function setRoleToCitizen(req, res, next) {
+    req.body.role = "citizen";
+    return next();
+}
+
+/** @type {import("express").RequestHandler} */
+async function setRoleToVolunteer(req, res, next) {
+    req.body.role = "volunteer";
+    return next();
+}
+
+/** @type {import("express").RequestHandler} */
+async function setRoleToOfficer(req, res, next) {
+    req.body.role = "officer";
     return next();
 }
 
@@ -126,5 +154,8 @@ module.exports = {
     checkRequiredFields,
     checkValidity,
     checkExistence,
-    checkDuplicates
+    checkDuplicates,
+    setRoleToCitizen,
+    setRoleToVolunteer,
+    setRoleToOfficer
 }

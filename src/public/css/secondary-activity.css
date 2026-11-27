@@ -7,7 +7,7 @@
     .root .main {
         grid-auto-columns: 400px auto;
     }
-    .root .main > .activity:nth-child(1) {
+    .root .main > .activity:nth-child(1) > section {
         background: var(--gray-7);
         box-shadow: inset -10px 0 5px -10px var(--border-sidebar);
     }

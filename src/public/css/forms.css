@@ -8,4 +8,5 @@
         }
         .popover .list.form > .stack span.icon {
             font-size: 0.7em;
+            color: var(--foreground-description);
         }

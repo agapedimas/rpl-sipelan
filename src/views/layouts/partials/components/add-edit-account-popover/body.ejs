@@ -1,0 +1,40 @@
+<%- include('./style') %>
+
+<div class="popover" id="<%= component.type %>AccountPopover">
+    <div class="activity">
+        <div class="header cascaded">
+            <span class="title"><%= language('account.' + component.role + '.' + component.type + '_dialog.title') %></span>
+            <div class="buttons">
+                <button id="cancel<%= component.type %>AccountButton"><%= language('general.cancel') %></button>
+                <button id="submit<%= component.type %>AccountButton">
+                    <div class="progressring"></div>
+                    <span><%= language('general.save') %></span>
+                </button>
+            </div>
+        </div>
+        <div class="content">
+            <div class="list form">
+                <div class="stack">
+                    <span><%= language('account.name.title') %></span>
+                    <input id="<%= component.type %>NameInput" type="text" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.phone.title') %></span>
+                    <input id="<%= component.type %>PhoneInput" type="tel" class="plain"/>
+                </div>
+                <div class="stack">
+                    <span><%= language('account.nik.short.title') %></span>
+                    <input id="<%= component.type %>NikInput" type="text" ad-type="nik" class="plain"/>
+                </div>
+                <div id="<%= component.type %>SelectDomicileButton" class="stack clickable">
+                    <span><%= language('domicile.title') %></span>
+                    <span id="<%= component.type %>DomicileText"></span>
+                    <span class="icon">&#xef59;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./script') %>
+<%- include('../select-domicile-popover/body') %>

@@ -1,7 +1,6 @@
 <style>
-    .root .main,
     .activity:has(section > #accountViewContent.show) {
-        background: inherit;
+        background: var(--background-activity-grid);
     }
 
     section:has(> #accountViewContent:not(.show)) 
@@ -42,7 +41,7 @@
         }
         .content > .selected {
             display: block;
-            
+
             .profile {        
                 display: grid;
                 max-width: 800px;
@@ -68,16 +67,23 @@
                     text-align: center;
                 }
         
-            .buttons {
+            .actions {
                 display: grid;
                 grid-auto-flow: column;
                 grid-auto-columns: 1fr;
                 gap: 7px;
             }
-                .buttons button {
+                .actions button {
                     padding: 0.75em 1.25em;
                     border-radius: 12px;
                 }
+                    .actions button .progressring {
+                        width: 1em;
+                    }
+
+            .list .stack > span:last-child {
+                color: var(--foreground-description);
+            }
         }
     }
     

@@ -6,7 +6,7 @@
 <section id="officerListSection">
     <div class="header">
         <div class="buttons">
-            <button></button>
+            <button id="addOfficerButton"><%= language('general.add') %></button>
             <button id="filterByDomicileButton" class="icon">&#xf5bf;</button>
         </div>
         <span class="title"><%= data.page.title %></span>
@@ -51,6 +51,11 @@
         const domicile = await selectDomicileAsync(filterByDomicileButton);
         const domicileName = domicile.districtName + ", " + domicile.cityName;
         officerList.setFilter(domicile.districtId, domicileName);
+    }
+
+    addOfficerButton.onclick = async function() {
+        await addAccountAsync(this);
+        officerList.refreshList();
     }
 </script>
 

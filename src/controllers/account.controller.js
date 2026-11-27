@@ -11,17 +11,17 @@ const DistrictService = require("../services/district.service");
 async function add(req, res) {
     const { phone, name, districtId, role, nik } = req.body;
 
-    const isSuccess = await AccountService.add(phone, name, districtId, role, nik);
+    const accountId = await AccountService.add(phone, name, districtId, role, nik);
 
-    if (isSuccess)
-        return ResponseUtil.sendApiResponse(res, 201);
+    if (accountId != null)
+        return ResponseUtil.sendApiResponse(res, 201, null, { accountId: accountId });
     else
         return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
 }
 
 /** @type {import("express").RequestHandler} */
 async function updateInfo(req, res) {
-    const accountId = req.session.accountId;
+    const accountId = req.params.accountId;
     const { phone, name, districtId, role, nik } = req.body;
 
     const isSuccess = await AccountService.updateInfo(accountId, {
@@ -30,6 +30,30 @@ async function updateInfo(req, res) {
         districtId: districtId,
         nik: nik
     });
+
+    if (isSuccess)
+        return ResponseUtil.sendApiResponse(res, 200);
+    else
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
+}
+
+/** @type {import("express").RequestHandler} */
+async function activate(req, res) {
+    const accountId = req.params.accountId;
+
+    const isSuccess = await AccountService.activate(accountId);
+
+    if (isSuccess)
+        return ResponseUtil.sendApiResponse(res, 200);
+    else
+        return ResponseUtil.sendApiResponse(res, 500, "Something went wrong.");
+}
+
+/** @type {import("express").RequestHandler} */
+async function deactivate(req, res) {
+    const accountId = req.params.accountId;
+
+    const isSuccess = await AccountService.deactivate(accountId);
 
     if (isSuccess)
         return ResponseUtil.sendApiResponse(res, 200);
@@ -144,6 +168,7 @@ async function assignAccountInfo(req, res, next) {
 module.exports = {
     add,
     updateInfo,
+    activate, deactivate,
     getPicture, setPicture, removePicture,
     assignAccountInfo,
     findAllOfficers, findAllVolunteers, findAllVolunteersByDistrictId

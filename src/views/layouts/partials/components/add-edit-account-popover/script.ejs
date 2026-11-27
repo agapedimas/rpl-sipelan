@@ -1,0 +1,194 @@
+<script type="module">
+    const component = JSON.parse('<%- JSON.stringify(component) %>');
+    
+    let activeAccount = null;
+    let addEditAccountCallback = null;
+
+    const addEditAccountPopover = document.getElementById("<%= component.type %>AccountPopover");
+    const addEditNameInput = document.getElementById("<%= component.type %>NameInput");
+    const addEditPhoneInput = document.getElementById("<%= component.type %>PhoneInput");
+    const addEditNikInput = document.getElementById("<%= component.type %>NikInput");
+    const addEditDomicileText = document.getElementById("<%= component.type %>DomicileText");
+    const addEditSelectDomicileButton = document.getElementById("<%= component.type %>SelectDomicileButton");
+    const submitAddEditAccountButton = document.getElementById("submit<%= component.type %>AccountButton");
+    const cancelAddEditAccountButton = document.getElementById("cancel<%= component.type %>AccountButton");
+
+    addEditSelectDomicileButton.onclick = async function() {
+        const selectedDomicile = await selectDomicileAsync(this);
+        addEditAccountFormData.set("districtId", selectedDomicile.districtId);
+        addEditAccountFormData.set("domicile", selectedDomicile.displayName);
+        addEditDomicileText.innerText = selectedDomicile.displayName;
+    }
+    const addEditAccountForm = new PopOverForm(
+        [
+            new Field(addEditNameInput),
+            new Field(addEditPhoneInput),
+            new Field(addEditNikInput)
+        ],
+        submitAddEditAccountButton,
+        cancelAddEditAccountButton,
+        addEditAccountPopover
+    );
+
+    let addEditAccountFormData = new FormData();
+
+    submitAddEditAccountButton.onaction = function() {
+        return new Promise(async function(resolve) {
+            let isSuccess = false;
+            
+            if (component.type === "add")
+                isSuccess = await submitAddAccount();
+            else if (component.type === "edit")
+                isSuccess = await submitEditAccount();
+
+            if (isSuccess === false)
+                return resolve(false);
+            
+            addEditAccountCallback();
+            return resolve(true);
+        })
+    }
+
+    async function submitAddAccount() {
+        try {
+            const submitRequest = 
+                await fetch("/api/account/" + component.role, {
+                    method: "POST",
+                    body: addEditAccountFormData
+                });
+
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                return true;
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
+        }
+        catch (error) {
+            Components.Notification.Send({ 
+                Id: "add_account_failed", 
+                Title: "<%= language('profile.errors.title') %>", 
+                Message: error.message || "<%= language('profile.errors.UNKNOWN') %>".format(error.cause.details), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
+            return false;
+        }
+    }
+
+    async function submitEditAccount() {
+        // No need to do patch request if user doesn't update their profile.
+        const updatedInfo = [...addEditAccountFormData.entries()];
+        if (updatedInfo.length == 0)
+            return true;
+
+        try {
+            const submitRequest = 
+                await fetch("/api/account/" + activeAccount.role + "/" + activeAccount.id, {
+                    method: "PATCH",
+                    body: addEditAccountFormData
+                });
+
+            const responseBody = await submitRequest.json();
+            const data = responseBody?.data;
+
+            if (submitRequest.ok) {
+                for (const info of updatedInfo) {
+                    const key = info[0];
+                    const newValue = info[1];
+                    activeAccount[key] = newValue;
+                }
+                return true;
+            }
+            else {
+                throw new Error(
+                    responseBody.message, { 
+                        cause: { 
+                            details: submitRequest.status 
+                        }
+                    }
+                );
+            }
+        }
+        catch (error) {
+            Components.Notification.Send({ 
+                Id: "update_account_failed", 
+                Title: "<%= language('profile.errors.title') %>", 
+                Message: error.message || "<%= language('profile.errors.UNKNOWN') %>".format(error.cause.details), 
+                Icon: "\ufe64", 
+                Buttons: [{Text: "<%= language('general.ok') %>"}] 
+            }); 
+
+            return false;
+        }
+    }
+
+    async function addAccountAsync(element) {
+        return new Promise(function(resolve) {
+            addEditAccountCallback = function() {
+                resolve();
+                addEditAccountPopover.close();
+            }
+            addEditNameInput.value = "";
+            addEditPhoneInput.value = "";
+            addEditNikInput.value = "";
+            addEditDomicileText.innerText = "<%= language('general.choose_ellipsis') %>";
+            
+            addEditAccountFormData = new FormData();
+            addEditNameInput.oninput = function() {
+                addEditAccountFormData.set("name", this.value);
+            }
+            addEditPhoneInput.oninput = function() {
+                addEditAccountFormData.set("phone", this.value);
+            }
+            addEditNikInput.oninput = function() {
+                addEditAccountFormData.set("nik", this.value);
+            }
+
+            addEditAccountPopover.open(element);
+        })
+    }
+    async function editAccountAsync(element, account) {
+        return new Promise(function(resolve) {
+            addEditAccountCallback = function() {
+                resolve();
+                addEditAccountPopover.close();
+            }
+            activeAccount = account;
+            addEditNameInput.value = account.name;
+            addEditPhoneInput.value = Formatter.PhoneNumber(account.phone);
+            addEditNikInput.value = account.nik;
+            addEditDomicileText.innerText = account.domicile;
+            
+            addEditAccountFormData = new FormData();
+            addEditNameInput.oninput = function() {
+                addEditAccountFormData.set("name", this.value);
+            }
+            addEditPhoneInput.oninput = function() {
+                addEditAccountFormData.set("phone", this.value);
+            }
+            addEditNikInput.oninput = function() {
+                addEditAccountFormData.set("nik", this.value);
+            }
+
+            addEditAccountPopover.open(element);
+        })
+    }
+
+    if (component.type === "add") {
+        window.addAccountAsync = addAccountAsync;
+    }
+    else if (component.type === "edit") {
+        window.editAccountAsync = editAccountAsync;
+    }
+</script>

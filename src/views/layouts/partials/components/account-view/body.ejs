@@ -34,7 +34,7 @@
                 <span id="accountPhoneText"></span>
             </div>
             <div class="stack">
-                <span><%= language('account.nik.short.title') %></span>
+                <span><%= language('account.nik.title') %></span>
                 <span id="accountNikText"></span>
             </div>
             <div class="stack">
@@ -42,11 +42,29 @@
                 <span id="accountDomicileText"></span>
             </div>
         </div>
-        <div class="buttons">
-            <button id="deactivateAccountButton" class="critical plain"><%= language('general.deactivate') %></button>
-            <button id="activateAccountButton"><%= language('general.activate') %></button>
-            <button id="deleteAccountButton" class="critical"><%= language('general.delete') %></button>
-        </div>
+        <% if (component.allowEditing == true) { %>
+            <div class="actions">
+                <button id="deactivateAccountButton" class="critical plain"><%= language('general.deactivate') %></button>
+                <button id="activateAccountButton"><%= language('general.activate') %></button>
+                <button id="deleteAccountButton" class="critical"><%= language('general.delete') %></button>
+            </div>
+        <% } %>
     </div>
 </div>
 <%- include('./script.ejs', { component }) %>
+<%- 
+    include('/layouts/partials/components/add-edit-account-popover/body', { 
+        component: {
+            role: component.role,
+            type: "add"
+        }
+    }) 
+%>
+<%- 
+    include('/layouts/partials/components/add-edit-account-popover/body', { 
+        component: {
+            role: component.role,
+            type: "edit"
+        }
+    }) 
+%>

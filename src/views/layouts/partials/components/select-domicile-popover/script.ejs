@@ -1,5 +1,5 @@
 <script type="module">
-    let domicileCallback;
+    let domicileCallback = null;
 
     document.addEventListener("DOMContentLoaded", async function() {
         const provinces = await fetchProvinces();
@@ -15,10 +15,6 @@
             selectDomicilePopover.open(element);
             navigateDomicileActivityToProvinceList();
         })
-    }
-
-    selectDomicilePopover.onclosed = function() {
-        domicileCallback = null;
     }
 
     cancelSelectDomicileButton.onclick = function() {

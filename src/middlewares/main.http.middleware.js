@@ -102,6 +102,10 @@ async function accessAsAdmin(req, res, next) {
     return accessAs(["admin"], req, res, next);
 }
 /** @type {import("express").RequestHandler} */
+async function accessAsAdminOrOfficer(req, res, next) {
+    return accessAs(["admin", "officer"], req, res, next);
+}
+/** @type {import("express").RequestHandler} */
 async function accessAsVolunteerOrOfficer(req, res, next) {
     return accessAs(["volunteer", "officer"], req, res, next);
 }
@@ -138,6 +142,7 @@ async function accessTheirOwn(req, res, next) {
 module.exports = {
     viewAsCitizen, viewAsVolunteer, viewAsOfficer, viewAsAdmin, viewTheirOwn,
     accessAsCitizen, accessAsVolunteer, accessAsOfficer, accessAsAdmin, accessTheirOwn,
+    accessAsAdminOrOfficer,
     accessAsVolunteerOrOfficer,
     accessAsCitizenOrVolunteerOrOfficer, 
     accessAsVolunteerOrOfficerOrAdmin
